@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/tourism_logo.png";
+import logo from "../../assets/images/tourism_logo.png";
 
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "admin@kh.com",
+    password: "1234",
   });
   const [isLoading, setIsLoading] = useState(false);
 

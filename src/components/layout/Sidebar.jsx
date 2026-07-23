@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import profile_v2 from "../assets/profile_v2.png";
-import tourism_app_icon from "/public/tourism_app_icon.png";
+import { useLocation, Link } from 'react-router-dom';
+import profile_v2 from "../../assets/images/profile_v2.png";
+import tourism_app_icon from "../../assets/images/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays, MessageSquareText,
-  Star, Heart, MessageCircle, Settings, LogOut, ChevronRight, Grip, ChevronLeft,
-  Sun, Moon, Folder, Clock
+  Star, Heart, Trash2, MessageCircle, Settings, LogOut, ChevronRight, Grip, ChevronLeft,
+  Sun, Moon, Folder, Clock 
 } from "lucide-react";
 
 
@@ -24,34 +25,38 @@ export default function Sidebar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const activeItem = "";
+  const location = useLocation();
 
   const menuItems = [
-    { name: "Dashboard", icon: LayoutGrid, hasSubmenu: true },
-    { name: "Places", icon: MapPinned, hasSubmenu: true },
-    { name: "Categories", icon: Tags, hasSubmenu: true },
-    { name: "Provinces", icon: Map, hasSubmenu: true },
-    { name: "Gallery", icon: Images, hasSubmenu: true },
-    { name: "Events", icon: CalendarDays, hasSubmenu: true },
-    { name: "Reviews", icon: MessageSquareText, hasSubmenu: true },
-    { name: "Ratings", icon: Star, hasSubmenu: true },
-    { name: "Favorites", icon: Heart, hasSubmenu: true },
+    { name: "Dashboard", icon: LayoutGrid, hasSubmenu: true, path: "/dashboard" },
+    { name: "Places", icon: MapPinned, hasSubmenu: true, path: "/place" },
+    { name: "Categories", icon: Tags, hasSubmenu: true, path: "/categories" },
+    { name: "Provinces", icon: Map, hasSubmenu: true, path: "/provinces" },
+    { name: "Gallery", icon: Images, hasSubmenu: true, path: "/gallery" },
+    { name: "Events", icon: CalendarDays, hasSubmenu: true, path: "/events" },
+    { name: "Reviews", icon: MessageSquareText, hasSubmenu: true, path: "/reviews" },
+    { name: "Ratings", icon: Star, hasSubmenu: true, path: "/ratings" },
+    { name: "Favorites", icon: Heart, hasSubmenu: true, path: "/favorites" },
+    {name : "Delete Account", icon: Trash2, hasSubmenu: true, path: "/delete-account" },
   ];
 
   const accountItems = [
-    { name: "Chat", icon: MessageCircle },
-    { name: "Settings", icon: Settings },
-    { name: "Log out", icon: LogOut },
+    { name: "Chat", icon: MessageCircle, path: "/chat" },
+    { name: "Settings", icon: Settings, path: "/settings" },
+    { name: "Log out", icon: LogOut, path: "/logout" },
   ];
 
   const renderNavItem = (item) => {
-    const isActive = activeItem === item.name;
+    // Check if current path matches item path
+    const isActive = item.path && item.path !== '#' && location.pathname.startsWith(item.path);
     const Icon = item.icon;
 
     return (
-      <div
+      <Link
+        to={item.path || '#'}
         key={item.name}
-        className={`group relative flex items-center px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200`}
+        className={`group relative flex items-center px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 
+          ${isActive ? 'bg-[#e9f8f6] text-[#22b7ab]' : 'text-gray-600 hover:bg-gray-50'}`}
       >
         <div className="flex items-center w-full">
           {item.hasSubmenu && isExpanded && (
@@ -79,7 +84,7 @@ export default function Sidebar() {
             <div className="absolute top-1/2 -left-1 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-gray-800"></div>
           </div>
         )}
-      </div>
+      </Link>
     );
   };
 
@@ -246,7 +251,7 @@ export default function Sidebar() {
               <span>Terms & Conditions</span>
             </div>
           </div>
-        )}     
+        )}
       </div>
     </aside >
   );

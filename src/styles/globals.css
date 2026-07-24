@@ -5,3 +5,28 @@
   --color-input: #5f84b3;
   --color-white: #ffffff;
 }
+
+/* Logout alert animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation: fadeIn 0.2s ease-out, zoomIn 0.2s ease-out;
+}

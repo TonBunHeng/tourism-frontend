@@ -1,40 +1,56 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+// Layout
+import Main from '../layouts/Main';
+// Auth Pages (Don't have Sidebar/Footer)
 import Login from '../pages/auth/Login';
-import Dashboard from '../pages/dashboard/DashboardLayout';
-import PlacesLayout from '../pages/places/PlacesLayout';
-import CategoriesLayout from '../pages/categories/CategoriesLayout';
-import ProvincesLayout from '../pages/provinces/ProvincesLayout';
-import GalleryLayout from '../pages/gallerys/GalleryLayout';
-import EventsLayout from '../pages/events/EventsLayout';
-import ReviewsLayout from '../pages/reviews/ReviewsLayout';
-import RatingsLayout from '../pages/ratings/RatingsLayout';
-import FavoritesLayout from '../pages/favorites/FavoritesLayout';
-import DeleteAccount from '../pages/delete/DeleteAccout';
+
+// Content Pages (Have Content)
+import Dashboard from '../pages/dashboard/Dashboard';
+import Places from '../pages/places/Places';
+import Categories from '../pages/categories/Categories';
+import Provinces from '../pages/provinces/Provinces';
+import Gallery from '../pages/galleries/Gallery';
+import Events from '../pages/events/Events';
+import Users from '../pages/users/Users';
+import Reviews from '../pages/reviews/Reviews';
+import Ratings from '../pages/ratings/Ratings';
+import Favorites from '../pages/favorites/Favorites';
+import DeletionRequests from '../pages/delete/DeletionRequests';
 import Chats from '../pages/account/Chats';
 import Settings from '../pages/account/Settings';
+import Profile from '../pages/profiles/Profile';
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/place" element={<PlacesLayout />} />
-        <Route path="/categories" element={<CategoriesLayout />} />
-        <Route path="/provinces" element={<ProvincesLayout />} />
-        <Route path="/gallery" element={<GalleryLayout />} />
-        <Route path="/events" element={<EventsLayout />} />
-        <Route path="/reviews" element={<ReviewsLayout />} />
-        <Route path="/ratings" element={<RatingsLayout />} />
-        <Route path="/favorites" element={<FavoritesLayout />} />
-        <Route path="/delete-account" element={<DeleteAccount />} />
-        <Route path="/chat" element={<Chats />} />
-        <Route path="/settings" element={<Settings />} />
+        
+        {/* Public Routes - Don't have Sidebar/Footer */}
+        <Route path="/" element={<Login />} />
         <Route path="/logout" element={<Navigate to="/login" replace />} />
+        
+        {/* Protected Routes - Have Sidebar/Footer */}
+        <Route element={<Main />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/place" element={<Places />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/provinces" element={<Provinces />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/ratings" element={<Ratings />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/deletion-requests" element={<DeletionRequests />} />
+          <Route path="/chat" element={<Chats />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};  
 
-export default AppRoutes
+export default AppRoutes;

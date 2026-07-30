@@ -8,10 +8,11 @@ import {
   Sun, Moon, Users, User, X 
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
+import { getInitialTheme, applyTheme } from '../../utils/Theme';
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => getInitialTheme() === 'dark');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const menuRef = useRef(null);
@@ -20,11 +21,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
   // Handle Global Dark Mode
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    applyTheme(isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
   // Close sidebar when clicking outside on mobile

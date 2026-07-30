@@ -9,11 +9,11 @@
 
 ## Stack For Develop
 ## Frontend: 
-<!-- Framework: React.js (Single Page Application) -->
-<!-- Language: JavaScript (ES6+) -->
-<!-- Styling: Tailwind CSS (Utility-first styling, responsive design) -->
-<!-- Icons: Lucide React / Heroicons -->
-<!-- Routing: React Router v6 -->
+- Framework: React.js (Single Page Application)
+- Language: JavaScript (ES6+)
+- Styling: Tailwind CSS (Utility-first styling, responsive design)
+- Icons: Lucide React / Heroicons
+- Routing: React Router v6
 
 <!-- Not Yet -->
 <!-- State Management: Context API / Redux Toolkit / React Query (TanStack Query) for server state -->

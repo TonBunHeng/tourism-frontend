@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4 flex-shrink-0 transition-colors duration-200">
       <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between text-center sm:text-left">
-        
+
         {/* Left section: Copyright & Version */}
         <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           <span>© {currentYear} Smart Tourism</span>
@@ -17,17 +17,17 @@ export default function Footer() {
 
         {/* Right section: Links, Status & Support Button */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
-          <Link 
-            to="/privacy" 
+          <Link
+            to="/privacy"
             className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline transition-colors"
           >
             Privacy Policy
           </Link>
-          
+
           <span className="text-gray-300 dark:text-gray-600 hidden sm:inline">•</span>
-          
-          <Link 
-            to="/terms" 
+
+          <Link
+            to="/terms"
             className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline transition-colors"
           >
             Terms of Service
@@ -38,14 +38,14 @@ export default function Footer() {
             <span>System Online</span>
           </span>
 
-          <Link 
+          <Link
             to="/support"
             className="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 shadow-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200"
           >
             Contact Support
           </Link>
         </div>
-        
+
       </div>
     </footer>
   );

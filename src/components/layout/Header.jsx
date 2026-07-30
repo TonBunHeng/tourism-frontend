@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
+import {
   Bell, Search, User, Settings, LogOut, Menu,
-  X, ChevronDown, MessageCircle
+  X, ChevronDown, MessageCircle, Globe
 } from "lucide-react";
 import profile_v2 from "../../assets/images/profile_v2.png";
 
@@ -10,11 +10,14 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
+  const [currentLang, setCurrentLang] = useState('EN');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
   const searchRef = useRef(null);
+  const langRef = useRef(null);
   const location = useLocation();
 
   const notifications = [
@@ -34,6 +37,9 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
       }
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setIsSearchOpen(false);
+      }
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setShowLangMenu(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -75,7 +81,7 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            
+
             <h1 className="text-base sm:text-xl font-semibold text-gray-800 dark:text-white truncate">
               {getPageTitle()}
             </h1>
@@ -107,6 +113,52 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
               <Search size={20} className="text-gray-600 dark:text-gray-300" />
             </button>
 
+            {/* Language Switcher */}
+            <div ref={langRef} className="relative">
+              <button
+                onClick={() => setShowLangMenu(!showLangMenu)}
+                className="flex items-center gap-1.5 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
+                aria-label="Change language"
+              >
+                <Globe size={20} />
+                <span className="text-sm font-medium hidden sm:inline">{currentLang}</span>
+                <ChevronDown size={14} className="text-gray-400" />
+              </button>
+
+              {showLangMenu && (
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+                  <div className="p-1.5">
+                    <button
+                      onClick={() => {
+                        setCurrentLang('EN');
+                        setShowLangMenu(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-xl transition-colors ${currentLang === 'EN'
+                          ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                    >
+                      <span>English</span>
+                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-gray-600 rounded">EN</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentLang('KH');
+                        setShowLangMenu(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-xl transition-colors mt-1 ${currentLang === 'KH'
+                          ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                    >
+                      <span>ភាសាខ្មែរ</span>
+                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-gray-600 rounded">KH</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Notifications */}
             <div ref={notificationRef} className="relative">
               <button
@@ -132,9 +184,8 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                     {notifications.map((notification) => (
                       <div
                         key={notification.id}
-                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${
-                          !notification.read ? 'bg-blue-50/50 dark:bg-gray-700' : ''
-                        }`}
+                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${!notification.read ? 'bg-blue-50/50 dark:bg-gray-700' : ''
+                          }`}
                       >
                         <p className="text-sm text-gray-800 dark:text-gray-200">{notification.title}</p>
                         <span className="text-xs text-gray-400">{notification.time}</span>

@@ -17,19 +17,19 @@ import Reviews from '../pages/reviews/Reviews';
 import Ratings from '../pages/ratings/Ratings';
 import Favorites from '../pages/favorites/Favorites';
 import DeletionRequests from '../pages/delete/DeletionRequests';
-import Chats from '../pages/account/Chats';
-import Settings from '../pages/account/Settings';
+import Chats from '../pages/chats/Chats';
+import Settings from '../pages/settings/Settings';
 import Profile from '../pages/profiles/Profile';
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        
+
         {/* Public Routes - Don't have Sidebar/Footer */}
         <Route path="/" element={<Login />} />
         <Route path="/logout" element={<Navigate to="/login" replace />} />
-        
+
         {/* Protected Routes - Have Sidebar/Footer */}
         <Route element={<Main />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -51,6 +51,6 @@ const AppRoutes = () => {
       </Routes>
     </BrowserRouter>
   );
-};  
+};
 
 export default AppRoutes;

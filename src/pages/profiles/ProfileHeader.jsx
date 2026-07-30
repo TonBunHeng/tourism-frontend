@@ -1,0 +1,100 @@
+import { User, Mail, Phone, MapPin, Calendar, Edit, Camera, CheckCircle } from 'lucide-react';
+
+export default function ProfileHeader({
+  userData,
+  profileImage,
+  fileInputRef,
+  handleImageUpload,
+  isEditing,
+  setIsEditing
+}) {
+  return (
+    <div className="flex flex-col sm:flex-row items-start gap-6">
+      <div className="flex items-start gap-4 sm:gap-6 w-full sm:w-auto">
+        <div className="relative flex-shrink-0">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center overflow-hidden">
+            {profileImage ? (
+              <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-10 h-10 sm:w-12 sm:h-12 text-blue-600 dark:text-blue-400" />
+            )}
+          </div>
+          <button
+            onClick={() => fileInputRef.current.click()}
+            className="absolute bottom-0 right-0 p-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+          >
+            <Camera className="w-3.5 h-3.5" />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+        </div>
+        {/* Name/badges shown next to avatar on mobile so the header reads naturally at narrow widths */}
+        <div className="flex-1 min-w-0 sm:hidden">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white truncate">{userData.name}</h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            {userData.verified && (
+              <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full border border-blue-200 dark:border-blue-800">
+                <CheckCircle className="w-3 h-3" />
+                Verified
+              </span>
+            )}
+            <span className="text-xs px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full border border-purple-200 dark:border-purple-800">
+              {userData.role}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex-1 min-w-0 w-full">
+        <div className="hidden sm:flex flex-wrap items-center gap-3">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{userData.name}</h2>
+          {userData.verified && (
+            <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full border border-blue-200 dark:border-blue-800">
+              <CheckCircle className="w-3 h-3" />
+              Verified
+            </span>
+          )}
+          <span className="text-xs px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full border border-purple-200 dark:border-purple-800">
+            {userData.role}
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <span className="flex items-center gap-1 min-w-0">
+            <Mail className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{userData.email}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <Phone className="w-4 h-4 flex-shrink-0" />
+            {userData.phone}
+          </span>
+          <span className="flex items-center gap-1">
+            <MapPin className="w-4 h-4 flex-shrink-0" />
+            {userData.location}
+          </span>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 max-w-2xl">{userData.bio}</p>
+        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400 dark:text-gray-500">
+          <span className="flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5" />
+            Joined {userData.joinDate}
+          </span>
+          <span>•</span>
+          <span>2FA {userData.twoFactorAuth ? 'Enabled' : 'Disabled'}</span>
+        </div>
+      </div>
+      <button
+        onClick={() => setIsEditing(!isEditing)}
+        className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25 w-full sm:w-auto flex-shrink-0"
+      >
+        <Edit className="w-4 h-4" />
+        Edit Profile
+      </button>
+    </div>
+  );
+}

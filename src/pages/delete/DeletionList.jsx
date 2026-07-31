@@ -2,20 +2,20 @@ import { User, AlertCircle, Clock, Check, X, Calendar, Eye, UserX, Trash2 } from
 
 export const getStatusBadge = (status) => {
   const colors = {
-    pending: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
-    approved: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800',
-    rejected: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800',
-    archived: 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:border-gray-600'
+    pending: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
+    approved: 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
+    rejected: 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]',
+    archived: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]'
   };
   return colors[status] || colors.pending;
 };
 
 export const getUrgencyBadge = (urgency) => {
   const colors = {
-    critical: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800',
-    high: 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800',
-    medium: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800',
-    low: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800'
+    critical: 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]',
+    high: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
+    medium: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
+    low: 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] dark:border-[var(--color-info-dark-border)]'
   };
   return colors[urgency] || colors.low;
 };
@@ -30,8 +30,8 @@ export const getTypeIcon = (type) => {
 
 export const getTypeBadge = (type) => {
   return type === 'account' 
-    ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800' 
-    : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800';
+    ? 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]' 
+    : 'bg-[var(--color-purple-badge-bg)] text-[var(--color-purple-badge-text)] border-[var(--color-purple-badge-border)] dark:bg-[var(--color-purple-badge-dark-bg)] dark:text-[var(--color-purple-badge-dark-text)] dark:border-[var(--color-purple-badge-dark-border)]';
 };
 
 export default function DeletionList({
@@ -43,16 +43,16 @@ export default function DeletionList({
   hasActiveFilters
 }) {
   return (
-    <div className="divide-y divide-gray-100 dark:divide-gray-700">
+    <div className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
       {requests.length > 0 ? (
         requests.map((request) => {
           const TypeIcon = getTypeIcon(request.type);
           return (
-            <div key={request.id} className="p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+            <div key={request.id} className="p-4 md:p-6 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
               <div className="flex items-start gap-3 md:gap-4">
                 {/* User Avatar */}
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 md:w-6 md:h-6 text-red-600 dark:text-red-400" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 md:w-6 md:h-6 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
                 </div>
                 
                 {/* Request Content */}
@@ -60,8 +60,8 @@ export default function DeletionList({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-gray-900 dark:text-white">{request.user.name}</span>
-                        <span className="text-xs text-gray-400 dark:text-gray-500 truncate">{request.user.email}</span>
+                        <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{request.user.name}</span>
+                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] truncate">{request.user.email}</span>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border ${getTypeBadge(request.type)}`}>
@@ -78,7 +78,7 @@ export default function DeletionList({
                           {request.status === 'rejected' && <X className="w-3 h-3" />}
                           {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                         </span>
-                        <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
+                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {request.requestDate}
                         </span>
@@ -88,29 +88,29 @@ export default function DeletionList({
                       <div className="flex gap-1 flex-shrink-0">
                         <button
                           onClick={() => onApprove(request)}
-                          className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-lg transition-colors"
+                          className="p-1.5 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] hover:bg-[var(--color-success-bg)]/80 dark:hover:bg-[var(--color-success-dark-bg)]/80 rounded-lg transition-colors"
                           title="Approve"
                         >
-                          <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                          <Check className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
                         </button>
                         <button
                           onClick={() => onReject(request)}
-                          className="p-1.5 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg transition-colors"
+                          className="p-1.5 bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] hover:bg-[var(--color-danger-bg)]/80 dark:hover:bg-[var(--color-danger-dark-bg)]/80 rounded-lg transition-colors"
                           title="Reject"
                         >
-                          <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                          <X className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                         </button>
                       </div>
                     )}
                   </div>
                   
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.reason}</p>
+                  <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 line-clamp-2">{request.reason}</p>
                   
                   {request.itemsToDelete && request.itemsToDelete.length > 0 && (
                     <div className="mt-2 flex items-center gap-2 flex-wrap">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">Items to delete:</span>
+                      <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Items to delete:</span>
                       {request.itemsToDelete.map((item, idx) => (
-                        <span key={idx} className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                        <span key={idx} className="text-xs px-2 py-0.5 bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] rounded-full">
                           {item.name}
                         </span>
                       ))}
@@ -118,8 +118,8 @@ export default function DeletionList({
                   )}
 
                   {request.adminNotes && (
-                    <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
-                      <p className="text-xs text-blue-700 dark:text-blue-400">
+                    <div className="mt-2 p-2 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] rounded-lg border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
+                      <p className="text-xs text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]">
                         <span className="font-medium">Admin Note:</span> {request.adminNotes}
                       </p>
                     </div>
@@ -128,7 +128,7 @@ export default function DeletionList({
                   <div className="flex items-center gap-4 mt-3 flex-wrap">
                     <button
                       onClick={() => onViewDetails(request)}
-                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium flex items-center gap-1 cursor-pointer"
+                      className="text-xs text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:text-[var(--color-purple-badge-text)]/80 font-medium flex items-center gap-1 cursor-pointer"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       View Details
@@ -137,14 +137,14 @@ export default function DeletionList({
                       <>
                         <button
                           onClick={() => onApprove(request)}
-                          className="text-xs text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium flex items-center gap-1 cursor-pointer"
+                          className="text-xs text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:text-[var(--color-success-text)]/80 font-medium flex items-center gap-1 cursor-pointer"
                         >
                           <Check className="w-3.5 h-3.5" />
                           Approve
                         </button>
                         <button
                           onClick={() => onReject(request)}
-                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium flex items-center gap-1 cursor-pointer"
+                          className="text-xs text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:text-[var(--color-danger-text)]/80 font-medium flex items-center gap-1 cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                           Reject
@@ -152,7 +152,7 @@ export default function DeletionList({
                       </>
                     )}
                     {request.processedBy && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">
                         Processed by {request.processedBy} on {request.processedDate}
                       </span>
                     )}
@@ -165,12 +165,12 @@ export default function DeletionList({
       ) : (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📋</div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No requests found</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+          <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No requests found</h3>
+          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
           {hasActiveFilters && (
             <button
               onClick={onClearFilters}
-              className="mt-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+              className="mt-3 px-4 py-2 text-sm text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-xl transition-colors"
             >
               Clear all filters
             </button>

@@ -1,11 +1,82 @@
 @import "tailwindcss";
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-primary: #003E83;
+  --color-primary-hover: #002e62;
   --color-input: #5f84b3;
   --color-white: #ffffff;
+
+  /* Sidebar */
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-dark-bg: #111827;
+  --color-sidebar-border: #f3f4f6;
+  --color-sidebar-dark-border: #1f2937;
+  --color-brand-teal: #22b7ab;
+  --color-teal-light: #e9f8f6;
+  --color-brand-border: #b2ebe6;
+
+  /* Backgrounds & Surfaces */
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #1f2937;
+  --color-bg-dark-modal: #111827;
+  --color-modal-overlay: rgba(0, 0, 0, 0.7);
+  --color-surface-hover-light: #f9fafb;
+  --color-surface-hover-dark: #374151;
+  /* Text Colors */
+  --color-text-primary-light: #111827;
+  --color-text-primary-dark: #ffffff;
+  --color-text-secondary-light: #6b7280;
+  --color-text-secondary-dark: #9ca3af;
+  --color-text-muted-light: #9ca3af;
+  --color-text-muted-dark: #6b7280;
+  /* Borders */
+  --color-border-light: #f3f4f6;
+  --color-border-subtle-light: #e5e7eb;
+  --color-border-dark: #374151;
+  --color-modal-border: #1f2937;
+  /* Form & Input Controls */
+  --color-input-dark-bg: #1f2937;
+  /* Badges & Status */
+  --color-success-text: #16a34a;
+  --color-success-dark-text: #4ade80;
+  --color-success-bg: #f0fdf4;
+  --color-success-dark-bg: rgba(22, 101, 52, 0.2);
+  --color-success-border: #bbf7d0;
+  --color-success-dark-border: #166534;
+  --color-warning-text: #b45309;
+  --color-warning-dark-text: #fbbf24;
+  --color-warning-bg: #fffbeb;
+  --color-warning-dark-bg: rgba(180, 83, 9, 0.2);
+  --color-warning-border: #fde68a;
+  --color-warning-dark-border: #92400e;
+  --color-warning-hover-border: #fcd34d;
+  --color-warning-dark-hover-border: #b45309;
+  --color-danger-text: #dc2626;
+  --color-danger-dark-text: #f87171;
+  --color-danger-bg: #fef2f2;
+  --color-danger-dark-bg: rgba(153, 27, 27, 0.2);
+  --color-danger-border: #fecaca;
+  --color-danger-dark-border: #991b1b;
+  --color-info-text: #2563eb;
+  --color-info-dark-text: #60a5fa;
+  --color-info-bg: #eff6ff;
+  --color-info-dark-bg: rgba(30, 58, 138, 0.2);
+  --color-info-border: #bfdbfe;
+  --color-info-dark-border: #1e3a8a;
+  --color-purple-text: #9333ea;
+  --color-purple-dark-text: #c084fc;
+  --color-purple-bg: #faf5ff;
+  --color-purple-dark-bg: rgba(107, 33, 168, 0.2);
+  --color-purple-border: #e9d5ff;
+  --color-purple-dark-border: #6b21a8;
+  --color-neutral-badge-text: #374151;
+  --color-neutral-badge-dark-text: #9ca3af;
+  --color-neutral-badge-bg: #f3f4f6;
+  --color-neutral-badge-dark-bg: rgba(55, 65, 81, 0.5);
+  --color-neutral-badge-border: #e5e7eb;
+  --color-neutral-badge-dark-border: #4b5563;
+
 }
 
 /* Logout alert animation */
@@ -13,6 +84,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -23,6 +95,7 @@
     transform: scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -31,4 +104,13 @@
 
 .animate-in {
   animation: fadeIn 0.2s ease-out, zoomIn 0.2s ease-out;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 50px;
 }

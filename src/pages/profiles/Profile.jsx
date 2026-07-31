@@ -46,10 +46,10 @@ export default function Profile() {
 
   // User stats
   const userStats = [
-    { label: 'Total Places', value: '156', icon: MapPinned, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Total Reviews', value: '89', icon: MessageSquare, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Total Favorites', value: '234', icon: Heart, color: 'text-red-500 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/20' },
-    { label: 'Total Photos', value: '567', icon: Image, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20' }
+    { label: 'Total Places', value: '156', icon: MapPinned, color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' },
+    { label: 'Total Reviews', value: '89', icon: MessageSquare, color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]' },
+    { label: 'Total Favorites', value: '234', icon: Heart, color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]', bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]' },
+    { label: 'Total Photos', value: '567', icon: Image, color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]', bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]' }
   ];
 
   // Recent activity
@@ -141,11 +141,11 @@ export default function Profile() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Profile Settings</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage your account settings and preferences</p>
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Profile Settings</h1>
+          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Manage your account settings and preferences</p>
         </div>
         {saveSuccess && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-400 text-sm mt-2 sm:mt-0">
+          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)] rounded-lg text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] text-sm mt-2 sm:mt-0">
             <Check className="w-4 h-4 flex-shrink-0" />
             Profile updated successfully!
           </div>
@@ -153,7 +153,7 @@ export default function Profile() {
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-1 bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+      <div className="flex flex-wrap gap-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-1 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] mb-6">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -162,8 +162,8 @@ export default function Profile() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 activeTab === tab.id
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-[var(--color-primary)] text-[var(--color-white)] shadow-lg shadow-[var(--color-primary)]/25'
+                  : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
               }`}
             >
               <Icon className="w-4 h-4" />

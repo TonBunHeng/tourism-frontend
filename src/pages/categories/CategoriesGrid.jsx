@@ -2,8 +2,8 @@ import { Eye, Edit, Trash2, Clock, FolderTree } from 'lucide-react';
 
 export const getStatusColor = (status) => {
   return status === "Active" 
-    ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800" 
-    : "bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:border-gray-600";
+    ? "bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]" 
+    : "bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]";
 };
 
 export default function CategoriesGrid({
@@ -20,7 +20,7 @@ export default function CategoriesGrid({
           return (
             <div 
               key={category.id} 
-              className="group relative bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02]"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02]"
             >
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="flex items-center gap-3 min-w-0">
@@ -31,42 +31,42 @@ export default function CategoriesGrid({
                     <IconComponent size={24} style={{ color: category.color }} />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{category.name}</h3>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{category.placeCount} places</span>
+                    <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{category.name}</h3>
+                    <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{category.placeCount} places</span>
                   </div>
                 </div>
                 {/* Actions */}
                 <div className="flex gap-1 flex-shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                   <button 
                     onClick={() => onView(category.id)}
-                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
                     title="View"
                   >
-                    <Eye className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+                    <Eye className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                   </button>
                   <button 
                     onClick={() => onEdit(category)}
-                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
                     title="Edit"
                   >
-                    <Edit className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+                    <Edit className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                   </button>
                   <button 
                     onClick={() => onDelete(category.id)}
-                    className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                     title="Delete"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                    <Trash2 className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">{category.description}</p>
-              <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 line-clamp-2">{category.description}</p>
+              <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
                 <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border flex-shrink-0 ${getStatusColor(category.status)}`}>
                   <Clock className="w-3 h-3" />
                   {category.status}
                 </span>
-                <span className="text-xs text-gray-400 dark:text-gray-500 truncate">Created: {category.createdAt}</span>
+                <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] truncate">Created: {category.createdAt}</span>
               </div>
             </div>
           );
@@ -74,10 +74,10 @@ export default function CategoriesGrid({
       ) : (
         <div className="col-span-full text-center py-12">
           <div className="flex justify-center mb-4">
-            <FolderTree className="w-16 h-16 text-gray-400" />
+            <FolderTree className="w-16 h-16 text-[var(--color-text-muted-light)]" />
           </div>
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white">No categories found</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Try adjusting your search</p>
+          <h3 className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">No categories found</h3>
+          <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">Try adjusting your search</p>
         </div>
       )}
     </div>

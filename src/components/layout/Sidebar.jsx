@@ -19,19 +19,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   const sidebarRef = useRef(null);
   const location = useLocation();
 
-  // Handle Global Dark Mode
   useEffect(() => {
     applyTheme(isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
-  // Close sidebar when clicking outside on mobile
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        isOpen && 
-        sidebarRef.current && 
-        !sidebarRef.current.contains(event.target)
-      ) {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     }
@@ -39,7 +33,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, setIsOpen]);
 
-  // Close profile menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -50,18 +43,20 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close mobile sidebar on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname, setIsOpen]);
 
-  const menuItems = [
+  const managementItems = [
     { name: "Dashboard", icon: LayoutGrid, path: "/dashboard" },
     { name: "Places", icon: MapPinned, path: "/place" },
     { name: "Categories", icon: Tags, path: "/categories" },
     { name: "Provinces", icon: Map, path: "/provinces" },
     { name: "Gallery", icon: Images, path: "/gallery" },
     { name: "Events", icon: CalendarDays, path: "/events" },
+  ];
+
+  const engagementItems = [
     { name: "Users", icon: Users, path: "/users" },
     { name: "Reviews", icon: MessageSquareText, path: "/reviews" },
     { name: "Ratings", icon: Star, path: "/ratings" },
@@ -85,14 +80,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         <button
           key={item.name}
           onClick={() => setShowLogoutAlert(true)}
-          className={`group relative flex items-center w-full px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30`}
+          className="group relative flex items-center w-full px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
         >
           <div className="flex items-center w-full">
             <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'mx-auto' : ''}`}>
               <Icon size={20} strokeWidth={2} className="text-red-600 dark:text-red-400" />
             </div>
             {isExpanded && (
-              <span className={`ml-3 text-sm font-medium whitespace-nowrap text-red-600 dark:text-red-400`}>
+              <span className="ml-3 text-sm font-medium whitespace-nowrap text-red-600 dark:text-red-400">
                 {item.name}
               </span>
             )}
@@ -111,22 +106,20 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       <Link
         to={item.path || '#'}
         key={item.name}
+        style={{
+          backgroundColor: isActive ? 'var(--color-teal-light)' : 'transparent',
+          color: isActive ? 'var(--color-brand-teal)' : undefined
+        }}
         className={`group relative flex items-center px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 
-          ${isActive ? 'bg-[#e9f8f6] text-[#22b7ab] dark:bg-[#22b7ab]/20 dark:text-[#22b7ab]' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+          ${isActive ? 'dark:bg-[var(--color-brand-teal)]/20 dark:text-[var(--color-brand-teal)]' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
       >
         <div className="flex items-center w-full">
-          {item.hasSubmenu && isExpanded && (
-            <div className="w-4 mr-1.5 flex justify-center shrink-0">
-              <ChevronRight size={14} className={isActive ? "text-[#22b7ab]" : "text-gray-400"} />
-            </div>
-          )}
-
           <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'mx-auto' : ''}`}>
             <Icon size={20} strokeWidth={2} />
           </div>
 
           {isExpanded && (
-            <span className={`ml-3 text-sm font-medium whitespace-nowrap`}>
+            <span className="ml-3 text-sm font-medium whitespace-nowrap">
               {item.name}
             </span>
           )}
@@ -144,7 +137,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
   return (
     <>
-      {/* Mobile Overlay */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
@@ -154,9 +146,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
       <aside
         ref={sidebarRef}
-        className={`fixed md:relative h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col transition-all duration-300 z-50
+        style={{
+          backgroundColor: 'var(--color-sidebar-bg)',
+          borderColor: 'var(--color-sidebar-border)'
+        }}
+        className={`fixed md:relative h-screen dark:bg-[var(--color-sidebar-dark-bg)] dark:border-[var(--color-sidebar-dark-border)] border-r flex flex-col transition-all duration-300 z-50
           ${isExpanded ? 'md:w-[260px]' : 'md:w-[80px]'}
-          w-[280px] /* Mobile fixed width */
+          w-[280px] 
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           shadow-2xl md:shadow-[1px_0_10px_rgba(0,0,0,0.03)]
         `}
@@ -164,7 +160,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         {/* Header */}
         <div className="h-20 flex items-center justify-between px-5">
           <div className="flex items-center gap-3 overflow-hidden w-full">
-            <div className="w-10 h-10 rounded-xl bg-white border border-[#b2ebe6] text-[#22b7ab] flex items-center justify-center shrink-0">
+            <div 
+              style={{ borderColor: 'var(--color-brand-border)', color: 'var(--color-brand-teal)' }}
+              className="w-10 h-10 rounded-xl bg-white border flex items-center justify-center shrink-0"
+            >
               <img src={tourism_app_icon} alt="Tourism App Icon" className="w-10 h-10" />
             </div>
             {isExpanded && (
@@ -175,7 +174,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             )}
           </div>
           
-          {/* Desktop Collapse Toggle */}
           {isExpanded && (
             <button
               onClick={() => setIsExpanded(false)}
@@ -185,7 +183,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </button>
           )}
 
-          {/* Mobile Close Toggle */}
           <button
             onClick={() => setIsOpen(false)}
             className="md:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-400 transition-colors shrink-0"
@@ -194,7 +191,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        {/* Desktop Expand Toggle */}
         {!isExpanded && (
           <div className="hidden md:flex justify-center -mt-2 mb-2">
             <button
@@ -211,18 +207,29 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <div>
             {isExpanded && (
               <h3 className="px-3 text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">
-                Overview
+                Management
               </h3>
             )}
             <div className="flex flex-col">
-              {menuItems.map(item => renderNavItem(item))}
+              {managementItems.map(item => renderNavItem(item))}
             </div>
           </div>
 
-          <div className="mt-2">
+          <div>
             {isExpanded && (
               <h3 className="px-3 text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">
-                Account
+                Engagement
+              </h3>
+            )}
+            <div className="flex flex-col">
+              {engagementItems.map(item => renderNavItem(item))}
+            </div>
+          </div>
+
+          <div>
+            {isExpanded && (
+              <h3 className="px-3 text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">
+                Preferences
               </h3>
             )}
             <div className="flex flex-col">
@@ -256,7 +263,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         </div>
 
         {/* User Profile Footer */}
-        <div className="p-4 relative border-t border-gray-100 dark:border-gray-800">
+        <div 
+          style={{ borderColor: 'var(--color-sidebar-border)' }}
+          className="p-4 relative border-t dark:border-[var(--color-sidebar-dark-border)]"
+        >
           <button
             type="button"
             onClick={() => setShowProfileMenu((prev) => !prev)}

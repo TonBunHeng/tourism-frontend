@@ -199,7 +199,7 @@ export default function Settings() {
       />
 
       {/* Settings Layout */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Navigation Tabs */}
           <SettingsTabs
@@ -210,7 +210,7 @@ export default function Settings() {
 
           {/* Content */}
           <div className="flex-1 p-4 md:p-6 min-w-0">
-            <h3 className="text-xs uppercase tracking-wide font-semibold text-gray-400 dark:text-gray-500 mb-3 md:hidden">
+            <h3 className="text-xs uppercase tracking-wide font-semibold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 md:hidden">
               {activeTabLabel}
             </h3>
             {renderTabContent()}

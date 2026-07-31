@@ -17,10 +17,10 @@ import {
 
 export const getStatusColor = (status) => {
   const colors = {
-    'Published': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800',
-    'Pending': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
-    'Flagged': 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800',
-    'Archived': 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700/50 dark:text-gray-400 dark:border-gray-600'
+    'Published': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
+    'Pending': 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
+    'Flagged': 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]',
+    'Archived': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-surface-hover-dark)]/50 dark:text-[var(--color-text-secondary-dark)] dark:border-[var(--color-border-dark)]'
   };
   return colors[status] || colors['Pending'];
 };
@@ -32,7 +32,7 @@ export const renderStars = (rating, size = 'sm') => {
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
-          className={`${i < rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-gray-600'} ${starSize}`}
+          className={`${i < rating ? 'fill-[var(--color-warning-text)] text-[var(--color-warning-text)]' : 'text-[var(--color-border-subtle-light)] dark:text-[var(--color-border-dark)]'} ${starSize}`}
         />
       ))}
     </div>
@@ -47,15 +47,15 @@ export default function ReviewsList({
   onDelete
 }) {
   return (
-    <div className="divide-y divide-gray-100 dark:divide-gray-700">
+    <div className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
       {reviews.length > 0 ? (
         reviews.map((review) => {
           const UserAvatar = review.user.avatar;
           return (
-            <div key={review.id} className="p-4 sm:p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+            <div key={review.id} className="p-4 sm:p-6 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center flex-shrink-0">
-                  <UserAvatar className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
+                  <UserAvatar className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
                 </div>
 
                 {/* Review Content */}
@@ -63,21 +63,21 @@ export default function ReviewsList({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">{review.user.name}</span>
+                        <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm sm:text-base">{review.user.name}</span>
                         {review.user.verified && (
-                          <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full border border-blue-200 dark:border-blue-800 inline-flex items-center gap-1">
+                          <span className="text-xs px-2 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] inline-flex items-center gap-1">
                             <Check className="w-3 h-3" /> Verified
                           </span>
                         )}
-                        <span className="text-xs text-gray-400 dark:text-gray-500">{review.date}</span>
+                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{review.date}</span>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         {renderStars(review.rating)}
-                        <span className="text-xs text-gray-500 dark:text-gray-400">({review.rating}.0)</span>
-                        <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">•</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{review.place.name}</span>
-                        <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">•</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                        <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">({review.rating}.0)</span>
+                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] hidden sm:inline">•</span>
+                        <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{review.place.name}</span>
+                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] hidden sm:inline">•</span>
+                        <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
                           {review.place.location}
                         </span>
@@ -88,12 +88,12 @@ export default function ReviewsList({
                         {review.status}
                       </span>
                       {review.featured && (
-                        <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800">
-                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> Featured
+                        <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-[var(--color-warning-text)] text-[var(--color-warning-text)]" /> Featured
                         </span>
                       )}
                       {review.reported && (
-                        <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800 flex items-center gap-1">
+                        <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] flex items-center gap-1">
                           <Flag className="w-3 h-3" />
                           Reported
                         </span>
@@ -107,20 +107,20 @@ export default function ReviewsList({
                       {review.status}
                     </span>
                     {review.featured && (
-                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800">
+                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)]">
                         Featured
                       </span>
                     )}
                     {review.reported && (
-                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] flex items-center gap-1">
                         <Flag className="w-3 h-3" />
                         Reported
                       </span>
                     )}
                   </div>
 
-                  <h4 className="font-medium text-gray-900 dark:text-white mt-2 sm:mt-1">{review.title}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{review.comment}</p>
+                  <h4 className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-2 sm:mt-1">{review.title}</h4>
+                  <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 line-clamp-2">{review.comment}</p>
 
                   {review.images && review.images.length > 0 && (
                     <div className="flex gap-2 mt-2">
@@ -129,27 +129,27 @@ export default function ReviewsList({
                           key={idx}
                           src={img}
                           alt={`Review image ${idx + 1}`}
-                          className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover border border-gray-200 dark:border-gray-700"
+                          className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
                         />
                       ))}
                     </div>
                   )}
 
                   <div className="flex items-center gap-4 mt-3 flex-wrap">
-                    <button className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                    <button className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-success-text)] dark:hover:text-[var(--color-success-dark-text)] transition-colors">
                       <ThumbsUp className="w-3.5 h-3.5" />
                       <span>{review.likes}</span>
                     </button>
-                    <button className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors">
+                    <button className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-danger-text)] dark:hover:text-[var(--color-danger-dark-text)] transition-colors">
                       <ThumbsDown className="w-3.5 h-3.5" />
                       <span>{review.dislikes}</span>
                     </button>
-                    <button className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                    <button className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>{review.replies.length} replies</span>
                     </button>
                     {review.helpful > 0 && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
+                      <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                         <Award className="w-3.5 h-3.5" />
                         {review.helpful} found helpful
                       </span>
@@ -158,18 +158,18 @@ export default function ReviewsList({
 
                   {/* Replies */}
                   {review.replies.length > 0 && (
-                    <div className="mt-3 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                    <div className="mt-3 pl-4 border-l-2 border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
                       {review.replies.map((reply) => (
                         <div key={reply.id} className="flex items-start gap-2 mt-2">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs flex-shrink-0">
-                            <Bot className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          <div className="w-6 h-6 rounded-full bg-[var(--color-neutral-badge-border)] dark:bg-[var(--color-surface-hover-dark)] flex items-center justify-center text-xs flex-shrink-0">
+                            <Bot className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{reply.user}</span>
-                              <span className="text-xs text-gray-400 dark:text-gray-500">{reply.date}</span>
+                              <span className="text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{reply.user}</span>
+                              <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{reply.date}</span>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">{reply.comment}</p>
+                            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">{reply.comment}</p>
                           </div>
                         </div>
                       ))}
@@ -177,45 +177,45 @@ export default function ReviewsList({
                   )}
 
                   {/* Actions: mobile row */}
-                  <div className="flex sm:hidden items-center gap-1 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex sm:hidden items-center gap-1 mt-3 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
                     <button
                       onClick={() => onViewDetails(review)}
-                      className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
                       title="View Details"
                     >
-                      <Eye className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                      <Eye className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
                     </button>
                     {review.status === 'Pending' && (
                       <>
                         <button
                           onClick={() => onStatusChange(review.id, 'Published')}
-                          className="p-1.5 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                          className="p-1.5 hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
                           title="Approve"
                         >
-                          <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                          <Check className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
                         </button>
                         <button
                           onClick={() => onStatusChange(review.id, 'Archived')}
-                          className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                           title="Archive"
                         >
-                          <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                          <X className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                         </button>
                       </>
                     )}
                     <button
                       onClick={() => onOpenReplyModal(review)}
-                      className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
                       title="Reply"
                     >
-                      <Reply className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <Reply className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
                     </button>
                     <button
                       onClick={() => onDelete(review.id)}
-                      className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                       title="Delete"
                     >
-                      <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                      <Trash2 className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                     </button>
                   </div>
                 </div>
@@ -224,42 +224,42 @@ export default function ReviewsList({
                 <div className="hidden sm:flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                   <button
                     onClick={() => onViewDetails(review)}
-                    className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
                     title="View Details"
                   >
-                    <Eye className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <Eye className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
                   </button>
                   {review.status === 'Pending' && (
                     <>
                       <button
                         onClick={() => onStatusChange(review.id, 'Published')}
-                        className="p-1.5 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
                         title="Approve"
                       >
-                        <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <Check className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
                       </button>
                       <button
                         onClick={() => onStatusChange(review.id, 'Archived')}
-                        className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                         title="Archive"
                       >
-                        <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                        <X className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                       </button>
                     </>
                   )}
                   <button
                     onClick={() => onOpenReplyModal(review)}
-                    className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
                     title="Reply"
                   >
-                    <Reply className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <Reply className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
                   </button>
                   <button
                     onClick={() => onDelete(review.id)}
-                    className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                     title="Delete"
                   >
-                    <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                    <Trash2 className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                   </button>
                 </div>
               </div>
@@ -269,10 +269,10 @@ export default function ReviewsList({
       ) : (
         <div className="text-center py-12">
           <div className="flex justify-center mb-4">
-            <FileText className="w-16 h-16 text-gray-400 dark:text-gray-500" />
+            <FileText className="w-16 h-16 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No reviews found</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+          <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No reviews found</h3>
+          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
         </div>
       )}
     </div>

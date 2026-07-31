@@ -10,23 +10,23 @@ export default function PerformanceTab({ settings, setSettings }) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Performance Settings</h3>
+        <h3 className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Performance Settings</h3>
         <div className="space-y-3">
           {performanceItems.map(({ key, label, desc }) => (
-            <div key={key} className="flex items-center justify-between gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+            <div key={key} className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-xl">
               <div className="min-w-0">
-                <p className="font-medium text-gray-900 dark:text-white">{label}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{desc}</p>
+                <p className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{label}</p>
+                <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{desc}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setSettings({ ...settings, [key]: !settings[key] })}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors ${
-                  settings[key] ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                  settings[key] ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border-subtle-light)] dark:bg-[var(--color-border-dark)]'
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-[var(--color-white)] transition-transform ${
                     settings[key] ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />

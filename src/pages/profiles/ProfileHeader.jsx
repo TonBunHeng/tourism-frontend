@@ -12,16 +12,16 @@ export default function ProfileHeader({
     <div className="flex flex-col sm:flex-row items-start gap-6">
       <div className="flex items-start gap-4 sm:gap-6 w-full sm:w-auto">
         <div className="relative flex-shrink-0">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center overflow-hidden">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center overflow-hidden">
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <User className="w-10 h-10 sm:w-12 sm:h-12 text-blue-600 dark:text-blue-400" />
+              <User className="w-10 h-10 sm:w-12 sm:h-12 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
             )}
           </div>
           <button
             onClick={() => fileInputRef.current.click()}
-            className="absolute bottom-0 right-0 p-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+            className="absolute bottom-0 right-0 p-1.5 bg-[var(--color-primary)] text-[var(--color-white)] rounded-full hover:bg-[var(--color-primary-hover)] transition-colors"
           >
             <Camera className="w-3.5 h-3.5" />
           </button>
@@ -36,16 +36,16 @@ export default function ProfileHeader({
         {/* Name/badges shown next to avatar on mobile so the header reads naturally at narrow widths */}
         <div className="flex-1 min-w-0 sm:hidden">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white truncate">{userData.name}</h2>
+            <h2 className="text-xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{userData.name}</h2>
           </div>
           <div className="flex flex-wrap items-center gap-2 mt-1">
             {userData.verified && (
-              <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full border border-blue-200 dark:border-blue-800">
+              <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
                 <CheckCircle className="w-3 h-3" />
                 Verified
               </span>
             )}
-            <span className="text-xs px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full border border-purple-200 dark:border-purple-800">
+            <span className="text-xs px-2 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]">
               {userData.role}
             </span>
           </div>
@@ -53,18 +53,18 @@ export default function ProfileHeader({
       </div>
       <div className="flex-1 min-w-0 w-full">
         <div className="hidden sm:flex flex-wrap items-center gap-3">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{userData.name}</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{userData.name}</h2>
           {userData.verified && (
-            <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full border border-blue-200 dark:border-blue-800">
+            <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
               <CheckCircle className="w-3 h-3" />
               Verified
             </span>
           )}
-          <span className="text-xs px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full border border-purple-200 dark:border-purple-800">
+          <span className="text-xs px-2 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]">
             {userData.role}
           </span>
         </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
           <span className="flex items-center gap-1 min-w-0">
             <Mail className="w-4 h-4 flex-shrink-0" />
             <span className="truncate">{userData.email}</span>
@@ -78,8 +78,8 @@ export default function ProfileHeader({
             {userData.location}
           </span>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 max-w-2xl">{userData.bio}</p>
-        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400 dark:text-gray-500">
+        <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-2 max-w-2xl">{userData.bio}</p>
+        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">
           <span className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5" />
             Joined {userData.joinDate}
@@ -90,7 +90,7 @@ export default function ProfileHeader({
       </div>
       <button
         onClick={() => setIsEditing(!isEditing)}
-        className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25 w-full sm:w-auto flex-shrink-0"
+        className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--color-white)] rounded-xl hover:bg-[var(--color-primary-hover)] transition-colors shadow-lg shadow-[var(--color-primary)]/25 w-full sm:w-auto flex-shrink-0"
       >
         <Edit className="w-4 h-4" />
         Edit Profile

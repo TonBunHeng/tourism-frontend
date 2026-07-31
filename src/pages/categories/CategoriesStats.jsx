@@ -13,11 +13,11 @@ export default function CategoriesStats({ categories }) {
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
-          <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700">
+          <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium truncate">{stat.label}</p>
-                <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
+                <p className="text-xs md:text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium truncate">{stat.label}</p>
+                <p className="text-xl md:text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{stat.value}</p>
               </div>
               <div
                 className="p-2.5 md:p-3 rounded-xl flex-shrink-0"

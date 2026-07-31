@@ -6,29 +6,29 @@ export default function ChatsStats({ chats }) {
       label: 'Active Chats',
       value: chats.filter(c => c.user.status === 'online').length,
       icon: MessageSquare,
-      color: 'text-green-600 dark:text-green-400',
-      bg: 'bg-green-50 dark:bg-green-900/30'
+      color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
+      bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
     },
     {
       label: 'Unread Messages',
       value: chats.reduce((sum, c) => sum + c.unread, 0),
       icon: Clock,
-      color: 'text-amber-500 dark:text-amber-400',
-      bg: 'bg-amber-50 dark:bg-amber-900/30'
+      color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
+      bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
       label: 'AI Conversations',
       value: chats.filter(c => c.messages.some(m => m.isAI)).length,
       icon: Bot,
-      color: 'text-purple-600 dark:text-purple-400',
-      bg: 'bg-purple-50 dark:bg-purple-900/30'
+      color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
+      bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'
     },
     {
       label: 'VIP Users',
       value: chats.filter(c => c.user.isVIP).length,
       icon: Star,
-      color: 'text-rose-500 dark:text-rose-400',
-      bg: 'bg-rose-50 dark:bg-rose-900/30'
+      color: 'text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]',
+      bg: 'bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)]'
     }
   ];
 
@@ -37,11 +37,11 @@ export default function ChatsStats({ chats }) {
       {stats.map((stat, idx) => {
         const IconComponent = stat.icon;
         return (
-          <div key={idx} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div key={idx} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
+                <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{stat.label}</p>
+                <p className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{stat.value}</p>
               </div>
               <div className={`p-3 rounded-lg ${stat.bg}`}>
                 <IconComponent className={`w-5 h-5 ${stat.color}`} />

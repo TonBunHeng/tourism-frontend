@@ -7,8 +7,7 @@
 - Analytics & Monitoring: Track user engagement, app usage statistics, and system performance metrics in real-time.
 - System Settings: Configure localized content (languages/currencies), push notifications, and API integrations.
 
-## Stack For Develop
-## Frontend: 
+## Stack For Develop Frontend 
 - Framework: React.js (Single Page Application)
 - Language: JavaScript (ES6+)
 - Styling: Tailwind CSS (Utility-first styling, responsive design)

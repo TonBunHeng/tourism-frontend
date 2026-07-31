@@ -6,29 +6,29 @@ export default function EventsStats({ events }) {
       label: 'Total Events',
       value: events.length,
       icon: Calendar,
-      color: 'text-blue-600 dark:text-blue-400',
-      bg: 'bg-blue-50 dark:bg-blue-900/20'
+      color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
+      bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'
     },
     {
       label: 'Upcoming',
       value: events.filter(e => e.status === 'Upcoming').length,
       icon: Bell,
-      color: 'text-amber-600 dark:text-amber-400',
-      bg: 'bg-amber-50 dark:bg-amber-900/20'
+      color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
+      bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
       label: 'Ongoing',
       value: events.filter(e => e.status === 'Ongoing').length,
       icon: Clock,
-      color: 'text-green-600 dark:text-green-400',
-      bg: 'bg-green-50 dark:bg-green-900/20'
+      color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
+      bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
     },
     {
       label: 'Total Attendees',
       value: events.reduce((sum, e) => sum + e.attendees, 0).toLocaleString(),
       icon: Users,
-      color: 'text-purple-600 dark:text-purple-400',
-      bg: 'bg-purple-50 dark:bg-purple-900/20'
+      color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
+      bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'
     }
   ];
 
@@ -37,11 +37,11 @@ export default function EventsStats({ events }) {
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
-          <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700">
+          <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium truncate">{stat.label}</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium truncate">{stat.label}</p>
+                <p className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{stat.value}</p>
               </div>
               <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${stat.bg}`}>
                 <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color}`} />

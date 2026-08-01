@@ -11,13 +11,13 @@ export default function UserGrowthChart() {
   ];
 
   return (
-    <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+    <div className="lg:col-span-2 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">User Growth</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Monthly active users</p>
+          <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">User Growth</h3>
+          <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Monthly active users</p>
         </div>
-        <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1">
+        <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] font-medium flex items-center gap-1">
           <span>View Details</span>
           <ArrowUpRight className="w-4 h-4" />
         </button>
@@ -29,14 +29,14 @@ export default function UserGrowthChart() {
           return (
             <div key={index} className="flex-1 flex flex-col items-center gap-2">
               <div
-                className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-lg transition-all duration-500 hover:from-blue-600 hover:to-blue-500"
+                className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] rounded-lg transition-all duration-500"
                 style={{ height: `${height}%`, minHeight: '20px' }}
               >
-                <div className="opacity-0 hover:opacity-100 transition-opacity text-center text-white text-xs font-medium pt-1">
+                <div className="opacity-0 hover:opacity-100 transition-opacity text-center text-[var(--color-white)] text-xs font-medium pt-1">
                   {item.users}
                 </div>
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">{item.month}</span>
+              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{item.month}</span>
             </div>
           );
         })}

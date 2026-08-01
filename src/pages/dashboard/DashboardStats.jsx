@@ -8,9 +8,9 @@ export default function DashboardStats() {
       change: '+12.5%',
       trend: 'up',
       icon: MapPinned,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
-      border: 'border-blue-100 dark:border-blue-800'
+      color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
+      bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
       title: 'Total Users',
@@ -18,9 +18,9 @@ export default function DashboardStats() {
       change: '+8.3%',
       trend: 'up',
       icon: Users,
-      color: 'text-purple-600',
-      bg: 'bg-purple-50 dark:bg-purple-900/20',
-      border: 'border-purple-100 dark:border-purple-800'
+      color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
+      bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
       title: 'Total Reviews',
@@ -28,9 +28,9 @@ export default function DashboardStats() {
       change: '+15.7%',
       trend: 'up',
       icon: MessageSquareText,
-      color: 'text-green-600',
-      bg: 'bg-green-50 dark:bg-green-900/20',
-      border: 'border-green-100 dark:border-green-800'
+      color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
+      bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
       title: 'Avg Rating',
@@ -38,9 +38,9 @@ export default function DashboardStats() {
       change: '+0.3',
       trend: 'up',
       icon: Star,
-      color: 'text-amber-500',
-      bg: 'bg-amber-50 dark:bg-amber-900/20',
-      border: 'border-amber-100 dark:border-amber-800'
+      color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
+      bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     }
   ];
 
@@ -51,9 +51,9 @@ export default function DashboardStats() {
       change: '+2',
       trend: 'up',
       icon: Tags,
-      color: 'text-indigo-600',
-      bg: 'bg-indigo-50 dark:bg-indigo-900/20',
-      border: 'border-indigo-100 dark:border-indigo-800'
+      color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
+      bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
       title: 'Total Provinces',
@@ -61,9 +61,9 @@ export default function DashboardStats() {
       change: '+1',
       trend: 'up',
       icon: Map,
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50 dark:bg-emerald-900/20',
-      border: 'border-emerald-100 dark:border-emerald-800'
+      color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
+      bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
       title: 'Total Events',
@@ -71,9 +71,9 @@ export default function DashboardStats() {
       change: '+28%',
       trend: 'up',
       icon: CalendarDays,
-      color: 'text-rose-600',
-      bg: 'bg-rose-50 dark:bg-rose-900/20',
-      border: 'border-rose-100 dark:border-rose-800'
+      color: 'text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]',
+      bg: 'bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
       title: 'Total Favorites',
@@ -81,9 +81,9 @@ export default function DashboardStats() {
       change: '+22.4%',
       trend: 'up',
       icon: Heart,
-      color: 'text-red-500',
-      bg: 'bg-red-50 dark:bg-red-900/20',
-      border: 'border-red-100 dark:border-red-800'
+      color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]',
+      bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     }
   ];
 
@@ -94,12 +94,12 @@ export default function DashboardStats() {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-200">
+            <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-6 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:shadow-md transition-all duration-200">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
-                  <div className={`flex items-center gap-1 mt-1 text-sm ${stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                  <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">{stat.title}</p>
+                  <p className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{stat.value}</p>
+                  <div className={`flex items-center gap-1 mt-1 text-sm ${stat.trend === 'up' ? 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]' : 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]'
                     }`}>
                     {stat.trend === 'up' ? (
                       <TrendingUp className="w-4 h-4" />
@@ -123,12 +123,12 @@ export default function DashboardStats() {
         {stats2.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-200">
+            <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-6 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:shadow-md transition-all duration-200">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
-                  <div className={`flex items-center gap-1 mt-1 text-sm ${stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                  <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">{stat.title}</p>
+                  <p className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{stat.value}</p>
+                  <div className={`flex items-center gap-1 mt-1 text-sm ${stat.trend === 'up' ? 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]' : 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]'
                     }`}>
                     {stat.trend === 'up' ? (
                       <TrendingUp className="w-4 h-4" />

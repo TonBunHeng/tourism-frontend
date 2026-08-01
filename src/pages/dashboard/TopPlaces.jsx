@@ -10,13 +10,13 @@ export default function TopPlaces() {
   ];
 
   return (
-    <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col h-full">
+    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">Top Places</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Highest rated destinations</p>
+          <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Top Places</h3>
+          <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Highest rated destinations</p>
         </div>
-        <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+        <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] font-medium">
           View All
         </button>
       </div>
@@ -24,15 +24,15 @@ export default function TopPlaces() {
         {topPlaces.map((place, index) => {
           const Icon = place.icon;
           return (
-            <div key={index} className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center flex-shrink-0">
-                <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div key={index} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center flex-shrink-0">
+                <Icon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{place.name}</p>
-                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{place.name}</p>
+                <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                   <div className="flex items-center gap-0.5">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    <Star className="w-3 h-3 fill-[var(--color-amber-star)] text-[var(--color-amber-star)]" />
                     <span>{place.rating}</span>
                   </div>
                   <span>•</span>
@@ -42,10 +42,10 @@ export default function TopPlaces() {
                 </div>
               </div>
               <div className="text-right">
-                <span className={`text-xs font-medium ${index === 0 ? 'text-amber-500' :
-                  index === 1 ? 'text-gray-400' :
-                    index === 2 ? 'text-amber-600' :
-                      'text-gray-400'
+                <span className={`text-xs font-medium ${index === 0 ? 'text-[var(--color-warning-text)]' :
+                  index === 1 ? 'text-[var(--color-text-muted-light)]' :
+                    index === 2 ? 'text-[var(--color-warning-text)]' :
+                      'text-[var(--color-text-muted-light)]'
                   }`}>
                   #{index + 1}
                 </span>

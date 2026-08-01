@@ -50,13 +50,13 @@ export default function RecentActivity() {
   ];
 
   return (
-    <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col h-full">
+    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Latest platform updates</p>
+          <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Recent Activity</h3>
+          <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Latest platform updates</p>
         </div>
-        <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+        <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] font-medium">
           View All
         </button>
       </div>
@@ -66,26 +66,26 @@ export default function RecentActivity() {
         {recentActivity.map((activity) => {
           const Icon = activity.icon;
           return (
-            <div key={activity.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div key={activity.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Icon className="w-5 h-5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
               </div>
               <div className="flex-1 min-w-0 flex flex-col">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{activity.user}</p>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold flex-shrink-0 ${activity.type === 'place' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' :
-                    activity.type === 'review' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                      activity.type === 'user' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' :
-                        activity.type === 'gallery' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
-                          'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400'
+                  <p className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{activity.user}</p>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold flex-shrink-0 ${activity.type === 'place' ? 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]' :
+                    activity.type === 'review' ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]' :
+                      activity.type === 'user' ? 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]' :
+                        activity.type === 'gallery' ? 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]' :
+                          'bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]'
                     }`}>
                     {activity.type}
                   </span>
                 </div>
-                <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {activity.action} <span className="font-medium text-gray-900 dark:text-white">{activity.target}</span>
+                <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] leading-relaxed">
+                  {activity.action} <span className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{activity.target}</span>
                 </p>
-                <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">{activity.time}</p>
+                <p className="text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">{activity.time}</p>
               </div>
             </div>
           );

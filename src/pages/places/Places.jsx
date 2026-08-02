@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Landmark } from 'lucide-react';
 import PlacesHeader from './PlacesHeader';
 import PlacesStats from './PlacesStats';
@@ -10,6 +11,7 @@ import PlaceDetailsModal from './PlaceDetailsModal';
 import PlaceModal from './PlaceModal';
 
 export default function Places() {
+  const location = useLocation();
   const [places, setPlaces] = useState([
     {
       id: 1,
@@ -72,7 +74,7 @@ export default function Places() {
 
   const filteredPlaces = places.filter(place => {
     const matchesSearch = place.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          place.category.toLowerCase().includes(searchTerm.toLowerCase());
+      place.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || place.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });

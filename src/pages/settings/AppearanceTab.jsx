@@ -1,7 +1,19 @@
+import { useEffect } from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
-import { applyTheme } from '../../utils/Theme';
+import { applyTheme, THEME_CHANGE_EVENT } from '../../utils/Theme';
 
 export default function AppearanceTab({ settings, setSettings }) {
+  useEffect(() => {
+    const handleSync = (e) => {
+      if (e.detail && e.detail.theme && settings.theme !== e.detail.theme) {
+        setSettings((prev) => ({ ...prev, theme: e.detail.theme }));
+      }
+    };
+
+    window.addEventListener(THEME_CHANGE_EVENT, handleSync);
+    return () => window.removeEventListener(THEME_CHANGE_EVENT, handleSync);
+  }, [settings.theme, setSettings]);
+
   const handleThemeChange = (newTheme) => {
     setSettings({ ...settings, theme: newTheme });
     applyTheme(newTheme);

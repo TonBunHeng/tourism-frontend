@@ -1,11 +1,38 @@
 import { MapPinned, CalendarDays, Users, BarChart3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function QuickActions() {
+  const navigate = useNavigate();
+
   const quickActions = [
-    { label: 'Add New Place', icon: MapPinned, color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' },
-    { label: 'Create Event', icon: CalendarDays, color: 'text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]', bg: 'bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)]' },
-    { label: 'Manage Users', icon: Users, color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]', bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]' },
-    { label: 'View Reports', icon: BarChart3, color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]' }
+    { 
+      label: 'Add New Place', 
+      icon: MapPinned, 
+      color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', 
+      bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]',
+      path: '/place'
+    },
+    { 
+      label: 'Create Event', 
+      icon: CalendarDays, 
+      color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]', 
+      bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)]',
+      path: '/events'
+    },
+    { 
+      label: 'Manage Users', 
+      icon: Users, 
+      color: 'text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)]', 
+      bg: 'bg-[var(--color-purple-bg)] dark:bg-[var(--color-purple-dark-bg)] border border-[var(--color-purple-border)] dark:border-[var(--color-purple-dark-border)]',
+      path: '/users'
+    },
+    { 
+      label: 'View Reports', 
+      icon: BarChart3, 
+      color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', 
+      bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)]',
+      path: '/ratings'
+    }
   ];
 
   return (
@@ -17,9 +44,10 @@ export default function QuickActions() {
           return (
             <button
               key={index}
-              className={`p-4 ${action.bg} rounded-xl hover:shadow-md transition-all duration-200 hover:scale-105 transform text-center`}
+              onClick={() => navigate(action.path)}
+              className={`p-4 ${action.bg} rounded-xl hover:shadow-md transition-all duration-200 hover:scale-105 transform text-center cursor-pointer flex flex-col items-center justify-center`}
             >
-              <Icon className={`w-6 h-6 ${action.color} mx-auto mb-1`} />
+              <Icon className={`w-6 h-6 ${action.color} mb-1`} />
               <span className="text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{action.label}</span>
             </button>
           );

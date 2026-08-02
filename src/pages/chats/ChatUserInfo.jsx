@@ -14,7 +14,7 @@ export default function ChatUserInfo({
         <div className="p-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">User Info</h3>
-            <button 
+            <button
               onClick={onClose}
               className="p-1 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
             >

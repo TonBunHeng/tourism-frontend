@@ -28,11 +28,10 @@ export default function FavoritesGrid({
           const FavoriteIcon = favorite.icon;
           const isSelected = selectedFavorites.includes(favorite.id);
           return (
-            <div 
-              key={favorite.id} 
-              className={`group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] ${
-                isSelected ? 'border-[var(--color-rose-badge-text)] dark:border-[var(--color-rose-badge-dark-text)] ring-2 ring-[var(--color-rose-badge-text)] dark:ring-[var(--color-rose-badge-dark-text)]' : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
-              }`}
+            <div
+              key={favorite.id}
+              className={`group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] ${isSelected ? 'border-[var(--color-rose-badge-text)] dark:border-[var(--color-rose-badge-dark-text)] ring-2 ring-[var(--color-rose-badge-text)] dark:ring-[var(--color-rose-badge-dark-text)]' : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
+                }`}
             >
               <div className="absolute top-3 left-3 z-10">
                 <input
@@ -59,9 +58,9 @@ export default function FavoritesGrid({
                   </span>
                 </div>
               </div>
-              
+
               <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 line-clamp-2">{favorite.description}</p>
-              
+
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
                   <Star className="w-3.5 h-3.5 fill-[var(--color-amber-star)] text-[var(--color-amber-star)] flex-shrink-0" />
@@ -83,11 +82,10 @@ export default function FavoritesGrid({
               </div>
 
               <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border flex-shrink-0 ${
-                  favorite.visited 
-                    ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)]' 
+                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border flex-shrink-0 ${favorite.visited
+                    ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)]'
                     : 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]'
-                }`}>
+                  }`}>
                   {favorite.visited ? (
                     <><Check className="w-3 h-3" /> Visited</>
                   ) : (

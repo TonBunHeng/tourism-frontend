@@ -1,8 +1,8 @@
 import { Eye, Edit, Trash2, Users, Navigation, Building2, Home, Star, Clock, Building } from 'lucide-react';
 
 export const getStatusColor = (status) => {
-  return status === 'Active' 
-    ? 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]' 
+  return status === 'Active'
+    ? 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]'
     : 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]';
 };
 
@@ -22,8 +22,8 @@ export default function ProvincesGrid({ provinces, onViewProvince, onEditProvinc
         provinces.map((province) => {
           const IconComponent = province.icon || Building;
           return (
-            <div 
-              key={province.id} 
+            <div
+              key={province.id}
               className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02]"
             >
               <div className="flex items-start justify-between gap-2 mb-3">
@@ -40,21 +40,21 @@ export default function ProvincesGrid({ provinces, onViewProvince, onEditProvinc
                 </div>
                 {/* Actions: always visible on touch/mobile, fade in on hover for pointer devices */}
                 <div className="flex gap-1 flex-shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     onClick={() => onViewProvince(province.id)}
                     className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
                     title="View"
                   >
                     <Eye className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                   </button>
-                  <button 
+                  <button
                     onClick={() => onEditProvince(province.id)}
                     className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
                     title="Edit"
                   >
                     <Edit className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                   </button>
-                  <button 
+                  <button
                     onClick={() => onDeleteProvince(province.id)}
                     className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                     title="Delete"
@@ -63,9 +63,9 @@ export default function ProvincesGrid({ provinces, onViewProvince, onEditProvinc
                   </button>
                 </div>
               </div>
-              
+
               <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 line-clamp-2">{province.description}</p>
-              
+
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
                   <Users className="w-3.5 h-3.5 flex-shrink-0" />

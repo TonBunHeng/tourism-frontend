@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Activity,
   PartyPopper,
@@ -16,6 +17,7 @@ import EventModal from './EventModal';
 import EventDetailsModal from './EventDetailsModal';
 
 export default function Events() {
+  const location = useLocation();
   const [events, setEvents] = useState([
     {
       id: 1,
@@ -125,7 +127,7 @@ export default function Events() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -149,8 +151,8 @@ export default function Events() {
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.organizer.toLowerCase().includes(searchTerm.toLowerCase());
+      event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.organizer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
     const matchesStatus = selectedStatus === 'All' || event.status === selectedStatus;
     return matchesSearch && matchesCategory && matchesStatus;

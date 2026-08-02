@@ -29,8 +29,8 @@ export const getTypeIcon = (type) => {
 };
 
 export const getTypeBadge = (type) => {
-  return type === 'account' 
-    ? 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]' 
+  return type === 'account'
+    ? 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]'
     : 'bg-[var(--color-purple-badge-bg)] text-[var(--color-purple-badge-text)] border-[var(--color-purple-badge-border)] dark:bg-[var(--color-purple-badge-dark-bg)] dark:text-[var(--color-purple-badge-dark-text)] dark:border-[var(--color-purple-badge-dark-border)]';
 };
 
@@ -54,7 +54,7 @@ export default function DeletionList({
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
                   <User className="w-5 h-5 md:w-6 md:h-6 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
                 </div>
-                
+
                 {/* Request Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-3">
@@ -103,9 +103,9 @@ export default function DeletionList({
                       </div>
                     )}
                   </div>
-                  
+
                   <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 line-clamp-2">{request.reason}</p>
-                  
+
                   {request.itemsToDelete && request.itemsToDelete.length > 0 && (
                     <div className="mt-2 flex items-center gap-2 flex-wrap">
                       <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Items to delete:</span>

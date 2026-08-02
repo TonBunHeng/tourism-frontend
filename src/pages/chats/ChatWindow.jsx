@@ -16,9 +16,8 @@ export default function ChatWindow({
 }) {
   return (
     <div
-      className={`${
-        selectedChat ? 'flex' : 'hidden md:flex'
-      } flex-1 min-w-0 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-col overflow-hidden`}
+      className={`${selectedChat ? 'flex' : 'hidden md:flex'
+        } flex-1 min-w-0 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-col overflow-hidden`}
     >
       {selectedChat ? (
         <>
@@ -59,7 +58,7 @@ export default function ChatWindow({
               <button className="hidden sm:inline-flex p-2 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors">
                 <Video className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
               </button>
-              <button 
+              <button
                 onClick={onToggleShowUserInfo}
                 className="p-2 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
                 title="User info"
@@ -87,13 +86,12 @@ export default function ChatWindow({
                     </div>
                   )}
                   <div
-                    className={`rounded-2xl px-4 py-2 ${
-                      message.sender === 'user'
+                    className={`rounded-2xl px-4 py-2 ${message.sender === 'user'
                         ? 'bg-[var(--color-primary)] text-[var(--color-white)]'
                         : message.isAI
-                        ? 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]'
-                        : 'bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]'
-                    }`}
+                          ? 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]'
+                          : 'bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]'
+                      }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                   </div>
@@ -164,7 +162,7 @@ export default function ChatWindow({
               <button className="hidden sm:inline-flex p-2 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors flex-shrink-0">
                 <Smile className="w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
               </button>
-              <button 
+              <button
                 onClick={onSendMessage}
                 disabled={!newMessage.trim()}
                 className="p-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"

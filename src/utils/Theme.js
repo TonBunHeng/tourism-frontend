@@ -1,7 +1,10 @@
 // src/utils/Theme.js
 
+export const THEME_CHANGE_EVENT = 'theme-changed';
+
 /**
- * Get initial theme from localStorage or fallback to system preference.
+ * Get initial theme mode ('light', 'dark', or 'system') stored in localStorage.
+ * Defaults to 'system'.
  * @returns {'light' | 'dark' | 'system'}
  */
 export const getInitialTheme = () => {
@@ -10,33 +13,39 @@ export const getInitialTheme = () => {
     if (storedTheme) {
       return storedTheme;
     }
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
   }
-  return 'light';
+  return 'system';
 };
 
 /**
- * Apply selected theme to HTML document element and save in localStorage.
+ * Determine if dark mode should be active based on current theme setting.
+ * @param {'light' | 'dark' | 'system'} theme 
+ * @returns {boolean}
+ */
+export const isDarkTheme = (theme) => {
+  if (theme === 'dark') return true;
+  if (theme === 'light') return false;
+  // 'system' mode fallback
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  return false;
+};
+
+/**
+ * Apply selected theme to HTML document element, update localStorage, and notify listeners.
  * @param {'light' | 'dark' | 'system'} theme 
  */
 export const applyTheme = (theme) => {
   if (typeof window === 'undefined') return;
 
   const root = document.documentElement;
+  const isDark = isDarkTheme(theme);
 
-  if (theme === 'dark') {
+  if (isDark) {
     root.classList.add('dark');
-  } else if (theme === 'light') {
+  } else {
     root.classList.remove('dark');
-  } else if (theme === 'system') {
-    const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (isSystemDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
   }
 
   try {
@@ -44,6 +53,12 @@ export const applyTheme = (theme) => {
   } catch (e) {
     console.error('Failed to save theme in localStorage', e);
   }
+
+  window.dispatchEvent(
+    new CustomEvent(THEME_CHANGE_EVENT, {
+      detail: { theme, isDark }
+    })
+  );
 };
 
 /**
@@ -57,11 +72,39 @@ export const toggleTheme = (currentTheme) => {
   return nextTheme;
 };
 
+let systemThemeCleanup = null;
+
 /**
- * Initialize theme on application startup.
+ * Initialize theme on application startup and set up OS system theme change listeners.
  */
 export const initTheme = () => {
+  if (typeof window === 'undefined') return;
+
   const theme = getInitialTheme();
   applyTheme(theme);
+
+  if (systemThemeCleanup) {
+    systemThemeCleanup();
+    systemThemeCleanup = null;
+  }
+
+  if (window.matchMedia) {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = () => {
+      const currentStored = getInitialTheme();
+      if (currentStored === 'system') {
+        applyTheme('system');
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+      systemThemeCleanup = () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    } else if (mediaQuery.addListener) {
+      mediaQuery.addListener(handleSystemThemeChange);
+      systemThemeCleanup = () => mediaQuery.removeListener(handleSystemThemeChange);
+    }
+  }
+
   return theme;
 };

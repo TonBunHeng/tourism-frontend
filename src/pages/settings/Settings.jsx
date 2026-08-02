@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getInitialTheme } from '../../utils/Theme';
 import {
   Settings as SettingsIcon,
   Shield,
@@ -37,7 +38,7 @@ export default function Settings() {
     timeFormat: '24h',
 
     // Appearance
-    theme: 'light',
+    theme: getInitialTheme(),
     primaryColor: '#2563EB',
     secondaryColor: '#7C3AED',
     fontFamily: 'Inter',

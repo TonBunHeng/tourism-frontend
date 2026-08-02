@@ -37,9 +37,8 @@ export default function ChatsList({
 }) {
   return (
     <div
-      className={`${
-        selectedChat ? 'hidden md:flex' : 'flex'
-      } w-full md:w-96 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-col overflow-hidden flex-shrink-0`}
+      className={`${selectedChat ? 'hidden md:flex' : 'flex'
+        } w-full md:w-96 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-col overflow-hidden flex-shrink-0`}
     >
       {/* Chat List Header */}
       <div className="p-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
@@ -49,7 +48,7 @@ export default function ChatsList({
             <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{chats.length} total chats</p>
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={onReset}
               className="p-2 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
               title="Reset chats"
@@ -61,7 +60,7 @@ export default function ChatsList({
             </button>
           </div>
         </div>
-        
+
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]" />
@@ -122,9 +121,8 @@ export default function ChatsList({
             <div
               key={chat.id}
               onClick={() => onSelectChat(chat)}
-              className={`flex items-start gap-3 p-4 cursor-pointer hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] ${
-                selectedChat?.id === chat.id ? 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' : ''
-              }`}
+              className={`flex items-start gap-3 p-4 cursor-pointer hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] ${selectedChat?.id === chat.id ? 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' : ''
+                }`}
             >
               <div className="relative flex-shrink-0">
                 <div className="w-12 h-12 rounded-full bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] flex items-center justify-center text-2xl">

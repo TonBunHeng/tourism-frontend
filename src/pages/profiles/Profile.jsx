@@ -1,8 +1,5 @@
 import { useState, useRef } from 'react';
 import {
-  User,
-  Shield,
-  Settings,
   Globe,
   Image,
   FileText,
@@ -17,15 +14,9 @@ import ProfileHeader from './ProfileHeader';
 import ProfileStats from './ProfileStats';
 import ProfileAchievements from './ProfileAchievements';
 import ProfileActivity from './ProfileActivity';
-import SecurityTab from './SecurityTab';
-import PreferencesTab from './PreferencesTab';
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -80,82 +71,34 @@ export default function Profile() {
     }
   };
 
-  const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'preferences', label: 'Preferences', icon: Settings }
-  ];
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'profile':
-        return (
-          <div className="space-y-6">
-            <ProfileHeader
-              userData={userData}
-              profileImage={profileImage}
-              fileInputRef={fileInputRef}
-              handleImageUpload={handleImageUpload}
-              isEditing={isEditing}
-              setIsEditing={setIsEditing}
-            />
-            <ProfileStats userStats={userStats} />
-            <ProfileAchievements achievements={achievements} />
-            <ProfileActivity recentActivity={recentActivity} />
-          </div>
-        );
-      case 'security':
-        return (
-          <SecurityTab
-            userData={userData}
-            setUserData={setUserData}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-            showNewPassword={showNewPassword}
-            setShowNewPassword={setShowNewPassword}
-            showConfirmPassword={showConfirmPassword}
-            setShowConfirmPassword={setShowConfirmPassword}
-          />
-        );
-      case 'preferences':
-        return <PreferencesTab />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Profile Settings</h1>
-          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Manage your account settings and preferences</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
+            Profile Settings
+          </h1>
+          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+            Manage your personal profile, view achievements, and track activity
+          </p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-1 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] mb-6">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === tab.id
-                  ? 'bg-[var(--color-primary)] text-[var(--color-white)] shadow-lg shadow-[var(--color-primary)]/25'
-                  : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
-                }`}
-            >
-              <Icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          );
-        })}
+      {/* Content Body */}
+      <div className="space-y-6">
+        <ProfileHeader
+          userData={userData}
+          profileImage={profileImage}
+          fileInputRef={fileInputRef}
+          handleImageUpload={handleImageUpload}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+        />
+        <ProfileStats userStats={userStats} />
+        <ProfileAchievements achievements={achievements} />
+        <ProfileActivity recentActivity={recentActivity} />
       </div>
-
-      {/* Content */}
-      {renderTabContent()}
     </div>
   );
 }

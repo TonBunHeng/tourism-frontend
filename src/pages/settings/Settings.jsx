@@ -2,104 +2,101 @@ import { useState } from 'react';
 import { getInitialTheme } from '../../utils/Theme';
 import {
   Settings as SettingsIcon,
-  Shield,
-  Bell,
-  Database,
   Palette,
-  FileText,
-  Activity,
-  Server
+  Bell,
+  Shield,
+  Server,
+  Database,
+  Info
 } from 'lucide-react';
+
 import SettingsHeader from './SettingsHeader';
 import SettingsTabs from './SettingsTabs';
 import GeneralTab from './GeneralTab';
 import AppearanceTab from './AppearanceTab';
+import NotificationTab from './NotificationTab';
 import SecurityTab from './SecurityTab';
-import NotificationsTab from './NotificationsTab';
-import ContentTab from './ContentTab';
-import PerformanceTab from './PerformanceTab';
-import ApiTab from './ApiTab';
-import DatabaseTab from './DatabaseTab';
+import IntegrationTab from './IntegrationTab';
+import BackupTab from './BackupTab';
+import AboutTab from './AboutTab';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('general');
-  const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Settings state
-  const [settings, setSettings] = useState({
+  // Comprehensive System Settings State
+  const defaultSettings = {
     // General
-    siteName: 'Cambodia Heritage Explorer',
-    siteDescription: 'Explore the rich cultural heritage of Cambodia',
+    siteName: 'Smart Tourism Information System',
+    organizationName: 'Ministry of Tourism & Culture Cambodia',
+    siteDescription: 'Official Smart Tourism Administration & Cultural Heritage Management Portal',
+    contactEmail: 'admin@tourism.gov.kh',
+    contactPhone: '+855 23 888 999',
     defaultLanguage: 'English',
     timezone: 'Asia/Phnom_Penh',
     dateFormat: 'YYYY-MM-DD',
-    timeFormat: '24h',
+    logoUrl: null,
+    faviconUrl: null,
 
     // Appearance
     theme: getInitialTheme(),
-    primaryColor: '#2563EB',
-    secondaryColor: '#7C3AED',
-    fontFamily: 'Inter',
-    layout: 'sidebar',
+    primaryColor: '#22b7ab',
+    sidebarStyle: 'modern',
+    compactSidebar: false,
+    fontSize: 'medium',
+
+    // Notifications
+    pushNotifications: true,
+    emailNotifications: true,
+    newUserAlert: true,
+    newReviewAlert: true,
+    newEventAlert: true,
+    deletionRequestAlert: true,
 
     // Security
     twoFactorAuth: true,
     sessionTimeout: '30',
     passwordPolicy: 'strong',
     loginAttempts: '5',
-    ipWhitelist: ['192.168.1.1', '10.0.0.1'],
 
-    // Notifications
-    emailNotifications: true,
-    pushNotifications: true,
-    smsNotifications: false,
-    marketingEmails: false,
-    systemAlerts: true,
-    userActivity: true,
+    // Integrations
+    googleMapsApiKey: 'AIzaSyA_DEMO_MAPS_KEY_987654321',
+    firebaseApiKey: 'AIzaSy_DEMO_FIREBASE_KEY',
+    firebaseAuthDomain: 'smart-tourism.firebaseapp.com',
+    firebaseProjectId: 'smart-tourism-cambodia',
+    firebaseStorageBucket: 'smart-tourism.appspot.com',
+    smtpHost: 'smtp.mailtrap.io',
+    smtpPort: '587',
+    smtpEncryption: 'tls',
+    smtpUsername: 'mailer@tourism.gov.kh',
+    smtpPassword: 'encrypted_smtp_pass_123',
+    weatherApiKey: 'openweather_demo_key_7788',
+    aiProvider: 'gemini',
+    aiApiKey: 'sk-proj-gemini-pro-v2',
 
-    // Content
-    autoApprove: false,
-    moderationLevel: 'medium',
-    commentSpam: true,
-    imageQuality: 'high',
-    videoQuality: '1080p',
-
-    // Performance
-    cacheEnabled: true,
-    compressionEnabled: true,
-    imageOptimization: true,
-    cdnEnabled: true,
-    lazyLoading: true,
-
-    // API
-    apiKey: 'sk_live_4eC39HqLyjWDarjtT1zdp7dc',
-    apiVersion: 'v2',
-    rateLimit: '1000',
-    webhookUrl: 'https://api.example.com/webhook',
-
-    // Database
-    dbType: 'postgresql',
-    dbHost: 'localhost',
-    dbPort: '5432',
-    dbName: 'heritage_db',
+    // Backup
     backupSchedule: 'daily',
     backupRetention: '30'
-  });
+  };
+
+  const [settings, setSettings] = useState(defaultSettings);
 
   const tabs = [
     { id: 'general', label: 'General', icon: SettingsIcon },
     { id: 'appearance', label: 'Appearance', icon: Palette },
-    { id: 'security', label: 'Security', icon: Shield },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'content', label: 'Content', icon: FileText },
-    { id: 'performance', label: 'Performance', icon: Activity },
-    { id: 'api', label: 'API', icon: Server },
-    { id: 'database', label: 'Database', icon: Database }
+    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'integrations', label: 'Integrations', icon: Server },
+    { id: 'backup', label: 'Backup & Restore', icon: Database },
+    { id: 'about', label: 'About System', icon: Info }
   ];
 
-  const activeTabLabel = tabs.find(t => t.id === activeTab)?.label;
+  const showToastNotification = (type, message) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   const handleSave = () => {
     setSaving(true);
@@ -107,55 +104,12 @@ export default function Settings() {
       setSaving(false);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-    }, 1500);
+    }, 1200);
   };
 
   const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset all settings to default?')) {
-      setSettings({
-        siteName: 'Cambodia Heritage Explorer',
-        siteDescription: 'Explore the rich cultural heritage of Cambodia',
-        defaultLanguage: 'English',
-        timezone: 'Asia/Phnom_Penh',
-        dateFormat: 'YYYY-MM-DD',
-        timeFormat: '24h',
-        theme: 'light',
-        primaryColor: '#2563EB',
-        secondaryColor: '#7C3AED',
-        fontFamily: 'Inter',
-        layout: 'sidebar',
-        twoFactorAuth: true,
-        sessionTimeout: '30',
-        passwordPolicy: 'strong',
-        loginAttempts: '5',
-        ipWhitelist: ['192.168.1.1', '10.0.0.1'],
-        emailNotifications: true,
-        pushNotifications: true,
-        smsNotifications: false,
-        marketingEmails: false,
-        systemAlerts: true,
-        userActivity: true,
-        autoApprove: false,
-        moderationLevel: 'medium',
-        commentSpam: true,
-        imageQuality: 'high',
-        videoQuality: '1080p',
-        cacheEnabled: true,
-        compressionEnabled: true,
-        imageOptimization: true,
-        cdnEnabled: true,
-        lazyLoading: true,
-        apiKey: 'sk_live_4eC39HqLyjWDarjtT1zdp7dc',
-        apiVersion: 'v2',
-        rateLimit: '1000',
-        webhookUrl: 'https://api.example.com/webhook',
-        dbType: 'postgresql',
-        dbHost: 'localhost',
-        dbPort: '5432',
-        dbName: 'heritage_db',
-        backupSchedule: 'daily',
-        backupRetention: '30'
-      });
+    if (window.confirm('Are you sure you want to reset all settings to system defaults?')) {
+      setSettings(defaultSettings);
     }
   };
 
@@ -165,64 +119,47 @@ export default function Settings() {
         return <GeneralTab settings={settings} setSettings={setSettings} />;
       case 'appearance':
         return <AppearanceTab settings={settings} setSettings={setSettings} />;
+      case 'notifications':
+        return <NotificationTab settings={settings} setSettings={setSettings} />;
       case 'security':
         return <SecurityTab settings={settings} setSettings={setSettings} />;
-      case 'notifications':
-        return <NotificationsTab settings={settings} setSettings={setSettings} />;
-      case 'content':
-        return <ContentTab settings={settings} setSettings={setSettings} />;
-      case 'performance':
-        return <PerformanceTab settings={settings} setSettings={setSettings} />;
-      case 'api':
-        return (
-          <ApiTab
-            settings={settings}
-            setSettings={setSettings}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-          />
-        );
-      case 'database':
-        return <DatabaseTab settings={settings} setSettings={setSettings} />;
+      case 'integrations':
+        return <IntegrationTab settings={settings} setSettings={setSettings} />;
+      case 'backup':
+        return <BackupTab settings={settings} setSettings={setSettings} />;
+      case 'about':
+        return <AboutTab />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="flex flex-col">
-      {/* Header */}
+    <div className="flex flex-col relative pb-10">
+      {/* Settings Header */}
       <SettingsHeader
         saving={saving}
         saveSuccess={saveSuccess}
         onSave={handleSave}
         onReset={handleReset}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
-      {/* Settings Layout */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          {/* Navigation Tabs */}
-          <SettingsTabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-          />
+      {/* Main Settings Card */}
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col min-h-[550px]">
+        {/* Top Header Navigation Tabs */}
+        <SettingsTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
 
-          {/* Content */}
-          <div className="flex-1 p-4 md:p-6 min-w-0">
-            <h3 className="text-xs uppercase tracking-wide font-semibold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 md:hidden">
-              {activeTabLabel}
-            </h3>
-            {renderTabContent()}
-          </div>
+        {/* Tab Content Body */}
+        <div className="flex-1 p-5 md:p-7 min-w-0">
+          {renderTabContent()}
         </div>
       </div>
-
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </div>
   );
 }

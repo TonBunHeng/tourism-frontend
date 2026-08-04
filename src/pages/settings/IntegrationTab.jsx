@@ -1,347 +1,375 @@
-import React, { useState } from 'react';
-import { Plug, MapPin, Flame, Mail, CloudSun, Cpu, Eye, EyeOff, CheckCircle2, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Server,
+  MapPin,
+  Flame,
+  Mail,
+  CloudSun,
+  Bot,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Send
+} from 'lucide-react';
 
 export default function IntegrationTab({ settings, setSettings }) {
-  const [showGmapsKey, setShowGmapsKey] = useState(false);
-  const [showSmtpPass, setShowSmtpPass] = useState(false);
-  const [showAiKey, setShowAiKey] = useState(false);
+  const [showKeys, setShowKeys] = useState({});
+  const [testingService, setTestingService] = useState({});
+  const [testResult, setTestResult] = useState({});
 
-  const [testingMaps, setTestingMaps] = useState(false);
-  const [testingSmtp, setTestingSmtp] = useState(false);
-  const [mapsTestResult, setMapsTestResult] = useState(null);
-  const [smtpTestResult, setSmtpTestResult] = useState(null);
-
-  const handleChange = (field, value) => {
-    setSettings((prev) => ({ ...prev, [field]: value }));
+  const toggleShowKey = (keyName) => {
+    setShowKeys((prev) => ({ ...prev, [keyName]: !prev[keyName] }));
   };
 
-  const handleTestMapsConnection = () => {
-    setTestingMaps(true);
-    setMapsTestResult(null);
+  const handleChange = (field, value) => {
+    setSettings((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleTestConnection = (serviceName) => {
+    setTestingService((prev) => ({ ...prev, [serviceName]: true }));
+    setTestResult((prev) => ({ ...prev, [serviceName]: null }));
+
     setTimeout(() => {
-      setTestingMaps(false);
-      setMapsTestResult('Google Maps API Key verified successfully!');
-      setTimeout(() => setMapsTestResult(null), 4000);
+      setTestingService((prev) => ({ ...prev, [serviceName]: false }));
+      setTestResult((prev) => ({
+        ...prev,
+        [serviceName]: { success: true, message: `Connected to ${serviceName} successfully!` }
+      }));
+
+      setTimeout(() => {
+        setTestResult((prev) => ({ ...prev, [serviceName]: null }));
+      }, 3500);
     }, 1200);
   };
 
-  const handleTestSmtpConnection = () => {
-    setTestingSmtp(true);
-    setSmtpTestResult(null);
-    setTimeout(() => {
-      setTestingSmtp(false);
-      setSmtpTestResult('Test email dispatched to contact address!');
-      setTimeout(() => setSmtpTestResult(null), 4000);
-    }, 1500);
-  };
-
   return (
-    <div className="space-y-4 animate-in fade-in duration-200">
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Section Header */}
       <div>
-        <h2 className="text-base md:text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
-          Integrations & Third-Party APIs
+        <h2 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+          API & Third-Party Integrations
         </h2>
-        <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-          Configure API credentials for mapping, real-time databases, SMTP mailers, weather, and AI services.
+        <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+          Configure external service API keys, spatial mapping services, cloud infrastructure, and AI features.
         </p>
       </div>
 
-      {/* Google Maps API Card */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 md:p-5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-brand-teal)] flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5" /> Google Maps Geolocation API
+      {/* Card 1: Google Maps API Key */}
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
+            Google Maps Geocoding & Places API
           </h3>
-          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
+          <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]">
             Active Integration
           </span>
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-            Google Maps API Key
-          </label>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                type={showGmapsKey ? 'text' : 'password'}
-                value={settings.gmapsApiKey || 'AIzaSyB_EXAMPLE_MAPS_KEY_9921'}
-                onChange={(e) => handleChange('gmapsApiKey', e.target.value)}
-                placeholder="AIzaSy..."
-                className="w-full pl-3 pr-9 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-mono"
-              />
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+              Google Maps API Key
+            </label>
+            <div className="flex space-x-2">
+              <div className="relative flex-1">
+                <input
+                  type={showKeys['googleMaps'] ? 'text' : 'password'}
+                  value={settings.googleMapsApiKey || ''}
+                  onChange={(e) => handleChange('googleMapsApiKey', e.target.value)}
+                  placeholder="AIzaSyA..."
+                  className="w-full pl-3 pr-9 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+                />
+                <button
+                  type="button"
+                  onClick={() => toggleShowKey('googleMaps')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)]"
+                >
+                  {showKeys['googleMaps'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={() => setShowGmapsKey(!showGmapsKey)}
-                className="absolute right-3 top-2.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-text-primary-dark)]"
+                onClick={() => handleTestConnection('Google Maps API')}
+                disabled={testingService['Google Maps API']}
+                className="px-3 py-2 bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-surface-hover-light)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-xs font-medium rounded-lg flex items-center gap-1.5 shrink-0 transition-colors"
               >
-                {showGmapsKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                {testingService['Google Maps API'] ? (
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-[var(--color-primary)]" />
+                ) : (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
+                )}
+                <span>Test API</span>
               </button>
             </div>
-
-            <button
-              type="button"
-              onClick={handleTestMapsConnection}
-              disabled={testingMaps}
-              className="px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
-            >
-              {testingMaps ? <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--color-primary)]" /> : <Plug className="w-3.5 h-3.5" />}
-              <span>Test Key</span>
-            </button>
+            {testResult['Google Maps API'] && (
+              <p className="text-[11px] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] mt-1 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" /> {testResult['Google Maps API'].message}
+              </p>
+            )}
           </div>
-
-          {mapsTestResult && (
-            <p className="text-xs text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] font-semibold mt-1.5 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> {mapsTestResult}
-            </p>
-          )}
         </div>
       </div>
 
-      {/* Firebase Configuration Card */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 md:p-5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs space-y-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-brand-teal)] flex items-center gap-1.5">
-          <Flame className="w-3.5 h-3.5" /> Firebase Credentials (Realtime Push)
+      {/* Card 2: Firebase Configuration */}
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+        <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
+          <Flame className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" />
+          Firebase Cloud Storage & Analytics
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
               Firebase API Key
             </label>
-            <input
-              type="text"
-              value={settings.firebaseApiKey || ''}
-              onChange={(e) => handleChange('firebaseApiKey', e.target.value)}
-              placeholder="AIzaSy..."
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-mono"
-            />
+            <div className="relative">
+              <input
+                type={showKeys['firebaseKey'] ? 'text' : 'password'}
+                value={settings.firebaseApiKey || ''}
+                onChange={(e) => handleChange('firebaseApiKey', e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full pl-3 pr-9 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+              />
+              <button
+                type="button"
+                onClick={() => toggleShowKey('firebaseKey')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)]"
+              >
+                {showKeys['firebaseKey'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
               Auth Domain
             </label>
             <input
               type="text"
               value={settings.firebaseAuthDomain || ''}
               onChange={(e) => handleChange('firebaseAuthDomain', e.target.value)}
-              placeholder="tourism-app.firebaseapp.com"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              placeholder="smart-tourism.firebaseapp.com"
+              className="w-full px-3 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
               Project ID
             </label>
             <input
               type="text"
               value={settings.firebaseProjectId || ''}
               onChange={(e) => handleChange('firebaseProjectId', e.target.value)}
-              placeholder="tourism-app-prod"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              placeholder="smart-tourism-cambodia"
+              className="w-full px-3 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
               Storage Bucket
             </label>
             <input
               type="text"
               value={settings.firebaseStorageBucket || ''}
               onChange={(e) => handleChange('firebaseStorageBucket', e.target.value)}
-              placeholder="tourism-app.appspot.com"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              placeholder="smart-tourism.appspot.com"
+              className="w-full px-3 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             />
           </div>
         </div>
       </div>
 
-      {/* SMTP Mail Server Settings Card */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 md:p-5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-brand-teal)] flex items-center gap-1.5">
-            <Mail className="w-3.5 h-3.5" /> SMTP Email Server Configuration
+      {/* Card 3: SMTP Email Settings */}
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
+            <Mail className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+            SMTP Mail Server Configuration
           </h3>
           <button
             type="button"
-            onClick={handleTestSmtpConnection}
-            disabled={testingSmtp}
-            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] hover:opacity-90 transition-all flex items-center gap-1 cursor-pointer"
+            onClick={() => handleTestConnection('SMTP Email')}
+            disabled={testingService['SMTP Email']}
+            className="px-3 py-1.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors"
           >
-            {testingSmtp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
-            <span>Send Test Mail</span>
+            {testingService['SMTP Email'] ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Send className="w-3.5 h-3.5" />
+            )}
+            <span>Send Test Email</span>
           </button>
         </div>
 
-        {smtpTestResult && (
-          <p className="text-xs text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] font-semibold flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5" /> {smtpTestResult}
+        {testResult['SMTP Email'] && (
+          <p className="text-[11px] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5" /> {testResult['SMTP Email'].message}
           </p>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
               SMTP Host
             </label>
             <input
               type="text"
-              value={settings.smtpHost || 'smtp.mailtrap.io'}
+              value={settings.smtpHost || ''}
               onChange={(e) => handleChange('smtpHost', e.target.value)}
-              placeholder="smtp.example.com"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              placeholder="smtp.mailtrap.io"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              Port
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+              SMTP Port
             </label>
             <input
               type="text"
-              value={settings.smtpPort || '587'}
+              value={settings.smtpPort || ''}
               onChange={(e) => handleChange('smtpPort', e.target.value)}
               placeholder="587 / 465"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              SMTP Username
-            </label>
-            <input
-              type="text"
-              value={settings.smtpUser || ''}
-              onChange={(e) => handleChange('smtpUser', e.target.value)}
-              placeholder="user@example.com"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              SMTP Password
-            </label>
-            <div className="relative">
-              <input
-                type={showSmtpPass ? 'text' : 'password'}
-                value={settings.smtpPass || ''}
-                onChange={(e) => handleChange('smtpPass', e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full pl-3 pr-9 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-              />
-              <button
-                type="button"
-                onClick={() => setShowSmtpPass(!showSmtpPass)}
-                className="absolute right-3 top-2.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-text-primary-dark)]"
-              >
-                {showSmtpPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
               Encryption Protocol
             </label>
             <select
               value={settings.smtpEncryption || 'tls'}
               onChange={(e) => handleChange('smtpEncryption', e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all cursor-pointer"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             >
               <option value="tls">TLS (STARTTLS - Port 587)</option>
               <option value="ssl">SSL (Implicit - Port 465)</option>
-              <option value="none">None (Plain Text - Port 25)</option>
+              <option value="none">None (Plaintext - Port 25)</option>
             </select>
           </div>
-        </div>
-      </div>
 
-      {/* Weather API (Optional) */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 md:p-5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs space-y-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-brand-teal)] flex items-center gap-1.5">
-          <CloudSun className="w-3.5 h-3.5" /> OpenWeather API (Optional)
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              OpenWeather Key
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+              SMTP Username
             </label>
             <input
               type="text"
-              value={settings.weatherApiKey || ''}
-              onChange={(e) => handleChange('weatherApiKey', e.target.value)}
-              placeholder="e.g. 8f92b7c4d1e2..."
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-mono"
+              value={settings.smtpUsername || ''}
+              onChange={(e) => handleChange('smtpUsername', e.target.value)}
+              placeholder="mailer@tourism.gov.kh"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              Default Weather Location
-            </label>
-            <input
-              type="text"
-              value={settings.weatherLocation || 'Phnom Penh, KH'}
-              onChange={(e) => handleChange('weatherLocation', e.target.value)}
-              placeholder="e.g. Siem Reap, KH"
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* AI Service API Key (Future Support) */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 md:p-5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-primary)] dark:text-[var(--color-brand-teal)] flex items-center gap-1.5">
-            <Cpu className="w-3.5 h-3.5" /> AI Assistant Service
-          </h3>
-          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--color-purple-bg)] dark:bg-[var(--color-purple-dark-bg)] text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)] border border-[var(--color-purple-border)] dark:border-[var(--color-purple-dark-border)]">
-            Future Support
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              AI Provider
-            </label>
-            <select
-              value={settings.aiProvider || 'gemini'}
-              onChange={(e) => handleChange('aiProvider', e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all cursor-pointer"
-            >
-              <option value="gemini">Google Gemini AI</option>
-              <option value="openai">OpenAI (GPT-4o)</option>
-              <option value="claude">Anthropic Claude</option>
-            </select>
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-              AI Service API Key
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+              SMTP Password
             </label>
             <div className="relative">
               <input
-                type={showAiKey ? 'text' : 'password'}
-                value={settings.aiApiKey || ''}
-                onChange={(e) => handleChange('aiApiKey', e.target.value)}
-                placeholder="AIzaSy... or sk-proj-..."
-                className="w-full pl-3 pr-9 py-2 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-mono"
+                type={showKeys['smtpPassword'] ? 'text' : 'password'}
+                value={settings.smtpPassword || ''}
+                onChange={(e) => handleChange('smtpPassword', e.target.value)}
+                placeholder="••••••••••••"
+                className="w-full pl-3 pr-9 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
               />
               <button
                 type="button"
-                onClick={() => setShowAiKey(!showAiKey)}
-                className="absolute right-3 top-2.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-text-primary-dark)]"
+                onClick={() => toggleShowKey('smtpPassword')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)]"
               >
-                {showAiKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                {showKeys['smtpPassword'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Card 4: Weather API (Optional) & AI Service Integration */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Weather API */}
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-3">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
+            <CloudSun className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" />
+            Live Destination Weather API
+          </h3>
+
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+              OpenWeatherMap API Key
+            </label>
+            <div className="relative">
+              <input
+                type={showKeys['weatherKey'] ? 'text' : 'password'}
+                value={settings.weatherApiKey || ''}
+                onChange={(e) => handleChange('weatherApiKey', e.target.value)}
+                placeholder="OpenWeather API Key..."
+                className="w-full pl-3 pr-9 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+              />
+              <button
+                type="button"
+                onClick={() => toggleShowKey('weatherKey')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)]"
+              >
+                {showKeys['weatherKey'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Service API */}
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-3">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
+            <Bot className="w-4 h-4 text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)]" />
+            AI Assistant Service API Key
+          </h3>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+                AI Provider
+              </label>
+              <select
+                value={settings.aiProvider || 'gemini'}
+                onChange={(e) => handleChange('aiProvider', e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+              >
+                <option value="gemini">Google Gemini AI</option>
+                <option value="openai">OpenAI (GPT-4o)</option>
+                <option value="claude">Anthropic Claude</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+                AI Service API Key
+              </label>
+              <div className="relative">
+                <input
+                  type={showKeys['aiKey'] ? 'text' : 'password'}
+                  value={settings.aiApiKey || ''}
+                  onChange={(e) => handleChange('aiApiKey', e.target.value)}
+                  placeholder="sk-proj-..."
+                  className="w-full pl-3 pr-9 py-2 text-sm font-mono rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+                />
+                <button
+                  type="button"
+                  onClick={() => toggleShowKey('aiKey')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)]"
+                >
+                  {showKeys['aiKey'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>

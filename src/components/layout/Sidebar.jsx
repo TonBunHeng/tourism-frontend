@@ -5,7 +5,7 @@ import tourism_app_icon from "../../assets/images/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays, MessageSquareText,
   Star, Heart, Trash2, MessageCircle, Settings, LogOut, ChevronRight, ChevronLeft,
-  Users, User, X
+  Users, User, X, FileText
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
 
@@ -38,8 +38,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, setIsOpen]);
 
-
-
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname, setIsOpen]);
@@ -51,6 +49,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Provinces", icon: Map, path: "/provinces" },
     { name: "Gallery", icon: Images, path: "/gallery" },
     { name: "Events", icon: CalendarDays, path: "/events" },
+    { name: "Reports", icon: FileText, path: "/reports" },
   ];
 
   const engagementItems = [
@@ -80,14 +79,12 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           className="group relative flex items-center w-full px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)]"
         >
           <div className="flex items-center w-full">
-            <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'mx-auto' : ''}`}>
+            <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'md:mx-auto' : ''}`}>
               <Icon size={20} strokeWidth={2} className="text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
             </div>
-            {isExpanded && (
-              <span className="ml-3 text-sm font-medium whitespace-nowrap text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]">
-                {item.name}
-              </span>
-            )}
+            <span className={`ml-3 text-sm font-medium whitespace-nowrap text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] ${isExpanded ? 'block' : 'block md:hidden'}`}>
+              {item.name}
+            </span>
           </div>
           {!isExpanded && (
             <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-[var(--color-danger-text)] text-[var(--color-white)] text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
@@ -109,15 +106,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'}`}
       >
         <div className="flex items-center w-full">
-          <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'mx-auto' : ''}`}>
+          <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'md:mx-auto' : ''}`}>
             <Icon size={20} strokeWidth={2} />
           </div>
 
-          {isExpanded && (
-            <span className="ml-3 text-sm font-medium whitespace-nowrap">
-              {item.name}
-            </span>
-          )}
+          <span className={`ml-3 text-sm font-medium whitespace-nowrap ${isExpanded ? 'block' : 'block md:hidden'}`}>
+            {item.name}
+          </span>
         </div>
 
         {!isExpanded && (
@@ -134,7 +129,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -145,35 +140,31 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           bg-[var(--color-sidebar-bg)] dark:bg-[var(--color-sidebar-dark-bg)]
           border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]
           ${isExpanded ? 'md:w-[260px]' : 'md:w-[80px]'}
-          w-[280px] 
+          w-[280px] max-w-[85vw]
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           shadow-2xl md:shadow-[1px_0_10px_rgba(0,0,0,0.03)]
         `}
       >
         {/* Header */}
-        <div className={`h-20 flex items-center ${isExpanded ? 'justify-between px-5' : 'justify-center px-2'}`}>
-          <div className={`flex items-center gap-3 overflow-hidden ${isExpanded ? 'w-full' : 'w-auto'}`}>
+        <div className={`h-20 flex items-center justify-between px-5 ${!isExpanded ? 'md:justify-center md:px-2' : ''}`}>
+          <div className={`flex items-center gap-3 overflow-hidden w-full ${!isExpanded ? 'md:w-auto' : ''}`}>
             <div
               className="w-10 h-10 rounded-xl bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] flex items-center justify-center shrink-0"
             >
               <img src={tourism_app_icon} alt="Tourism App Icon" className="w-10 h-10" />
             </div>
-            {isExpanded && (
-              <div className="flex flex-col whitespace-nowrap">
-                <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-base leading-tight">Smart Tourism</span>
-                <span className="text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium">Technology</span>
-              </div>
-            )}
+            <div className={`flex flex-col whitespace-nowrap ${isExpanded ? 'flex' : 'flex md:hidden'}`}>
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-base leading-tight">Smart Tourism</span>
+              <span className="text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium">Technology</span>
+            </div>
           </div>
 
-          {isExpanded && (
-            <button
-              onClick={() => setIsExpanded(false)}
-              className="hidden md:block p-1 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors shrink-0"
-            >
-              <ChevronLeft size={18} />
-            </button>
-          )}
+          <button
+            onClick={() => setIsExpanded(false)}
+            className={`hidden ${isExpanded ? 'md:block' : 'md:hidden'} p-1 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors shrink-0`}
+          >
+            <ChevronLeft size={18} />
+          </button>
 
           <button
             onClick={() => setIsOpen(false)}
@@ -197,33 +188,27 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         {/* Navigation Areas */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-2 px-4 flex flex-col gap-6">
           <div>
-            {isExpanded && (
-              <h3 className="px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest">
-                Management
-              </h3>
-            )}
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest ${isExpanded ? 'block' : 'block md:hidden'}`}>
+              Management
+            </h3>
             <div className="flex flex-col">
               {managementItems.map(item => renderNavItem(item))}
             </div>
           </div>
 
           <div>
-            {isExpanded && (
-              <h3 className="px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest">
-                Engagement
-              </h3>
-            )}
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest ${isExpanded ? 'block' : 'block md:hidden'}`}>
+              Engagement
+            </h3>
             <div className="flex flex-col">
               {engagementItems.map(item => renderNavItem(item))}
             </div>
           </div>
 
           <div>
-            {isExpanded && (
-              <h3 className="px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest">
-                Preferences
-              </h3>
-            )}
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest ${isExpanded ? 'block' : 'block md:hidden'}`}>
+              Preferences
+            </h3>
             <div className="flex flex-col">
               {accountItems.map(item => renderNavItem(item))}
             </div>
@@ -235,7 +220,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           className="p-4 relative border-t border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]"
         >
           <div
-            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors w-full text-left ${!isExpanded && 'justify-center'}`}
+            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors w-full text-left ${!isExpanded ? 'md:justify-center' : ''}`}
           >
             <div className="relative shrink-0">
               <img
@@ -244,12 +229,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 className="w-9 h-9 rounded-full object-cover bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
               />
             </div>
-            {isExpanded && (
-              <div className="flex flex-col overflow-hidden">
-                <span className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] truncate">BunHeng Ton</span>
-                <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">bunheng@email.com</span>
-              </div>
-            )}
+            <div className={`flex flex-col overflow-hidden ${isExpanded ? 'flex' : 'flex md:hidden'}`}>
+              <span className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] truncate">BunHeng Ton</span>
+              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">bunheng@email.com</span>
+            </div>
           </div>
         </div>
       </aside>

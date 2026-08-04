@@ -108,10 +108,6 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-
-            <h1 className="text-base sm:text-xl font-semibold text-gray-800 dark:text-white truncate">
-              {getPageTitle()}
-            </h1>
           </div>
 
           {/* Right section - Actions */}
@@ -140,6 +136,19 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
               <Search size={20} className="text-gray-600 dark:text-gray-300" />
             </button>
 
+            {/* Dark / Light Mode Toggle - now directly in header */}
+            <button
+              onClick={handleToggleTheme}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? (
+                <Moon size={20} className="text-blue-400" />
+              ) : (
+                <Sun size={20} className="text-amber-500" />
+              )}
+            </button>
+
             {/* Language Switcher */}
             <div ref={langRef} className="relative">
               <button
@@ -161,8 +170,8 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                         setShowLangMenu(false);
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-xl transition-colors ${currentLang === 'EN'
-                          ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                     >
                       <span>English</span>
@@ -174,8 +183,8 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                         setShowLangMenu(false);
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-xl transition-colors mt-1 ${currentLang === 'KH'
-                          ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                     >
                       <span>ភាសាខ្មែរ</span>
@@ -262,33 +271,6 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                       <MessageCircle size={18} className="text-gray-400" />
                       Messages
                     </Link>
-
-                    {/* Dark/Light Mode Toggle */}
-                    <div
-                      onClick={handleToggleTheme}
-                      className="flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors cursor-pointer select-none"
-                    >
-                      <div className="flex items-center gap-3">
-                        {isDarkMode ? (
-                          <Moon size={18} className="text-blue-500 dark:text-blue-400" />
-                        ) : (
-                          <Sun size={18} className="text-amber-500" />
-                        )}
-                        <span>{isDarkMode ? 'Dark Mode' : 'Light Mode'}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleTheme();
-                        }}
-                        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-gray-600"
-                      >
-                        <span
-                          className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-1'}`}
-                        />
-                      </button>
-                    </div>
 
                     <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition-colors w-full text-left">
                       <LogOut size={18} className="text-red-500 dark:text-red-400" />

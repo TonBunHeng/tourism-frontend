@@ -20,6 +20,7 @@ import DeletionRequests from '../pages/delete/DeletionRequests';
 import Chats from '../pages/chats/Chats';
 import Settings from '../pages/settings/Settings';
 import Profile from '../pages/profiles/Profile';
+import Reports from '../pages/reports/Reports';
 
 const AppRoutes = () => {
   return (
@@ -39,6 +40,7 @@ const AppRoutes = () => {
           <Route path="/provinces" element={<Provinces />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="/users" element={<Users />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/ratings" element={<Ratings />} />

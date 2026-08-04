@@ -24,7 +24,7 @@ export default function Login() {
     // TODO: Add your login API call here
     console.log("Login attempt:", formData);
 
-    // Simulate API call
+    // Simulate API call  
     setTimeout(() => {
       setIsLoading(false);
       navigate('/dashboard');
@@ -91,9 +91,9 @@ export default function Login() {
 
             {/* Login Button */}
             <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-white text-primary py-3 rounded font-semibold hover:bg-gray-100 transition disabled:opacity-70 disabled:cursor-not-allowed"
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-white text-primary py-3 rounded font-semibold hover:bg-gray-100 transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>

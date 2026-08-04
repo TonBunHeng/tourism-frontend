@@ -5,10 +5,9 @@ import tourism_app_icon from "../../assets/images/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays, MessageSquareText,
   Star, Heart, Trash2, MessageCircle, Settings, LogOut, ChevronRight, ChevronLeft,
-  Sun, Moon, Users, User, X
+  Users, User, X
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
-import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   // Load initial state from localStorage to prevent transition flashes on refresh
@@ -20,15 +19,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     return true;
   });
 
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return isDarkTheme(getInitialTheme());
-  });
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
-  const menuRef = useRef(null);
   const sidebarRef = useRef(null);
   const location = useLocation();
 
@@ -36,25 +27,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   useEffect(() => {
     localStorage.setItem('sidebar_expanded', JSON.stringify(isExpanded));
   }, [isExpanded]);
-
-  useEffect(() => {
-    const handleThemeChange = (e) => {
-      if (e.detail && typeof e.detail.isDark === 'boolean') {
-        setIsDarkMode(e.detail.isDark);
-      } else {
-        setIsDarkMode(document.documentElement.classList.contains('dark'));
-      }
-    };
-
-    window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange);
-    return () => window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
-  }, []);
-
-  const handleToggleTheme = () => {
-    const nextMode = !isDarkMode;
-    setIsDarkMode(nextMode);
-    applyTheme(nextMode ? 'dark' : 'light');
-  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -66,15 +38,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, setIsOpen]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowProfileMenu(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
 
   useEffect(() => {
     setIsOpen(false);
@@ -82,8 +46,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
   const managementItems = [
     { name: "Dashboard", icon: LayoutGrid, path: "/dashboard" },
-    { name: "Places", icon: MapPinned, path: "/place" },
     { name: "Categories", icon: Tags, path: "/categories" },
+    { name: "Places", icon: MapPinned, path: "/place" },
     { name: "Provinces", icon: Map, path: "/provinces" },
     { name: "Gallery", icon: Images, path: "/gallery" },
     { name: "Events", icon: CalendarDays, path: "/events" },
@@ -264,40 +228,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               {accountItems.map(item => renderNavItem(item))}
             </div>
           </div>
-
-          {/* Theme Toggle */}
-          <div className={`mt-auto mb-2 flex items-center ${isExpanded ? 'px-4 justify-between' : 'justify-center'}`}>
-            {isExpanded && (
-              <div className="text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                <Sun size={16} className={!isDarkMode ? "text-yellow-500" : ""} />
-              </div>
-            )}
-
-            <button
-              onClick={handleToggleTheme}
-              className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer bg-[var(--color-border-subtle-light)] dark:bg-[var(--color-border-dark)]"
-            >
-              <span
-                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-[var(--color-white)] transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-1'}`}
-              />
-            </button>
-
-            {isExpanded && (
-              <div className="text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                <Moon size={16} className={isDarkMode ? "text-[var(--color-info-dark-text)]" : ""} />
-              </div>
-            )}
-          </div>
         </div>
 
         {/* User Profile Footer */}
         <div
           className="p-4 relative border-t border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]"
         >
-          <button
-            type="button"
-            onClick={() => setShowProfileMenu((prev) => !prev)}
-            className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors w-full text-left ${!isExpanded && 'justify-center'}`}
+          <div
+            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors w-full text-left ${!isExpanded && 'justify-center'}`}
           >
             <div className="relative shrink-0">
               <img
@@ -312,7 +250,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">bunheng@email.com</span>
               </div>
             )}
-          </button>
+          </div>
         </div>
       </aside>
 

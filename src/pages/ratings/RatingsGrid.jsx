@@ -1,6 +1,6 @@
 import { Star, MapPin, ThumbsUp, Check, X, Eye, Trash2 } from 'lucide-react';
 
-export const getStatusColor = (status) => {
+const getStatusColor = (status) => {
   const colors = {
     'Approved': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
     'Pending': 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
@@ -9,7 +9,7 @@ export const getStatusColor = (status) => {
   return colors[status] || colors['Pending'];
 };
 
-export const renderStars = (rating, size = 'sm') => {
+const renderStars = (rating, size = 'sm') => {
   const starSize = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
   return (
     <div className="flex gap-0.5">

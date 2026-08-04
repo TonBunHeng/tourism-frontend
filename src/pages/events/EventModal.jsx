@@ -1,4 +1,4 @@
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown, Upload, Trash2 } from 'lucide-react';
 
 export default function EventModal({
   isOpen,
@@ -39,6 +39,84 @@ export default function EventModal({
                 required
               />
             </div>
+
+            {/* Event Picture Upload Field */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5 flex items-center justify-between">
+                <span>Event Picture</span>
+                <span className="text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] lowercase font-normal">(Upload file or paste image URL)</span>
+              </label>
+              
+              {formData.imageUrl ? (
+                <div className="relative w-full h-36 rounded-2xl overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] group shadow-sm">
+                  <img src={formData.imageUrl} alt="Event Preview" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <label className="p-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-xl text-xs font-medium flex items-center gap-1.5 cursor-pointer shadow-md transition-colors">
+                      <Upload className="w-4 h-4" />
+                      Change Picture
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              onFormDataChange({ ...formData, imageUrl: reader.result });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => onFormDataChange({ ...formData, imageUrl: '' })}
+                      className="p-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-medium flex items-center gap-1 cursor-pointer shadow-md transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary)] rounded-2xl cursor-pointer bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)]/50 transition-colors">
+                    <div className="flex flex-col items-center justify-center pt-2 pb-2">
+                      <Upload className="w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1" />
+                      <p className="text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Click to upload event picture</p>
+                      <p className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">PNG, JPG, WEBP or GIF</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            onFormDataChange({ ...formData, imageUrl: reader.result });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                  <div>
+                    <input
+                      type="url"
+                      value={formData.imageUrl || ''}
+                      onChange={(e) => onFormDataChange({ ...formData, imageUrl: e.target.value })}
+                      placeholder="Or enter image URL (https://...)"
+                      className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl px-4 py-2.5 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category</label>
               <div className="relative">
@@ -61,7 +139,7 @@ export default function EventModal({
                 value={formData.description}
                 onChange={(e) => onFormDataChange({ ...formData, description: e.target.value })}
                 placeholder="Enter event description"
-                rows="3"
+                rows="2"
                 className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none transition-all"
                 required
               />
@@ -91,11 +169,10 @@ export default function EventModal({
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Time</label>
                 <input
-                  type="text"
+                  type="time"
                   value={formData.time}
                   onChange={(e) => onFormDataChange({ ...formData, time: e.target.value })}
-                  placeholder="e.g., 08:00 AM"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all cursor-pointer"
                   required
                 />
               </div>

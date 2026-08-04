@@ -1,6 +1,6 @@
 import { User, AlertCircle, Clock, Check, X, Calendar, Eye, UserX, Trash2 } from 'lucide-react';
 
-export const getStatusBadge = (status) => {
+const getStatusBadge = (status) => {
   const colors = {
     pending: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
     approved: 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
@@ -10,7 +10,7 @@ export const getStatusBadge = (status) => {
   return colors[status] || colors.pending;
 };
 
-export const getUrgencyBadge = (urgency) => {
+const getUrgencyBadge = (urgency) => {
   const colors = {
     critical: 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]',
     high: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
@@ -20,15 +20,15 @@ export const getUrgencyBadge = (urgency) => {
   return colors[urgency] || colors.low;
 };
 
-export const getTypeLabel = (type) => {
+const getTypeLabel = (type) => {
   return type === 'account' ? 'Account Deletion' : 'Item Deletion';
 };
 
-export const getTypeIcon = (type) => {
+const getTypeIcon = (type) => {
   return type === 'account' ? UserX : Trash2;
 };
 
-export const getTypeBadge = (type) => {
+const getTypeBadge = (type) => {
   return type === 'account'
     ? 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]'
     : 'bg-[var(--color-purple-badge-bg)] text-[var(--color-purple-badge-text)] border-[var(--color-purple-badge-border)] dark:bg-[var(--color-purple-badge-dark-bg)] dark:text-[var(--color-purple-badge-dark-text)] dark:border-[var(--color-purple-badge-dark-border)]';

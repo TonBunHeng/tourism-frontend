@@ -42,9 +42,9 @@ export default function DeletionConfirmModal({
           </button>
           <button 
             onClick={onConfirm}
-            className={`flex-1 py-3 px-4 rounded-xl text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg text-center flex items-center justify-center gap-2 ${
+            className={`flex-1 py-3 px-4 rounded-xl text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg text-center flex items-center justify-center gap-2 cursor-pointer ${
               confirmAction === 'approve'
-                ? 'bg-[var(--color-success-text)] dark:bg-[var(--color-success-badge-text)] hover:opacity-90 shadow-green-500/25'
+                ? 'bg-emerald-600 hover:bg-emerald-700 shadow-green-500/25'
                 : 'bg-[var(--color-danger-text)] hover:opacity-90 shadow-red-500/25'
             }`}
           >

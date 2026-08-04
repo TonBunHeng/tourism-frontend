@@ -1,25 +1,5 @@
 import { Eye, Edit, Trash2, Calendar, Clock, MapPin, Users, Star } from 'lucide-react';
-
-export const getStatusColor = (status) => {
-  const colors = {
-    'Upcoming': 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] dark:border-[var(--color-info-dark-border)]',
-    'Ongoing': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
-    'Completed': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]',
-    'Cancelled': 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]'
-  };
-  return colors[status] || colors['Upcoming'];
-};
-
-export const getCategoryColor = (category) => {
-  const colors = {
-    'Sports': 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] dark:border-[var(--color-info-dark-border)]',
-    'Cultural': 'bg-[var(--color-purple-badge-bg)] text-[var(--color-purple-badge-text)] border-[var(--color-purple-badge-border)] dark:bg-[var(--color-purple-badge-dark-bg)] dark:text-[var(--color-purple-badge-dark-text)] dark:border-[var(--color-purple-badge-dark-border)]',
-    'Arts & Entertainment': 'bg-[var(--color-rose-badge-bg)] text-[var(--color-rose-badge-text)] border-[var(--color-rose-badge-border)] dark:bg-[var(--color-rose-badge-dark-bg)] dark:text-[var(--color-rose-badge-dark-text)] dark:border-[var(--color-rose-badge-dark-border)]',
-    'Food & Drink': 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
-    'Music': 'bg-[var(--color-rose-badge-bg)] text-[var(--color-rose-badge-text)] border-[var(--color-rose-badge-border)] dark:bg-[var(--color-rose-badge-dark-bg)] dark:text-[var(--color-rose-badge-dark-text)] dark:border-[var(--color-rose-badge-dark-border)]'
-  };
-  return colors[category] || 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]';
-};
+import { getEventStatusColor as getStatusColor, getCategoryColor } from '../../utils/StatusUtils';
 
 export default function EventsGrid({
   events,
@@ -31,31 +11,35 @@ export default function EventsGrid({
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
       {events.length > 0 ? (
         events.map((event) => {
-          const EventImage = event.image;
           return (
             <div
               key={event.id}
               className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02]"
             >
-              {event.featured && (
-                <div className="absolute top-3 right-3 z-10">
-                  <span className="px-2 py-0.5 bg-[var(--color-warning-text)] text-[var(--color-white)] text-xs font-semibold rounded-full">
-                    Featured
-                  </span>
-                </div>
-              )}
-
-              <div className="flex items-start justify-between mb-3 gap-2">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] flex items-center justify-center shrink-0">
-                    <EventImage className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
+              {/* Event Image Picture Header */}
+              <div className="relative w-full h-36 mb-3 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
+                {event.imageUrl ? (
+                  <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center p-3 text-center">
+                    <span className="text-white text-xs font-semibold drop-shadow">{event.title}</span>
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm line-clamp-1">{event.title}</h3>
-                    <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full border ${getCategoryColor(event.category)}`}>
-                      {event.category}
+                )}
+                {event.featured && (
+                  <div className="absolute top-2.5 right-2.5 z-10">
+                    <span className="px-2 py-0.5 bg-[var(--color-warning-text)] text-[var(--color-white)] text-xs font-semibold rounded-full shadow-md">
+                      Featured
                     </span>
                   </div>
+                )}
+              </div>
+
+              <div className="flex items-start justify-between mb-3 gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm line-clamp-1">{event.title}</h3>
+                  <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full border ${getCategoryColor(event.category)}`}>
+                    {event.category}
+                  </span>
                 </div>
                 <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                   <button

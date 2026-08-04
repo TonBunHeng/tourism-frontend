@@ -8,20 +8,13 @@ export default function EventDetailsModal({
 }) {
   if (!isOpen || !event) return null;
 
-  const EventImage = event.image;
-
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-3xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center">
-              {EventImage && <EventImage className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />}
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">Event Details</h3>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{event.id}</p>
-            </div>
+          <div>
+            <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">Event Details</h3>
+            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{event.id}</p>
           </div>
           <button
             onClick={onClose}
@@ -32,6 +25,12 @@ export default function EventDetailsModal({
         </div>
 
         <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          {event.imageUrl && (
+            <div className="w-full h-48 rounded-2xl overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
+              <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+            </div>
+          )}
+
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Event Title</span>
             <p className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{event.title}</p>

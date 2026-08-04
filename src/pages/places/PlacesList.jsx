@@ -7,10 +7,7 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
       <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {places.length > 0 ? (
           places.map((place) => (
-            <div key={place.id} className="p-4 flex gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center shrink-0">
-                <place.icon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-              </div>
+            <div key={place.id} className="p-4 flex flex-col">
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{place.name}</p>
@@ -88,14 +85,9 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
                     {String(index + 1).padStart(2, '0')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center">
-                        <place.icon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{place.name}</p>
-                        <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{place.id}</p>
-                      </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{place.name}</p>
+                      <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{place.id}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -1,42 +1,22 @@
-import { Eye, Edit, Trash2, Users, Navigation, Building2, Home, Star, Clock, Building } from 'lucide-react';
-
-export const getStatusColor = (status) => {
-  return status === 'Active'
-    ? 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]'
-    : 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]';
-};
-
-export const getTypeBadgeColor = (type) => {
-  const colors = {
-    'Capital City': 'bg-[var(--color-purple-badge-bg)] text-[var(--color-purple-badge-text)] border-[var(--color-purple-badge-border)] dark:bg-[var(--color-purple-badge-dark-bg)] dark:text-[var(--color-purple-badge-dark-text)] dark:border-[var(--color-purple-badge-dark-border)]',
-    'Province': 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] dark:border-[var(--color-info-dark-border)]',
-    'Municipality': 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]'
-  };
-  return colors[type] || 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]';
-};
+import { Eye, Edit, Trash2, Users, Navigation, Building2, Home, Star, Clock } from 'lucide-react';
+import { getStatusColor, getTypeBadgeColor } from '../../utils/StatusUtils';
 
 export default function ProvincesGrid({ provinces, onViewProvince, onEditProvince, onDeleteProvince }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
       {provinces.length > 0 ? (
         provinces.map((province) => {
-          const IconComponent = province.icon || Building;
           return (
             <div
               key={province.id}
               className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02]"
             >
               <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center">
-                    <IconComponent className="w-6 h-6 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{province.name}</h3>
-                    <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full border ${getTypeBadgeColor(province.type)}`}>
-                      {province.type}
-                    </span>
-                  </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{province.name}</h3>
+                  <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full border ${getTypeBadgeColor(province.type)}`}>
+                    {province.type}
+                  </span>
                 </div>
                 {/* Actions: always visible on touch/mobile, fade in on hover for pointer devices */}
                 <div className="flex gap-1 flex-shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">

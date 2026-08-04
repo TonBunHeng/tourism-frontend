@@ -1,5 +1,5 @@
 import { MapPin, X, Trash2, Clock, Check } from 'lucide-react';
-import { renderStars } from './FavoritesGrid';
+import { renderStars } from '../../utils/StatusUtils';
 
 export default function FavoriteDetailsModal({
   isOpen,

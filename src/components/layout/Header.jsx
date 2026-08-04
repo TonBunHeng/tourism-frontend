@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Bell, Search, User, Settings, LogOut, Menu,
-  X, ChevronDown, MessageCircle, Globe
+  X, ChevronDown, MessageCircle, Globe, Sun, Moon
 } from "lucide-react";
 import profile_v2 from "../../assets/images/profile_v2.png";
+import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
 
 export default function Header({ toggleSidebar, isSidebarOpen }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -14,11 +15,37 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
   const [currentLang, setCurrentLang] = useState('EN');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return isDarkTheme(getInitialTheme());
+  });
+
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const langRef = useRef(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleThemeChange = (e) => {
+      if (e.detail && typeof e.detail.isDark === 'boolean') {
+        setIsDarkMode(e.detail.isDark);
+      } else {
+        setIsDarkMode(document.documentElement.classList.contains('dark'));
+      }
+    };
+
+    window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+    return () => window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextMode = !isDarkMode;
+    setIsDarkMode(nextMode);
+    applyTheme(nextMode ? 'dark' : 'light');
+  };
 
   const notifications = [
     { id: 1, title: 'New user registered', time: '5 min ago', read: false },
@@ -231,10 +258,38 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                       <Settings size={18} className="text-gray-400" />
                       Settings
                     </Link>
-                    <Link to="/chat" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors">
+                    <Link to="/chat" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors">
                       <MessageCircle size={18} className="text-gray-400" />
                       Messages
                     </Link>
+
+                    {/* Dark/Light Mode Toggle */}
+                    <div
+                      onClick={handleToggleTheme}
+                      className="flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors cursor-pointer select-none"
+                    >
+                      <div className="flex items-center gap-3">
+                        {isDarkMode ? (
+                          <Moon size={18} className="text-blue-500 dark:text-blue-400" />
+                        ) : (
+                          <Sun size={18} className="text-amber-500" />
+                        )}
+                        <span>{isDarkMode ? 'Dark Mode' : 'Light Mode'}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleTheme();
+                        }}
+                        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-gray-600"
+                      >
+                        <span
+                          className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${isDarkMode ? 'translate-x-4' : 'translate-x-1'}`}
+                        />
+                      </button>
+                    </div>
+
                     <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition-colors w-full text-left">
                       <LogOut size={18} className="text-red-500 dark:text-red-400" />
                       Log Out

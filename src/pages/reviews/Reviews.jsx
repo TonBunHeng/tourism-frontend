@@ -13,7 +13,8 @@ import ReviewsHeader from './ReviewsHeader';
 import ReviewsStats from './ReviewsStats';
 import ReviewsRatingSummary from './ReviewsRatingSummary';
 import ReviewsToolbar from './ReviewsToolbar';
-import ReviewsList, { renderStars } from './ReviewsList';
+import ReviewsList from './ReviewsList';
+import { renderStars } from '../../utils/StatusUtils';
 import ReviewDetailsModal from './ReviewDetailsModal';
 import ReviewReplyModal from './ReviewReplyModal';
 
@@ -256,9 +257,9 @@ export default function Reviews() {
 
   const filteredReviews = reviews.filter(review => {
     const matchesSearch = review.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         review.place.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         review.comment.toLowerCase().includes(searchTerm.toLowerCase());
+      review.place.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.comment.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = selectedStatus === 'All' || review.status === selectedStatus;
     const matchesRating = selectedRating === 'All' || review.rating === parseInt(selectedRating);
     const matchesCategory = selectedCategory === 'All' || review.place.category === selectedCategory;

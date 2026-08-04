@@ -194,6 +194,7 @@ export default function Gallery() {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         categories={categories}
+        onAddMedia={(newMedia) => setMediaItems([newMedia, ...mediaItems])}
       />
 
       {/* Edit Media Modal */}

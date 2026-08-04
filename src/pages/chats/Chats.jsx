@@ -255,7 +255,7 @@ export default function Chats() {
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [newMessage, setNewMessage] = useState('');
-  const [isAITyping, setIsAITyping] = useState(false);
+  const [isAITyping] = useState(false);
   const [sortBy, setSortBy] = useState('recent');
   const [showUserInfo, setShowUserInfo] = useState(false);
 
@@ -289,10 +289,10 @@ export default function Chats() {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedChat) return;
 
-    // Add user message
-    const userMessage = {
+    // Add admin reply message
+    const adminMessage = {
       id: selectedChat.messages.length + 1,
-      sender: 'user',
+      sender: 'admin',
       text: newMessage,
       timestamp: new Date().toLocaleString(),
       read: true
@@ -300,7 +300,7 @@ export default function Chats() {
 
     const updatedChat = {
       ...selectedChat,
-      messages: [...selectedChat.messages, userMessage],
+      messages: [...selectedChat.messages, adminMessage],
       lastMessage: newMessage,
       lastMessageTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
@@ -312,44 +312,6 @@ export default function Chats() {
     setChats(updatedChats);
     setSelectedChat(updatedChat);
     setNewMessage('');
-
-    // Simulate AI response
-    setIsAITyping(true);
-    setTimeout(() => {
-      const aiResponses = [
-        'That\'s a great question! Let me help you with that.',
-        'I understand. Here\'s what I can suggest...',
-        'Thank you for sharing that. I\'ll assist you right away.',
-        'Let me look into that for you. One moment please.',
-        'I appreciate your patience. Here\'s the information you need.',
-        'That\'s an interesting point. Let me provide some insights.',
-        'I\'m here to help! Let\'s work through this together.',
-        'Thank you for reaching out. I\'ll do my best to assist you.'
-      ];
-      
-      const aiMessage = {
-        id: updatedChat.messages.length + 1,
-        sender: 'ai',
-        text: aiResponses[Math.floor(Math.random() * aiResponses.length)],
-        timestamp: new Date().toLocaleString(),
-        read: true,
-        isAI: true
-      };
-
-      const aiUpdatedChat = {
-        ...updatedChat,
-        messages: [...updatedChat.messages, aiMessage],
-        lastMessage: aiMessage.text,
-        lastMessageTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      const aiUpdatedChats = updatedChats.map(chat =>
-        chat.id === selectedChat.id ? aiUpdatedChat : chat
-      );
-      setChats(aiUpdatedChats);
-      setSelectedChat(aiUpdatedChat);
-      setIsAITyping(false);
-    }, 1500 + Math.random() * 1000);
   };
 
   const handleReset = () => {

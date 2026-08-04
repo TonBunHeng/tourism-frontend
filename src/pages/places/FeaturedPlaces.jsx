@@ -1,4 +1,8 @@
 import { Landmark, Mountain, Building2, Palette, Star, ArrowRight } from 'lucide-react';
+import siemReapImg from '../../assets/places_img/SiemReapAngkor.jpg';
+import pursatImg from '../../assets/places_img/PursatMountains.jpeg';
+import historicalImg from '../../assets/places_img/HistoricalSites.jpeg';
+import museumImg from '../../assets/places_img/images.jpeg';
 
 export default function FeaturedPlaces() {
   const featuredPlaces = [
@@ -8,7 +12,8 @@ export default function FeaturedPlaces() {
       rating: 5.0,
       reviews: 35,
       icon: Landmark,
-      gradient: 'from-amber-500 to-orange-600'
+      image: siemReapImg,
+      gradient: 'from-amber-500/80 to-orange-600/80'
     },
     {
       name: 'Pursat Mountains',
@@ -16,7 +21,8 @@ export default function FeaturedPlaces() {
       rating: 5.0,
       reviews: 6,
       icon: Mountain,
-      gradient: 'from-emerald-500 to-teal-600'
+      image: pursatImg,
+      gradient: 'from-emerald-500/80 to-teal-600/80'
     },
     {
       name: 'Historical Sites',
@@ -24,7 +30,8 @@ export default function FeaturedPlaces() {
       rating: 5.0,
       reviews: 35,
       icon: Building2,
-      gradient: 'from-purple-500 to-indigo-600'
+      image: historicalImg,
+      gradient: 'from-purple-500/80 to-indigo-600/80'
     },
     {
       name: 'Cultural Museum',
@@ -32,7 +39,8 @@ export default function FeaturedPlaces() {
       rating: 5.0,
       reviews: 35,
       icon: Palette,
-      gradient: 'from-rose-500 to-pink-600'
+      image: museumImg,
+      gradient: 'from-rose-500/80 to-pink-600/80'
     }
   ];
 
@@ -49,20 +57,27 @@ export default function FeaturedPlaces() {
         {featuredPlaces.map((place, index) => (
           <div
             key={index}
-            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${place.gradient} p-6 text-[var(--color-white)] shadow-lg hover:shadow-xl transition-all duration-300 md:hover:scale-105 transform group cursor-pointer`}
+            className="relative overflow-hidden rounded-2xl p-6 text-[var(--color-white)] shadow-lg hover:shadow-xl transition-all duration-300 transform group cursor-pointer h-52 flex flex-col justify-end"
           >
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+            {/* Background Image */}
+            <img
+              src={place.image}
+              alt={place.name}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+
+            {/* Gradient Overlays */}
+            <div className={`absolute inset-0 bg-gradient-to-t ${place.gradient} opacity-40 group-hover:opacity-30 transition-opacity duration-300`}></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 group-hover:from-black/90 transition-colors duration-300"></div>
+
+            {/* Content */}
             <div className="relative z-10">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
-                <place.icon className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold mb-1">{place.name}</h3>
+              <h3 className="text-lg font-bold mb-1 text-white drop-shadow-sm">{place.name}</h3>
               <p className="text-sm text-white/90 mb-3 line-clamp-1">{place.location}</p>
               <div className="flex items-center gap-2">
-                <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                  <Star className="w-3 h-3 fill-[var(--color-warning-text)] text-[var(--color-warning-text)] mr-1" />
-                  <span className="text-sm font-bold">{place.rating}</span>
+                <div className="flex items-center bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
+                  <Star className="w-3.5 h-3.5 fill-[var(--color-warning-text)] text-[var(--color-warning-text)] mr-1" />
+                  <span className="text-sm font-bold text-white">{place.rating}</span>
                   <span className="text-xs ml-1 text-white/80">({place.reviews})</span>
                 </div>
               </div>

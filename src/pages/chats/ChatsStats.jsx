@@ -17,7 +17,7 @@ export default function ChatsStats({ chats }) {
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
-      label: 'AI Conversations',
+      label: 'Chat Support Conversations',
       value: chats.filter(c => c.messages.some(m => m.isAI)).length,
       icon: Bot,
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',

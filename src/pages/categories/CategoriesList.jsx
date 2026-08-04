@@ -1,5 +1,5 @@
 import { Eye, Edit, Trash2, Clock, Layers, FolderTree } from 'lucide-react';
-import { getStatusColor } from './CategoriesGrid';
+import { getStatusColor } from '../../utils/StatusUtils';
 
 export default function CategoriesList({
   categories,
@@ -23,24 +23,15 @@ export default function CategoriesList({
         <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
           {categories.length > 0 ? (
             categories.map((category, index) => {
-              const IconComponent = category.icon || FolderTree;
               return (
                 <tr key={category.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {String(index + 1).padStart(2, "0")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: `${category.color}20` }}
-                      >
-                        <IconComponent size={20} style={{ color: category.color }} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{category.name}</p>
-                        <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{category.id}</p>
-                      </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{category.name}</p>
+                      <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{category.id}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] max-w-xs truncate">

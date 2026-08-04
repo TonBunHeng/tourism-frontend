@@ -1,5 +1,5 @@
 import { Calendar, Check, Image as ImageIcon, MapPin, ThumbsUp, ThumbsDown, Clock, X, Eye, Trash2 } from 'lucide-react';
-import { getStatusColor, renderStars } from './RatingsGrid';
+import { getStatusColor, renderStars } from '../../utils/StatusUtils';
 
 export default function RatingsTable({
   reviews,

@@ -27,7 +27,8 @@ const AppRoutes = () => {
       <Routes>
 
         {/* Public Routes - Don't have Sidebar/Footer */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Navigate to="/" replace />} /> 
 
         {/* Protected Routes - Have Sidebar/Footer */}

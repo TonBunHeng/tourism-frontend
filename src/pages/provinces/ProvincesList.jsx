@@ -1,5 +1,5 @@
-import { Building, Clock, Eye, Edit, Trash2 } from 'lucide-react';
-import { getStatusColor, getTypeBadgeColor } from './ProvincesGrid';
+import { Clock, Eye, Edit, Trash2 } from 'lucide-react';
+import { getStatusColor, getTypeBadgeColor } from '../../utils/StatusUtils';
 
 export default function ProvincesList({ provinces, onViewProvince, onEditProvince, onDeleteProvince }) {
   return (
@@ -20,21 +20,15 @@ export default function ProvincesList({ provinces, onViewProvince, onEditProvinc
         <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
           {provinces.length > 0 ? (
             provinces.map((province, index) => {
-              const IconComponent = province.icon || Building;
               return (
                 <tr key={province.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {String(index + 1).padStart(2, '0')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center">
-                        <IconComponent className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{province.name}</p>
-                        <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{province.id}</p>
-                      </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{province.name}</p>
+                      <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{province.id}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -1,5 +1,5 @@
 import { User, X, Trash2, Check } from 'lucide-react';
-import { getTypeLabel } from './DeletionList';
+import { getTypeLabel } from '../../utils/StatusUtils';
 
 export default function DeletionDetailsModal({
   isOpen,
@@ -103,7 +103,7 @@ export default function DeletionDetailsModal({
               <button
                 type="button"
                 onClick={() => onApprove(request)}
-                className="py-2.5 px-4 rounded-xl bg-[var(--color-success-text)] dark:bg-[var(--color-success-badge-text)] hover:opacity-90 text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
+                className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 Approve

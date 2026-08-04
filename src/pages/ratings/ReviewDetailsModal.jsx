@@ -1,5 +1,5 @@
 import { X, Check, Trash2 } from 'lucide-react';
-import { renderStars } from './RatingsGrid';
+import { renderStars } from '../../utils/StatusUtils';
 
 export default function ReviewDetailsModal({
   isOpen,

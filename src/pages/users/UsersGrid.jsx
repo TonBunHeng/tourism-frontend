@@ -1,31 +1,5 @@
 import { Check, Eye, Edit, Trash2, Activity, Calendar } from 'lucide-react';
-
-export const getStatusColor = (status) => {
-  const colors = {
-    'Active': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
-    'Inactive': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-neutral-badge-dark-border)]',
-    'Suspended': 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]'
-  };
-  return colors[status] || colors['Inactive'];
-};
-
-export const getRoleColor = (role) => {
-  const colors = {
-    'Admin': 'bg-[var(--color-purple-bg)] text-[var(--color-purple-text)] border-[var(--color-purple-border)] dark:bg-[var(--color-purple-dark-bg)] dark:text-[var(--color-purple-dark-text)] dark:border-[var(--color-purple-dark-border)]',
-    'Moderator': 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] dark:border-[var(--color-info-dark-border)]',
-    'User': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-neutral-badge-dark-border)]'
-  };
-  return colors[role] || colors['User'];
-};
-
-export const getSubscriptionColor = (subscription) => {
-  const colors = {
-    'Premium': 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
-    'Basic': 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] dark:border-[var(--color-info-dark-border)]',
-    'Free': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-neutral-badge-dark-border)]'
-  };
-  return colors[subscription] || colors['Free'];
-};
+import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor } from '../../utils/StatusUtils';
 
 export default function UsersGrid({ users, onViewDetails, onEdit, onDelete }) {
   return (

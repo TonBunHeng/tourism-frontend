@@ -1,5 +1,5 @@
 import { Eye, Edit, Trash2, MapPin, Users, Star, Clock } from 'lucide-react';
-import { getStatusColor, getCategoryColor } from './EventsGrid';
+import { getEventStatusColor as getStatusColor, getCategoryColor } from '../../utils/StatusUtils';
 
 export default function EventsList({
   events,
@@ -13,12 +13,11 @@ export default function EventsList({
       <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {events.length > 0 ? (
           events.map((event) => {
-            const EventImage = event.image;
             return (
-              <div key={event.id} className="p-4 flex gap-3">
-                <div className="w-14 h-14 rounded-xl bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] flex items-center justify-center shrink-0">
-                  <EventImage className="w-6 h-6 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
-                </div>
+              <div key={event.id} className="p-4 flex flex-col sm:flex-row gap-3">
+                {event.imageUrl && (
+                  <img src={event.imageUrl} alt={event.title} className="w-full sm:w-16 h-20 sm:h-16 rounded-xl object-cover shrink-0" />
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{event.title}</p>
@@ -80,7 +79,6 @@ export default function EventsList({
           <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
             {events.length > 0 ? (
               events.map((event, index) => {
-                const EventImage = event.image;
                 return (
                   <tr key={event.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
@@ -88,9 +86,9 @@ export default function EventsList({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
-                          <EventImage className="w-6 h-6 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
-                        </div>
+                        {event.imageUrl && (
+                          <img src={event.imageUrl} alt={event.title} className="w-10 h-10 rounded-xl object-cover flex-shrink-0" />
+                        )}
                         <div>
                           <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{event.title}</p>
                           <div className="flex items-center gap-2 mt-0.5">

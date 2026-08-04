@@ -1,5 +1,5 @@
 import { ArrowLeft, User, Star, Phone, Video, Info, MoreVertical, Bot, CheckCheck, Check, Paperclip, Smile, Send, MessageSquare } from 'lucide-react';
-import { getStatusColor } from './ChatsList';
+import { getChatStatusColor as getStatusColor } from '../../utils/StatusUtils';
 
 export default function ChatWindow({
   selectedChat,
@@ -11,7 +11,6 @@ export default function ChatWindow({
   onNewMessageChange,
   onSendMessage,
   onKeyPress,
-  showUserInfo,
   onToggleShowUserInfo
 }) {
   return (
@@ -73,47 +72,63 @@ export default function ChatWindow({
 
           {/* Messages Feed */}
           <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3">
-            {selectedChat.messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={`max-w-[85%] sm:max-w-[70%] ${message.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                  {message.isAI && (
-                    <div className="flex items-center gap-1 mb-1">
-                      <Bot className="w-3 h-3 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
-                      <span className="text-xs font-medium text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]">AI Assistant</span>
-                    </div>
-                  )}
-                  <div
-                    className={`rounded-2xl px-4 py-2 ${message.sender === 'user'
+            {selectedChat.messages.map((message) => {
+              const isAdmin = message.sender === 'admin' || message.sender === 'support';
+              const isAI = message.isAI || message.sender === 'ai';
+              const isOutbound = isAdmin || isAI;
+
+              return (
+                <div
+                  key={message.id}
+                  className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[85%] sm:max-w-[70%] flex flex-col ${isOutbound ? 'items-end' : 'items-start'}`}>
+                    {isAdmin && (
+                      <div className="flex items-center gap-1 mb-1">
+                        <span className="text-xs font-medium text-[var(--color-primary)]">Admin</span>
+                      </div>
+                    )}
+                    {isAI && (
+                      <div className="flex items-center gap-1 mb-1">
+                        <Bot className="w-3 h-3 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
+                        <span className="text-xs font-medium text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]">Chat Support</span>
+                      </div>
+                    )}
+                    {!isOutbound && (
+                      <div className="flex items-center gap-1 mb-1">
+                        <span className="text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{selectedChat.user.name}</span>
+                      </div>
+                    )}
+                    <div
+                      className={`rounded-2xl px-4 py-2 ${isAdmin
                         ? 'bg-[var(--color-primary)] text-[var(--color-white)]'
-                        : message.isAI
+                        : isAI
                           ? 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]'
                           : 'bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]'
-                      }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-                  </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{message.timestamp}</span>
-                    {message.sender === 'user' && (
-                      message.read ? (
-                        <CheckCheck className="w-3 h-3 text-[var(--color-info-text)]" />
-                      ) : (
-                        <Check className="w-3 h-3 text-[var(--color-text-muted-light)]" />
-                      )
-                    )}
+                        }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                    </div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{message.timestamp}</span>
+                      {isOutbound && (
+                        message.read ? (
+                          <CheckCheck className="w-3 h-3 text-[var(--color-info-text)]" />
+                        ) : (
+                          <Check className="w-3 h-3 text-[var(--color-text-muted-light)]" />
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {isAITyping && (
               <div className="flex justify-start">
                 <div className="bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] rounded-2xl px-4 py-2">
                   <div className="flex items-center gap-2">
                     <Bot className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
-                    <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">AI is typing</span>
+                    <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Chat Support is typing</span>
                     <span className="flex gap-1">
                       <span className="w-1.5 h-1.5 bg-[var(--color-text-muted-light)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
                       <span className="w-1.5 h-1.5 bg-[var(--color-text-muted-light)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>

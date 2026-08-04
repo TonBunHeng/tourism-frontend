@@ -1,5 +1,5 @@
 import { Clock, Eye, Edit, Trash2 } from 'lucide-react';
-import { getStatusColor, getTypeIcon } from './GalleryGrid';
+import { getGalleryStatusColor as getStatusColor, getTypeIcon } from '../../utils/StatusUtils';
 
 export default function GalleryList({ media, onPreview, onEdit, onDelete }) {
   return (

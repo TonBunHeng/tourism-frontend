@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import {
   Activity,
   PartyPopper,
@@ -16,8 +15,12 @@ import EventsList from './EventsList';
 import EventModal from './EventModal';
 import EventDetailsModal from './EventDetailsModal';
 
+import siemReapImg from '../../assets/places_img/SiemReapAngkor.jpg';
+import historicalImg from '../../assets/places_img/HistoricalSites.jpeg';
+import pursatImg from '../../assets/places_img/PursatMountains.jpeg';
+import museumImg from '../../assets/places_img/images.jpeg';
+
 export default function Events() {
-  const location = useLocation();
   const [events, setEvents] = useState([
     {
       id: 1,
@@ -31,6 +34,7 @@ export default function Events() {
       price: '$45',
       status: 'Upcoming',
       image: Activity,
+      imageUrl: siemReapImg,
       organizer: 'Cambodia Tourism Board',
       featured: true,
       rating: 4.9,
@@ -48,6 +52,7 @@ export default function Events() {
       price: 'Free',
       status: 'Ongoing',
       image: PartyPopper,
+      imageUrl: historicalImg,
       organizer: 'Ministry of Culture',
       featured: true,
       rating: 4.8,
@@ -65,6 +70,7 @@ export default function Events() {
       price: '$15',
       status: 'Completed',
       image: Clapperboard,
+      imageUrl: museumImg,
       organizer: 'Cambodian Film Association',
       featured: false,
       rating: 4.7,
@@ -82,6 +88,7 @@ export default function Events() {
       price: 'Free',
       status: 'Upcoming',
       image: Ship,
+      imageUrl: siemReapImg,
       organizer: 'Phnom Penh Municipality',
       featured: true,
       rating: 4.9,
@@ -99,6 +106,7 @@ export default function Events() {
       price: '$25',
       status: 'Completed',
       image: Utensils,
+      imageUrl: museumImg,
       organizer: 'Siem Reap Tourism Association',
       featured: false,
       rating: 4.6,
@@ -116,6 +124,7 @@ export default function Events() {
       price: '$30',
       status: 'Upcoming',
       image: Music,
+      imageUrl: pursatImg,
       organizer: 'Kampot Provincial Government',
       featured: false,
       rating: 4.5,
@@ -143,7 +152,8 @@ export default function Events() {
     date: '',
     time: '',
     price: '',
-    organizer: ''
+    organizer: '',
+    imageUrl: ''
   });
 
   const categories = ['All', 'Sports', 'Cultural', 'Arts & Entertainment', 'Food & Drink', 'Music'];
@@ -168,7 +178,8 @@ export default function Events() {
       date: '',
       time: '',
       price: '',
-      organizer: ''
+      organizer: '',
+      imageUrl: ''
     });
     setIsModalOpen(true);
   };
@@ -183,7 +194,8 @@ export default function Events() {
       date: event.date,
       time: event.time,
       price: event.price,
-      organizer: event.organizer
+      organizer: event.organizer,
+      imageUrl: event.imageUrl || ''
     });
     setIsModalOpen(true);
   };

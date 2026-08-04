@@ -1,23 +1,5 @@
 import { Search, RotateCcw, Plus, ChevronDown, User, Star, AlertCircle, MessageSquare } from 'lucide-react';
-
-export const getStatusColor = (status) => {
-  const colors = {
-    online: 'bg-[var(--color-success-badge-text)]',
-    away: 'bg-[var(--color-warning-text)]',
-    offline: 'bg-[var(--color-text-muted-light)]'
-  };
-  return colors[status] || colors.offline;
-};
-
-export const getPriorityBadge = (priority) => {
-  const colors = {
-    critical: 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)]',
-    high: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)]',
-    medium: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)]',
-    low: 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] border-[var(--color-info-border)]'
-  };
-  return colors[priority] || colors.low;
-};
+import { getChatStatusColor as getStatusColor } from '../../utils/StatusUtils'; 
 
 export default function ChatsList({
   chats,

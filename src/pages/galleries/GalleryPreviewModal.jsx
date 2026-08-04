@@ -1,21 +1,16 @@
-import { Eye, X, Edit } from 'lucide-react';
+import { X, Edit } from 'lucide-react';
 
 export default function GalleryPreviewModal({ isOpen, media, onClose, onEdit }) {
   if (!isOpen || !media) return null;
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-3xl max-w-2xl w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-3xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center">
-              <Eye className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">Media Preview</h3>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{media.id}</p>
-            </div>
+          <div>
+            <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">Media Preview</h3>
+            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{media.id}</p>
           </div>
           <button
             onClick={onClose}
@@ -27,13 +22,15 @@ export default function GalleryPreviewModal({ isOpen, media, onClose, onEdit }) 
 
         {/* Modal Content */}
         <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-          <div className="rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center max-h-[300px]">
-            <img
-              src={media.url}
-              alt={media.title}
-              className="w-full h-full object-contain max-h-[300px]"
-            />
-          </div>
+          {media.url && (
+            <div className="w-full h-48 rounded-2xl overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
+              <img
+                src={media.url}
+                alt={media.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
 
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Title</span>
@@ -59,14 +56,14 @@ export default function GalleryPreviewModal({ isOpen, media, onClose, onEdit }) 
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Engagement</span>
-              <p className="text-sm font-medium text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] mt-1">{media.views.toLocaleString()} views · {media.likes} likes</p>
+              <p className="text-sm font-medium text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] mt-1">{media.views?.toLocaleString()} views · {media.likes} likes</p>
             </div>
           </div>
 
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block mb-1.5">Tags</span>
             <div className="flex flex-wrap gap-1.5">
-              {media.tags.map((tag, idx) => (
+              {media.tags?.map((tag, idx) => (
                 <span key={idx} className="px-2.5 py-1 bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] rounded-lg text-xs border border-[var(--color-neutral-badge-border)] dark:border-[var(--color-border-dark)]">
                   #{tag}
                 </span>

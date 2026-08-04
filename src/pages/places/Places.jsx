@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { Landmark } from 'lucide-react';
 import PlacesHeader from './PlacesHeader';
 import PlacesStats from './PlacesStats';
@@ -11,7 +10,6 @@ import PlaceDetailsModal from './PlaceDetailsModal';
 import PlaceModal from './PlaceModal';
 
 export default function Places() {
-  const location = useLocation();
   const [places, setPlaces] = useState([
     {
       id: 1,

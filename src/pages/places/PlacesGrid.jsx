@@ -7,14 +7,9 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
         places.map((place) => (
           <div key={place.id} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-4 hover:shadow-lg transition-all duration-200 group">
             <div className="flex items-start justify-between gap-2 mb-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 flex-shrink-0 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center">
-                  <place.icon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{place.name}</h3>
-                  <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{place.category}</span>
-                </div>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{place.name}</h3>
+                <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{place.category}</span>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <Star className="w-3 h-3 fill-[var(--color-warning-text)] text-[var(--color-warning-text)]" />

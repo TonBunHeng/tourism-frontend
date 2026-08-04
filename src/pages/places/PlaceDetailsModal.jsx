@@ -1,23 +1,16 @@
-import { X, CheckCircle, Star, MapPin, Edit } from 'lucide-react';
+import { X, CheckCircle, Star, MapPin, Edit, ExternalLink } from 'lucide-react';
 
 export default function PlaceDetailsModal({ place, onClose, onEditPlace }) {
   if (!place) return null;
-
-  const PlaceIcon = place.icon;
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-3xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center">
-              {PlaceIcon && <PlaceIcon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />}
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">Place Details</h3>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{place.id}</p>
-            </div>
+          <div>
+            <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">Place Details</h3>
+            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{place.id}</p>
           </div>
           <button
             onClick={onClose}
@@ -68,6 +61,37 @@ export default function PlaceDetailsModal({ place, onClose, onEditPlace }) {
               <MapPin className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] shrink-0 mt-0.5" />
               <span>{place.address}</span>
             </p>
+          </div>
+
+          {/* Google Maps Location Section */}
+          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-4 rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+                Google Maps Location
+              </span>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.address || place.name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:underline flex items-center gap-1 font-medium"
+              >
+                <span>Open in Google Maps</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <div className="relative w-full h-48 rounded-xl overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
+              <iframe
+                title="Google Maps Location"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(place.address || place.name)}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+              ></iframe>
+            </div>
           </div>
         </div>
 

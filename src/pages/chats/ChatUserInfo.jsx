@@ -1,5 +1,5 @@
 import { X, User, AlertCircle, Bot } from 'lucide-react';
-import { getStatusColor, getPriorityBadge } from './ChatsList';
+import { getChatStatusColor as getStatusColor, getPriorityBadge } from '../../utils/StatusUtils';
 
 export default function ChatUserInfo({
   isOpen,
@@ -67,7 +67,7 @@ export default function ChatUserInfo({
               <span className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{selectedChat.messages.length}</span>
             </div>
             <div className="flex items-center justify-between p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg">
-              <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">AI Assisted</span>
+              <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Chat Support</span>
               <span className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
                 {selectedChat.messages.some(m => m.isAI) ? 'Yes' : 'No'}
               </span>
@@ -78,7 +78,7 @@ export default function ChatUserInfo({
             <div className="flex items-center gap-2">
               <Bot className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] shrink-0" />
               <p className="text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                This conversation is being assisted by AI. The AI provides automated responses to help users quickly.
+                This conversation is being assisted by Chat Support. Automated responses help users quickly.
               </p>
             </div>
           </div>

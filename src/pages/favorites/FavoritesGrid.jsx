@@ -1,17 +1,6 @@
 import { Heart, MapPin, Star, Clock, Users, Calendar, Check, Eye, Trash2 } from 'lucide-react';
 
-export const renderStars = (rating) => {
-  return (
-    <div className="flex gap-0.5">
-      {[...Array(5)].map((_, i) => (
-        <Star
-          key={i}
-          className={`${i < Math.floor(rating) ? 'fill-[var(--color-amber-star)] text-[var(--color-amber-star)]' : 'text-[var(--color-border-subtle-light)] dark:text-[var(--color-border-dark)]'} w-4 h-4`}
-        />
-      ))}
-    </div>
-  );
-};
+
 
 export default function FavoritesGrid({
   favorites,

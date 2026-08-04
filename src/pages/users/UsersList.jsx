@@ -1,5 +1,5 @@
 import { Check, Clock, X, Eye, Edit, Trash2, Phone } from 'lucide-react';
-import { getStatusColor, getRoleColor, getSubscriptionColor } from './UsersGrid';
+import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor } from '../../utils/StatusUtils';
 
 export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
   return (

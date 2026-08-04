@@ -1,5 +1,5 @@
 import { X, Check, MapPin, Reply } from 'lucide-react';
-import { renderStars } from './ReviewsList';
+import { renderStars } from '../../utils/StatusUtils';
 
 export default function ReviewDetailsModal({
   isOpen,

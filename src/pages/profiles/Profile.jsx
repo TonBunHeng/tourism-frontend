@@ -3,7 +3,6 @@ import {
   User,
   Shield,
   Settings,
-  Check,
   Globe,
   Image,
   FileText,
@@ -27,7 +26,6 @@ export default function Profile() {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -82,16 +80,6 @@ export default function Profile() {
     }
   };
 
-  const handleSave = () => {
-    setSaveSuccess(true);
-    setIsEditing(false);
-    setTimeout(() => setSaveSuccess(false), 3000);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
-
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'security', label: 'Security', icon: Shield },
@@ -144,12 +132,6 @@ export default function Profile() {
           <h1 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Profile Settings</h1>
           <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Manage your account settings and preferences</p>
         </div>
-        {saveSuccess && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)] rounded-lg text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] text-sm mt-2 sm:mt-0">
-            <Check className="w-4 h-4 flex-shrink-0" />
-            Profile updated successfully!
-          </div>
-        )}
       </div>
 
       {/* Tabs */}

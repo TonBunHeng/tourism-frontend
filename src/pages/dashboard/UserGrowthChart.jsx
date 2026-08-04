@@ -2,12 +2,18 @@ import { ArrowUpRight } from 'lucide-react';
 
 export default function UserGrowthChart() {
   const userGrowth = [
-    { month: 'Jan', users: 1200 },
-    { month: 'Feb', users: 1500 },
-    { month: 'Mar', users: 1800 },
-    { month: 'Apr', users: 2100 },
-    { month: 'May', users: 2500 },
-    { month: 'Jun', users: 2900 }
+    { month: 'Jan', users: 320 },
+    { month: 'Feb', users: 480 },
+    { month: 'Mar', users: 710 },
+    { month: 'Apr', users: 980 },
+    { month: 'May', users: 1360 },
+    { month: 'Jun', users: 1820 },
+    { month: 'Jul', users: 2410 },
+    { month: 'Aug', users: 3150 },
+    { month: 'Sep', users: 3890 },
+    { month: 'Oct', users: 4620 },
+    { month: 'Nov', users: 5380 },
+    { month: 'Dec', users: 6210 }
   ];
 
   return (

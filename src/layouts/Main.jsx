@@ -9,6 +9,18 @@ export default function Main() {
   const mainRef = useRef(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebar_expanded');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebar_expanded', JSON.stringify(isExpanded));
+  }, [isExpanded]);
+
   // Dynamic Page Title
   useEffect(() => {
     const pageTitles = {
@@ -43,16 +55,20 @@ export default function Main() {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div className="flex h-screen bg-gray-50 dark:bg-[#09090b] transition-colors duration-200">
       <Sidebar
         isOpen={isMobileSidebarOpen}
         setIsOpen={setIsMobileSidebarOpen}
+        isExpanded={isExpanded}
+        setIsExpanded={setIsExpanded}
       />
 
       <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
         <Header
           toggleSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
           isSidebarOpen={isMobileSidebarOpen}
+          isExpanded={isExpanded}
+          toggleExpand={() => setIsExpanded(prev => !prev)}
         />
 
         <main ref={mainRef} className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6">

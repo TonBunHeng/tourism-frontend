@@ -5,7 +5,8 @@ export default function RatingsTable({
   reviews,
   onStatusChange,
   onViewDetails,
-  onDelete
+  onDelete,
+  startIndex = 0
 }) {
   return (
     <div className="hidden sm:block overflow-x-auto">
@@ -27,8 +28,8 @@ export default function RatingsTable({
               const AvatarIcon = review.avatar;
               return (
                 <tr key={review.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                    {String(index + 1).padStart(2, '0')}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                    {String(startIndex + index + 1).padStart(2, '0')}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">

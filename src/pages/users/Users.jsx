@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import UsersHeader from './UsersHeader';
 import UsersStats from './UsersStats';
 import UsersToolbar from './UsersToolbar';
@@ -148,24 +148,50 @@ export default function Users() {
       verified: true,
       twoFactorAuth: true,
       subscription: 'Premium',
+      activity: 'Medium',
+      reports: 0
+    },
+    {
+      id: 8,
+      name: 'Vannak M.',
+      email: 'vannak@email.com',
+      phone: '+855 10 999 888',
+      avatar: User,
+      role: 'Admin',
+      status: 'Active',
+      joinDate: '2023-01-10',
+      lastActive: '2024-02-25 18:20',
+      reviews: 24,
+      favorites: 15,
+      places: 8,
+      location: 'Phnom Penh',
+      verified: true,
+      twoFactorAuth: true,
+      subscription: 'Premium',
       activity: 'High',
       reports: 0
     }
   ];
 
   const [users, setUsers] = useState(defaultUsers);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedSubscription, setSelectedSubscription] = useState('All');
-  const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('newest');
+  const [viewMode, setViewMode] = useState('list');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Modal states
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  // State for Add/Edit User Modal
-  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
+  // Form state
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -198,6 +224,16 @@ export default function Users() {
     if (sortBy === 'most_favorites') return b.favorites - a.favorites;
     return 0;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedRole, selectedStatus, selectedSubscription, sortBy, sortedUsers.length]);
+
+  const totalRecords = sortedUsers.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedUsers = sortedUsers.slice(startIndex, startIndex + itemsPerPage);
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
@@ -343,18 +379,71 @@ export default function Users() {
         {/* Grid or List View */}
         {viewMode === 'grid' ? (
           <UsersGrid
-            users={sortedUsers}
+            users={paginatedUsers}
             onViewDetails={handleViewDetails}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
           <UsersList
-            users={sortedUsers}
+            users={paginatedUsers}
             onViewDetails={handleViewDetails}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            startIndex={startIndex}
           />
+        )}
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> users
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

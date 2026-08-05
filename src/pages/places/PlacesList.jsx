@@ -1,6 +1,6 @@
 import { Star, MapPin, Edit, Eye, Trash2, Clock } from 'lucide-react';
 
-export default function PlacesList({ places, onViewPlace, onEditPlace, onDeletePlace }) {
+export default function PlacesList({ places, onViewPlace, onEditPlace, onDeletePlace, startIndex = 0 }) {
   return (
     <>
       {/* Mobile: stacked cards instead of a squeezed table */}
@@ -30,18 +30,18 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <button
-                    onClick={() => onEditPlace(place)}
-                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
-                    title="Edit"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button
                     onClick={() => onViewPlace(place.id)}
                     className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
                     title="View"
                   >
                     <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onEditPlace(place)}
+                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
+                    title="Edit"
+                  >
+                    <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => onDeletePlace(place.id)}
@@ -81,8 +81,8 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
             {places.length > 0 ? (
               places.map((place, index) => (
                 <tr key={place.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                    {String(index + 1).padStart(2, '0')}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                    {String(startIndex + index + 1).padStart(2, '0')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
@@ -117,18 +117,18 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => onEditPlace(place)}
-                        className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
-                        title="Edit"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
                         onClick={() => onViewPlace(place.id)}
                         className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
                         title="View"
                       >
                         <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onEditPlace(place)}
+                        className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => onDeletePlace(place.id)}

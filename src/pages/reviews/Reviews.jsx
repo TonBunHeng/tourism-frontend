@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   User,
   Landmark,
@@ -7,7 +7,9 @@ import {
   Umbrella,
   Leaf,
   Flame,
-  Sunrise
+  Sunrise,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import ReviewsHeader from './ReviewsHeader';
 import ReviewsStats from './ReviewsStats';
@@ -237,6 +239,35 @@ export default function Reviews() {
       images: ['https://images.unsplash.com/photo-1542131596-7a4ffc23f2f4?w=200&h=150&fit=crop'],
       helpful: 29,
       reported: false
+    },
+    {
+      id: 8,
+      user: {
+        name: 'Vannak M.',
+        avatar: User,
+        email: 'vannak@email.com',
+        verified: true,
+        memberSince: '2023-01-10',
+        totalReviews: 24
+      },
+      place: {
+        name: 'Bokor National Park',
+        category: 'Nature',
+        location: 'Kampot',
+        image: Leaf
+      },
+      rating: 5,
+      title: 'Stunning mountain views',
+      comment: 'Cool climate, historic French casino ruins, and beautiful waterfalls. A fantastic day trip from Kampot.',
+      date: '2024-02-24',
+      likes: 112,
+      dislikes: 2,
+      replies: [],
+      status: 'Published',
+      featured: true,
+      images: [],
+      helpful: 41,
+      reported: false
     }
   ];
 
@@ -250,6 +281,9 @@ export default function Reviews() {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const categories = ['All', 'Temple', 'Palace', 'Market', 'Beach', 'Nature', 'Historical'];
   const statuses = ['All', 'Published', 'Pending', 'Flagged', 'Archived'];
@@ -275,6 +309,16 @@ export default function Reviews() {
     if (sortBy === 'most_helpful') return b.helpful - a.helpful;
     return 0;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedStatus, selectedRating, selectedCategory, sortBy, sortedReviews.length]);
+
+  const totalRecords = sortedReviews.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedReviews = sortedReviews.slice(startIndex, startIndex + itemsPerPage);
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this review?')) {
@@ -375,12 +419,64 @@ export default function Reviews() {
 
         {/* Reviews Feed */}
         <ReviewsList
-          reviews={sortedReviews}
+          reviews={paginatedReviews}
           onViewDetails={handleViewDetails}
           onStatusChange={handleStatusChange}
           onOpenReplyModal={handleOpenReplyModal}
           onDelete={handleDelete}
         />
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> reviews
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Review Details Modal */}

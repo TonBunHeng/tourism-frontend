@@ -15,13 +15,16 @@ import { exportToPDF, exportToExcel } from '../../utils/exportReports';
 
 export default function Reports() {
   const [activeTab, setActiveTab] = useState('places');
-  const [dateRange, setDateRange] = useState('all');
   const [selectedDay, setSelectedDay] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
+  
+  // Only apply date filter when user clicks Submit
+  const [appliedDay, setAppliedDay] = useState('');
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [totalExports, setTotalExports] = useState(14);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
@@ -43,14 +46,12 @@ export default function Reports() {
     const itemDate = item.createdAt || item.startDate || item.joinedDate || item.date;
 
     let matchesDate = true;
-    if (dateRange === 'day' && selectedDay && itemDate) {
-      matchesDate = itemDate === selectedDay;
-    } else if (dateRange === 'month' && selectedMonth && itemDate) {
-      const monthPart = itemDate.slice(5, 7);
-      matchesDate = monthPart === selectedMonth;
-    } else if (dateRange === 'year' && selectedYear && itemDate) {
-      const yearPart = itemDate.slice(0, 4);
-      matchesDate = yearPart === selectedYear;
+    if (itemDate && appliedDay) {
+      if (item.startDate && item.endDate) {
+        matchesDate = appliedDay >= item.startDate && appliedDay <= item.endDate;
+      } else {
+        matchesDate = itemDate === appliedDay || itemDate.startsWith(appliedDay);
+      }
     }
 
     const matchesSearch = Object.values(item).some(val =>
@@ -71,17 +72,23 @@ export default function Reports() {
     }, 200);
   };
 
-  const handleRefresh = () => {
-    setDateRange('all');
+  const handleSubmitFilter = () => {
+    setAppliedDay(selectedDay);
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+    }, 250);
+  };
+
+  const handleResetFilter = () => {
     setSelectedDay('');
-    setSelectedMonth('');
-    setSelectedYear('');
+    setAppliedDay('');
     setSearchTerm('');
     setStatusFilter('All');
-    setIsLoading(true);
+    setIsResetting(true);
     setTimeout(() => {
-      setIsLoading(false);
-    }, 400);
+      setIsResetting(false);
+    }, 250);
   };
 
   const handleOpenExportPDF = () => {
@@ -161,19 +168,14 @@ export default function Reports() {
       />
 
       <ReportsHeader
-        activeTab={activeTab}
-        dateRange={dateRange}
-        setDateRange={setDateRange}
         selectedDay={selectedDay}
         setSelectedDay={setSelectedDay}
-        selectedMonth={selectedMonth}
-        setSelectedMonth={setSelectedMonth}
-        selectedYear={selectedYear}
-        setSelectedYear={setSelectedYear}
+        onSubmitFilter={handleSubmitFilter}
+        onResetFilter={handleResetFilter}
         onExportPDF={handleOpenExportPDF}
         onExportExcel={handleOpenExportExcel}
-        onRefresh={handleRefresh}
-        isLoading={isLoading}
+        isSubmitting={isSubmitting}
+        isResetting={isResetting}
       />
 
       <ReportsStats

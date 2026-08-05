@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Home,
   Landmark,
@@ -6,7 +6,9 @@ import {
   Sprout,
   Church,
   Mountain,
-  Building
+  Building,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import ProvincesHeader from './ProvincesHeader';
 import ProvincesStats from './ProvincesStats';
@@ -101,15 +103,46 @@ export default function Provinces() {
       description: 'Known for its mountain ranges and forests',
       rating: 4.4,
       places: 22
+    },
+    {
+      id: 7,
+      name: 'Kampot',
+      type: 'Province',
+      population: '627,884',
+      area: '4,873 km²',
+      districts: 8,
+      communes: 93,
+      status: 'Active',
+      icon: Mountain,
+      description: 'Famous for Kampot Pepper and Bokor Mountain',
+      rating: 4.8,
+      places: 41
+    },
+    {
+      id: 8,
+      name: 'Kandal',
+      type: 'Province',
+      population: '1,201,581',
+      area: '3,211 km²',
+      districts: 11,
+      communes: 127,
+      status: 'Active',
+      icon: Building,
+      description: 'Surrounds the national capital Phnom Penh',
+      rating: 4.6,
+      places: 52
     }
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewingProvince, setViewingProvince] = useState(null);
   const [editingProvince, setEditingProvince] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const provinceTypes = ['All', 'Capital City', 'Province', 'Municipality'];
 
@@ -119,6 +152,16 @@ export default function Provinces() {
     const matchesType = selectedType === 'All' || prov.type === selectedType;
     return matchesSearch && matchesType;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedType, filteredProvinces.length]);
+
+  const totalRecords = filteredProvinces.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedProvinces = filteredProvinces.slice(startIndex, startIndex + itemsPerPage);
 
   const handleEdit = (id) => {
     const province = provinces.find(p => p.id === id);
@@ -191,18 +234,71 @@ export default function Provinces() {
 
         {viewMode === 'grid' ? (
           <ProvincesGrid
-            provinces={filteredProvinces}
+            provinces={paginatedProvinces}
             onViewProvince={handleView}
             onEditProvince={handleEdit}
             onDeleteProvince={handleDelete}
           />
         ) : (
           <ProvincesList
-            provinces={filteredProvinces}
+            provinces={paginatedProvinces}
             onViewProvince={handleView}
             onEditProvince={handleEdit}
             onDeleteProvince={handleDelete}
+            startIndex={startIndex}
           />
+        )}
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> provinces
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

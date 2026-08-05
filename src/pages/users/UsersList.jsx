@@ -1,7 +1,7 @@
 import { Check, Clock, X, Eye, Edit, Trash2, Phone } from 'lucide-react';
 import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor } from '../../utils/StatusUtils';
 
-export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
+export default function UsersList({ users, onViewDetails, onEdit, onDelete, startIndex = 0 }) {
   return (
     <>
       {/* Mobile Card List View */}
@@ -35,7 +35,7 @@ export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
                     <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{user.reviews} reviews</span>
                   </div>
                   <div className="flex items-center gap-1 mt-2">
-                    <button onClick={() => onViewDetails(user)} className="p-1.5 text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)] hover:bg-[var(--color-purple-bg)] dark:hover:bg-[var(--color-purple-dark-bg)] rounded-lg transition-colors" title="View Details">
+                    <button onClick={() => onViewDetails(user)} className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors" title="View Details">
                       <Eye className="w-4 h-4" />
                     </button>
                     <button onClick={() => onEdit(user)} className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors" title="Edit">
@@ -79,8 +79,8 @@ export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
                 const UserAvatar = user.avatar;
                 return (
                   <tr key={user.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                      {String(index + 1).padStart(2, '0')}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                      {String(startIndex + index + 1).padStart(2, '0')}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => onViewDetails(user)}
-                          className="p-1.5 text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)] hover:bg-[var(--color-purple-bg)] dark:hover:bg-[var(--color-purple-dark-bg)] rounded-lg transition-colors"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import GalleryHeader from './GalleryHeader';
 import GalleryStats from './GalleryStats';
 import GalleryToolbar from './GalleryToolbar';
@@ -99,18 +100,51 @@ export default function Gallery() {
       views: 432,
       likes: 28,
       status: 'Draft'
+    },
+    {
+      id: 7,
+      title: 'Kampot Pepper Farm',
+      type: 'image',
+      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop',
+      category: 'Nature',
+      tags: ['kampot', 'pepper', 'farm'],
+      size: '3.4 MB',
+      dimensions: '1920x1080',
+      uploadedBy: 'Editor',
+      uploadDate: '2024-03-01',
+      views: 780,
+      likes: 62,
+      status: 'Published'
+    },
+    {
+      id: 8,
+      title: 'Preah Vihear Temple Cliff',
+      type: 'image',
+      url: 'https://images.unsplash.com/photo-1583418037743-c2e994c1222d?w=400&h=300&fit=crop',
+      category: 'Temple',
+      tags: ['preah vihear', 'temple', 'cliff'],
+      size: '4.1 MB',
+      dimensions: '1920x1080',
+      uploadedBy: 'Admin',
+      uploadDate: '2024-03-05',
+      views: 1890,
+      likes: 145,
+      status: 'Published'
     }
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedType, setSelectedType] = useState('All');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingMedia, setEditingMedia] = useState(null);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const categories = ['All', 'Temple', 'City', 'Nature', 'Culture', 'Beach', 'Historical'];
   const types = ['All', 'image', 'video'];
@@ -122,6 +156,16 @@ export default function Gallery() {
     const matchesType = selectedType === 'All' || item.type === selectedType;
     return matchesSearch && matchesCategory && matchesType;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedType, filteredMedia.length]);
+
+  const totalRecords = filteredMedia.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedMedia = filteredMedia.slice(startIndex, startIndex + itemsPerPage);
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this media?')) {
@@ -174,18 +218,71 @@ export default function Gallery() {
         {/* Grid or List View */}
         {viewMode === 'grid' ? (
           <GalleryGrid
-            media={filteredMedia}
+            media={paginatedMedia}
             onPreview={handlePreview}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
           <GalleryList
-            media={filteredMedia}
+            media={paginatedMedia}
             onPreview={handlePreview}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            startIndex={startIndex}
           />
+        )}
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> media items
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

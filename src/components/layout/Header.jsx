@@ -7,7 +7,7 @@ import {
 import profile_v2 from "../../assets/images/profile_v2.png";
 import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
 
-export default function Header({ toggleSidebar, isSidebarOpen }) {
+export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggleExpand }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -96,50 +96,47 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 transition-colors duration-200 w-full">
+    <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-30 transition-colors duration-200 w-full">
       <div className="px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left section - Page Title & Mobile Menu Button */}
+          {/* Left section - Unified Sidebar Toggle Button */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
-              onClick={toggleSidebar}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors shrink-0"
-              aria-label="Toggle mobile menu"
+              onClick={toggleExpand}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
+              title={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
+              aria-label="Toggle Sidebar Navigation"
             >
-              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              {/* Mobile Icon */}
+              <span className="md:hidden">
+                {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              </span>
+
+              {/* Desktop Icon */}
+              <span className="hidden md:inline-flex">
+                {isExpanded ? (
+                  <svg className="w-5 h-5 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
+                    <path d="M9 3v18" strokeWidth="2" />
+                    <path d="M14 15l-3-3 3-3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
+                    <path d="M9 3v18" strokeWidth="2" />
+                    <path d="M13 9l3 3-3 3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </span>
             </button>
           </div>
 
           {/* Right section - Actions */}
           <div className="flex items-center gap-1 sm:gap-3 shrink-0">
-            {/* Search - Desktop */}
-            {/* <div ref={searchRef} className="hidden md:flex items-center relative">
-              <div className={`relative transition-all duration-300 ${isSearchOpen ? 'w-64' : 'w-40'}`}>
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchOpen(true)}
-                  className="w-full pl-9 pr-4 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 dark:text-white border-0 rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-600 transition-all"
-                />
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              </div>
-            </div> */}
-
-            {/* Search - Mobile Toggle */}
-            {/* <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Toggle search"
-            >
-              <Search size={20} className="text-gray-600 dark:text-gray-300" />
-            </button> */}
-
-            {/* Dark / Light Mode Toggle - now directly in header */}
+            {/* Dark / Light Mode Toggle */}
             <button
               onClick={handleToggleTheme}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors"
               aria-label="Toggle dark mode"
             >
               {isDarkMode ? (
@@ -153,16 +150,14 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
             <div ref={langRef} className="relative">
               <button
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className="flex items-center gap-1.5 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors"
                 aria-label="Change language"
               >
                 <Globe size={20} />
-                <span className="text-sm font-medium hidden sm:inline">{currentLang}</span>
-                <ChevronDown size={14} className="text-gray-400" />
               </button>
 
               {showLangMenu && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
                   <div className="p-1.5">
                     <button
                       onClick={() => {
@@ -170,12 +165,12 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                         setShowLangMenu(false);
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors ${currentLang === 'EN'
-                        ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-semibold'
+                        : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
                         }`}
                     >
                       <span>English</span>
-                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-gray-600 rounded">EN</span>
+                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded">EN</span>
                     </button>
                     <button
                       onClick={() => {
@@ -183,12 +178,12 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                         setShowLangMenu(false);
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors mt-1 ${currentLang === 'KH'
-                        ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-semibold'
+                        : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
                         }`}
                     >
                       <span>ភាសាខ្មែរ</span>
-                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-gray-600 rounded">KH</span>
+                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded">KH</span>
                     </button>
                   </div>
                 </div>
@@ -199,19 +194,19 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
             <div ref={notificationRef} className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
                 aria-label="Notifications"
               >
-                <Bell size={20} className="text-gray-600 dark:text-gray-300" />
+                <Bell size={20} className="text-gray-600 dark:text-zinc-300" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-800"></span>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-zinc-900"></span>
                 )}
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
-                  <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800 dark:text-white">Notifications</h3>
+                <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
+                  <div className="p-4 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+                    <h3 className="font-semibold text-gray-800 dark:text-zinc-100">Notifications</h3>
                     <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium">
                       Mark all read
                     </button>
@@ -220,15 +215,15 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                     {notifications.map((notification) => (
                       <div
                         key={notification.id}
-                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${!notification.read ? 'bg-blue-50/50 dark:bg-gray-700' : ''
+                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors ${!notification.read ? 'bg-blue-50/50 dark:bg-zinc-800' : ''
                           }`}
                       >
-                        <p className="text-sm text-gray-800 dark:text-gray-200">{notification.title}</p>
+                        <p className="text-sm text-gray-800 dark:text-zinc-200">{notification.title}</p>
                         <span className="text-xs text-gray-400">{notification.time}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="p-3 border-t border-gray-100 dark:border-gray-700 text-center">
+                  <div className="p-3 border-t border-gray-100 dark:border-zinc-800 text-center">
                     <Link to="/notifications" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium">
                       View all notifications
                     </Link>
@@ -241,38 +236,37 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
             <div ref={profileRef} className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-1 sm:gap-2 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
                 aria-label="Profile menu"
               >
                 <img
                   src={profile_v2}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-600"
+                  className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-zinc-700"
                 />
-                <ChevronDown size={16} className="text-gray-400 hidden sm:block" />
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
-                  <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white truncate">BunHeng Ton</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">bunheng@email.com</p>
+                <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
+                  <div className="p-4 border-b border-gray-100 dark:border-zinc-800">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-zinc-100 truncate">BunHeng Ton</p>
+                    <p className="text-xs text-gray-500 dark:text-zinc-400 truncate">bunheng@email.com</p>
                   </div>
                   <div className="p-2">
-                    <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
+                    <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <User size={18} className="text-gray-400" />
                       My Profile
                     </Link>
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <Settings size={18} className="text-gray-400" />
                       Settings
                     </Link>
-                    <Link to="/chat" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
+                    <Link to="/chat" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <MessageCircle size={18} className="text-gray-400" />
                       Messages
                     </Link>
 
-                    <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors w-full text-left">
+                    <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md transition-colors w-full text-left">
                       <LogOut size={18} className="text-red-500 dark:text-red-400" />
                       Log Out
                     </button>
@@ -285,14 +279,14 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
 
         {/* Mobile Search - Expanded */}
         {isSearchOpen && (
-          <div ref={searchRef} className="md:hidden py-2.5 border-t border-gray-100 dark:border-gray-700 animate-fadeIn">
+          <div ref={searchRef} className="md:hidden py-2.5 border-t border-gray-100 dark:border-zinc-800 animate-fadeIn">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 dark:text-white border-0 rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-600 transition-all"
+                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-100 dark:bg-zinc-800 dark:text-zinc-100 border-0 rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-zinc-700 transition-all"
                 autoFocus
               />
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />

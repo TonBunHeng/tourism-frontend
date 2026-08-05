@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import RatingsHeader from './RatingsHeader';
 import RatingsStats from './RatingsStats';
 import RatingsSentiment from './RatingsSentiment';
@@ -111,6 +111,40 @@ export default function Ratings() {
       status: 'Pending',
       verified: false,
       images: []
+    },
+    {
+      id: 7,
+      user: 'Emma W.',
+      avatar: User,
+      place: 'Preah Vihear Temple',
+      category: 'Temple',
+      rating: 5,
+      title: 'Majestic cliff top temple',
+      comment: 'The cliff top views are incredible. Breathtaking architecture and history.',
+      date: '2024-02-20',
+      likes: 142,
+      dislikes: 2,
+      replies: 10,
+      status: 'Approved',
+      verified: true,
+      images: []
+    },
+    {
+      id: 8,
+      user: 'Vannak M.',
+      avatar: User,
+      place: 'Bokor National Park',
+      category: 'Nature',
+      rating: 4,
+      title: 'Cool mountain air',
+      comment: 'Great views and cool breeze. Loved exploring the old buildings.',
+      date: '2024-02-24',
+      likes: 88,
+      dislikes: 1,
+      replies: 4,
+      status: 'Approved',
+      verified: true,
+      images: []
     }
   ]);
 
@@ -121,6 +155,9 @@ export default function Ratings() {
   const [selectedReview, setSelectedReview] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const places = ['All', 'Angkor Wat', 'Phnom Penh Royal Palace', 'Siem Reap Night Market', 'Koh Rong Island', 'Battambang Countryside', 'Killing Caves'];
   const statuses = ['All', 'Approved', 'Pending', 'Rejected'];
@@ -153,6 +190,16 @@ export default function Ratings() {
     if (sortBy === 'most_likes') return b.likes - a.likes;
     return 0;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedStatus, selectedRating, selectedPlace, sortBy, sortedReviews.length]);
+
+  const totalRecords = sortedReviews.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedReviews = sortedReviews.slice(startIndex, startIndex + itemsPerPage);
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this review?')) {
@@ -203,7 +250,7 @@ export default function Ratings() {
 
         {/* Mobile View */}
         <RatingsGrid
-          reviews={sortedReviews}
+          reviews={paginatedReviews}
           onStatusChange={handleStatusChange}
           onViewDetails={handleViewDetails}
           onDelete={handleDelete}
@@ -211,11 +258,64 @@ export default function Ratings() {
 
         {/* Desktop View */}
         <RatingsTable
-          reviews={sortedReviews}
+          reviews={paginatedReviews}
           onStatusChange={handleStatusChange}
           onViewDetails={handleViewDetails}
           onDelete={handleDelete}
+          startIndex={startIndex}
         />
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> ratings
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Review Details Modal */}

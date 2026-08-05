@@ -9,24 +9,10 @@ import {
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
 
-export default function Sidebar({ isOpen, setIsOpen }) {
-  // Load initial state from localStorage to prevent transition flashes on refresh
-  const [isExpanded, setIsExpanded] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebar_expanded');
-      return saved !== null ? JSON.parse(saved) : true;
-    }
-    return true;
-  });
-
+export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }) {
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const sidebarRef = useRef(null);
   const location = useLocation();
-
-  // Save expanded state to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('sidebar_expanded', JSON.stringify(isExpanded));
-  }, [isExpanded]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -49,7 +35,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Provinces", icon: Map, path: "/provinces" },
     { name: "Galleries", icon: Images, path: "/galleries" },
     { name: "Events", icon: CalendarDays, path: "/events" },
-    
+
   ];
 
   const engagementItems = [
@@ -57,8 +43,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Reviews", icon: MessageSquareText, path: "/reviews" },
     { name: "Ratings", icon: Star, path: "/ratings" },
     { name: "Favorites", icon: Heart, path: "/favorites" },
-    { name: "Deletion Requests", icon: Trash2, path: "/deletion-requests" },
     { name: "Reports", icon: FileText, path: "/reports" },
+    { name: "Deletion Requests", icon: Trash2, path: "/deletion-requests" },
   ];
 
   const accountItems = [
@@ -137,16 +123,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
       <aside
         ref={sidebarRef}
-        className={`fixed md:relative h-screen border-r flex flex-col transition-all duration-300 z-50
-          bg-[var(--color-sidebar-bg)] dark:bg-[var(--color-sidebar-dark-bg)]
-          border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]
-          ${isExpanded ? 'md:w-[260px]' : 'md:w-[80px]'}
-          w-[280px] max-w-[85vw]
-          ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          shadow-2xl md:shadow-[1px_0_10px_rgba(0,0,0,0.03)]
-        `}
+        className={`fixed md:static inset-y-0 left-0 z-40 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border-r border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] transition-all duration-300 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          } ${isExpanded ? 'w-64' : 'w-64 md:w-20'}`}
       >
-        {/* Header */}
+        {/* Brand Header */}
         <div className={`h-20 flex items-center justify-between px-5 ${!isExpanded ? 'md:justify-center md:px-2' : ''}`}>
           <div className={`flex items-center gap-3 overflow-hidden w-full ${!isExpanded ? 'md:w-auto' : ''}`}>
             <div
@@ -160,13 +140,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </div>
           </div>
 
-          <button
-            onClick={() => setIsExpanded(false)}
-            className={`hidden ${isExpanded ? 'md:block' : 'md:hidden'} p-1 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors shrink-0`}
-          >
-            <ChevronLeft size={18} />
-          </button>
-
+          {/* Mobile Close Button */}
           <button
             onClick={() => setIsOpen(false)}
             className="md:hidden p-1 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors shrink-0"
@@ -175,16 +149,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        {!isExpanded && (
-          <div className="hidden md:flex justify-center -mt-2 mb-2">
-            <button
-              onClick={() => setIsExpanded(true)}
-              className="p-1 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
-        )}
 
         {/* Navigation Areas */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-2 px-4 flex flex-col gap-6">
@@ -224,7 +188,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               <img
                 src={profile_v2}
                 alt="User profile"
-                className="w-9 h-9 rounded-full object-cover bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"/>
+                className="w-9 h-9 rounded-full object-cover bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]" />
             </div>
             <div className={`flex flex-col overflow-hidden ${isExpanded ? 'flex' : 'flex md:hidden'}`}>
               <span className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] truncate">BunHeng Ton</span>

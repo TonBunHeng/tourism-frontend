@@ -43,13 +43,13 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
       aria-labelledby="logout-modal-title"
     >
       <div 
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full mx-4 p-6 relative animate-in fade-in zoom-in duration-200 border border-gray-100 dark:border-gray-700"
+        className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl max-w-md w-full mx-4 p-6 relative animate-in fade-in zoom-in duration-200 border border-gray-100 dark:border-zinc-800"
         onClick={(e) => e.stopPropagation()} // Prevent clicks inside the modal from closing it
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          className="absolute right-4 top-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
           aria-label="Close modal"
         >
           <X size={20} />
@@ -63,12 +63,12 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
         </div>
 
         {/* Title */}
-        <h3 id="logout-modal-title" className="text-xl font-bold text-gray-800 dark:text-white text-center mb-2">
+        <h3 id="logout-modal-title" className="text-xl font-bold text-gray-800 dark:text-zinc-100 text-center mb-2">
           Logout Confirmation
         </h3>
 
         {/* Message */}
-        <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
+        <p className="text-gray-600 dark:text-zinc-400 text-center mb-6">
           Are you sure you want to logout? You will need to login again to access your account.
         </p>
 
@@ -76,7 +76,7 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-300 font-medium rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
           >
             Cancel
           </button>

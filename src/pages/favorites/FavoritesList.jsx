@@ -9,7 +9,8 @@ export default function FavoritesList({
   isAllSelected,
   onToggleVisited,
   onViewDetails,
-  onDelete
+  onDelete,
+  startIndex = 0
 }) {
   return (
     <div className="overflow-x-auto">
@@ -46,8 +47,8 @@ export default function FavoritesList({
                       className="w-4 h-4 text-[var(--color-rose-badge-text)] border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded focus:ring-[var(--color-input)] dark:bg-[var(--color-bg-dark)] dark:checked:bg-[var(--color-rose-badge-text)] cursor-pointer"
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                    {String(index + 1).padStart(2, '0')}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                    {String(startIndex + index + 1).padStart(2, '0')}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">

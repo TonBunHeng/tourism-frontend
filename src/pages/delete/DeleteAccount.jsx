@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import DeletionHeader from './DeletionHeader';
 import DeletionStats from './DeletionStats';
 import DeletionAlert from './DeletionAlert';
@@ -149,7 +149,7 @@ export default function DeleteAccount() {
     },
     {
       id: 6,
-      type: 'item',
+      type: 'account',
       user: {
         name: 'Thomas K.',
         email: 'thomas@email.com',
@@ -160,24 +160,16 @@ export default function DeleteAccount() {
         totalFavorites: 1,
         totalPlaces: 1
       },
-      reason: 'Privacy - I want to remove my personal review of the Killing Caves.',
-      additionalInfo: 'I feel uncomfortable with my review being public. Please remove it.',
+      reason: 'Security concerns - Suspicious activity detected on account.',
+      additionalInfo: 'I noticed login attempts from unknown locations. Prefer to close this account.',
       requestDate: '2024-02-15',
-      status: 'approved',
-      urgency: 'high',
+      status: 'rejected',
+      urgency: 'critical',
       attachments: [],
-      adminNotes: 'Review removed as per user request. User privacy respected.',
+      adminNotes: 'Advised user to enable 2FA instead. Request rejected per user agreement.',
       processedDate: '2024-02-16',
       processedBy: 'Admin',
-      itemsToDelete: [
-        {
-          id: 103,
-          name: 'Review of Killing Caves',
-          type: 'review',
-          category: 'Review',
-          dateAdded: '2024-02-10'
-        }
-      ]
+      itemsToDelete: []
     },
     {
       id: 7,
@@ -192,12 +184,12 @@ export default function DeleteAccount() {
         totalFavorites: 6,
         totalPlaces: 2
       },
-      reason: 'Security concern - I believe my account may have been compromised.',
-      additionalInfo: 'I received suspicious login attempts. Please delete my account for security reasons.',
+      reason: 'No longer needed',
+      additionalInfo: 'Switching to another platform.',
       requestDate: '2024-02-20',
       status: 'pending',
-      urgency: 'critical',
-      attachments: ['security_report.pdf'],
+      urgency: 'low',
+      attachments: [],
       adminNotes: '',
       processedDate: null,
       processedBy: null,
@@ -207,38 +199,31 @@ export default function DeleteAccount() {
       id: 8,
       type: 'item',
       user: {
-        name: 'Nina P.',
-        email: 'nina@email.com',
-        phone: '+855 78 876 543',
+        name: 'Vannak M.',
+        email: 'vannak@email.com',
+        phone: '+855 10 999 888',
         avatar: User,
-        memberSince: '2024-02-01',
-        totalReviews: 4,
-        totalFavorites: 2,
-        totalPlaces: 0
+        memberSince: '2023-01-10',
+        totalReviews: 24,
+        totalFavorites: 15,
+        totalPlaces: 8
       },
-      reason: 'Spam content - I want to report and delete spam reviews on my place.',
-      additionalInfo: 'There are multiple fake reviews on my restaurant listing. Please delete them.',
-      requestDate: '2024-02-25',
+      reason: 'Outdated listing',
+      additionalInfo: 'Business has closed permanently.',
+      requestDate: '2024-02-22',
       status: 'pending',
       urgency: 'medium',
-      attachments: ['spam_screenshots.zip'],
+      attachments: [],
       adminNotes: '',
       processedDate: null,
       processedBy: null,
       itemsToDelete: [
         {
-          id: 104,
-          name: 'Fake Review #1',
-          type: 'review',
-          category: 'Review',
-          dateAdded: '2024-02-20'
-        },
-        {
-          id: 105,
-          name: 'Fake Review #2',
-          type: 'review',
-          category: 'Review',
-          dateAdded: '2024-02-22'
+          id: 103,
+          name: 'Old Siem Reap Guesthouse',
+          type: 'place',
+          category: 'Accommodation',
+          dateAdded: '2023-05-10'
         }
       ]
     }
@@ -249,25 +234,33 @@ export default function DeleteAccount() {
   const [selectedType, setSelectedType] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedUrgency, setSelectedUrgency] = useState('All');
+  const [sortBy, setSortBy] = useState('newest');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Modal states
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmType, setConfirmType] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
 
   const types = ['All', 'account', 'item'];
   const statuses = ['All', 'pending', 'approved', 'rejected', 'archived'];
   const urgencies = ['All', 'critical', 'high', 'medium', 'low'];
 
-  const filteredRequests = requests.filter(request => {
-    const matchesSearch = request.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         request.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         request.reason.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'All' || request.type === selectedType;
-    const matchesStatus = selectedStatus === 'All' || request.status === selectedStatus;
-    const matchesUrgency = selectedUrgency === 'All' || request.urgency === selectedUrgency;
+  const filteredRequests = requests.filter(req => {
+    const matchesSearch = req.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesType = selectedType === 'All' || req.type === selectedType;
+    const matchesStatus = selectedStatus === 'All' || req.status === selectedStatus;
+    const matchesUrgency = selectedUrgency === 'All' || req.urgency === selectedUrgency;
+
     return matchesSearch && matchesType && matchesStatus && matchesUrgency;
   });
 
@@ -275,14 +268,24 @@ export default function DeleteAccount() {
     if (sortBy === 'newest') return new Date(b.requestDate) - new Date(a.requestDate);
     if (sortBy === 'oldest') return new Date(a.requestDate) - new Date(b.requestDate);
     if (sortBy === 'urgency') {
-      const urgencyOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-      return (urgencyOrder[a.urgency] || 4) - (urgencyOrder[b.urgency] || 4);
+      const order = { critical: 4, high: 3, medium: 2, low: 1 };
+      return order[b.urgency] - order[a.urgency];
     }
     return 0;
   });
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedType, selectedStatus, selectedUrgency, sortBy, sortedRequests.length]);
+
+  const totalRecords = sortedRequests.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedRequests = sortedRequests.slice(startIndex, startIndex + itemsPerPage);
+
   const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset all requests to default?')) {
+    if (window.confirm('Are you sure you want to reset all deletion requests to default? This will restore all original requests and cannot be undone.')) {
       setRequests(defaultRequests);
       setSearchTerm('');
       setSelectedType('All');
@@ -387,13 +390,65 @@ export default function DeleteAccount() {
 
         {/* Requests List */}
         <DeletionList
-          requests={sortedRequests}
+          requests={paginatedRequests}
           onViewDetails={handleViewDetails}
           onApprove={handleApprove}
           onReject={handleReject}
           onClearFilters={handleClearFilters}
           hasActiveFilters={hasActiveFilters}
         />
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> requests
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Details Modal */}

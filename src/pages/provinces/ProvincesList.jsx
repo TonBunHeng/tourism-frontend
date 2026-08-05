@@ -1,7 +1,7 @@
 import { Clock, Eye, Edit, Trash2 } from 'lucide-react';
 import { getStatusColor, getTypeBadgeColor } from '../../utils/StatusUtils';
 
-export default function ProvincesList({ provinces, onViewProvince, onEditProvince, onDeleteProvince }) {
+export default function ProvincesList({ provinces, onViewProvince, onEditProvince, onDeleteProvince, startIndex = 0 }) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
@@ -22,8 +22,8 @@ export default function ProvincesList({ provinces, onViewProvince, onEditProvinc
             provinces.map((province, index) => {
               return (
                 <tr key={province.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                    {String(index + 1).padStart(2, '0')}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                    {String(startIndex + index + 1).padStart(2, '0')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>

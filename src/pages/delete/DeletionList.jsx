@@ -40,143 +40,201 @@ export default function DeletionList({
   onApprove,
   onReject,
   onClearFilters,
-  hasActiveFilters
+  hasActiveFilters,
+  startIndex = 0
 }) {
   return (
-    <div className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
-      {requests.length > 0 ? (
-        requests.map((request) => {
-          const TypeIcon = getTypeIcon(request.type);
-          return (
-            <div key={request.id} className="p-4 md:p-6 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
-              <div className="flex items-start gap-3 md:gap-4">
-                {/* User Avatar */}
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 md:w-6 md:h-6 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
-                </div>
-
-                {/* Request Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{request.user.name}</span>
-                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] truncate">{request.user.email}</span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border ${getTypeBadge(request.type)}`}>
-                          <TypeIcon className="w-3 h-3" />
-                          {getTypeLabel(request.type)}
-                        </span>
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border ${getUrgencyBadge(request.urgency)}`}>
-                          <AlertCircle className="w-3 h-3" />
-                          {request.urgency.toUpperCase()}
-                        </span>
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border ${getStatusBadge(request.status)}`}>
-                          {request.status === 'pending' && <Clock className="w-3 h-3" />}
-                          {request.status === 'approved' && <Check className="w-3 h-3" />}
-                          {request.status === 'rejected' && <X className="w-3 h-3" />}
-                          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                        </span>
-                        <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {request.requestDate}
-                        </span>
-                      </div>
-                    </div>
-                    {request.status === 'pending' && (
-                      <div className="flex gap-1 flex-shrink-0">
-                        <button
-                          onClick={() => onApprove(request)}
-                          className="p-1.5 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] hover:bg-[var(--color-success-bg)]/80 dark:hover:bg-[var(--color-success-dark-bg)]/80 rounded-lg transition-colors"
-                          title="Approve"
-                        >
-                          <Check className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
-                        </button>
-                        <button
-                          onClick={() => onReject(request)}
-                          className="p-1.5 bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] hover:bg-[var(--color-danger-bg)]/80 dark:hover:bg-[var(--color-danger-dark-bg)]/80 rounded-lg transition-colors"
-                          title="Reject"
-                        >
-                          <X className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
-                        </button>
-                      </div>
-                    )}
+    <>
+      {/* Mobile Card View */}
+      <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
+        {requests.length > 0 ? (
+          requests.map((request) => {
+            const TypeIcon = getTypeIcon(request.type);
+            return (
+              <div key={request.id} className="p-4 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
+                    <User className="w-5 h-5 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
                   </div>
 
-                  <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 line-clamp-2">{request.reason}</p>
-
-                  {request.itemsToDelete && request.itemsToDelete.length > 0 && (
-                    <div className="mt-2 flex items-center gap-2 flex-wrap">
-                      <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Items to delete:</span>
-                      {request.itemsToDelete.map((item, idx) => (
-                        <span key={idx} className="text-xs px-2 py-0.5 bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] rounded-full">
-                          {item.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {request.adminNotes && (
-                    <div className="mt-2 p-2 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] rounded-lg border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
-                      <p className="text-xs text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]">
-                        <span className="font-medium">Admin Note:</span> {request.adminNotes}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-4 mt-3 flex-wrap">
-                    <button
-                      onClick={() => onViewDetails(request)}
-                      className="text-xs text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:text-[var(--color-purple-badge-text)]/80 font-medium flex items-center gap-1 cursor-pointer"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      View Details
-                    </button>
-                    {request.status === 'pending' && (
-                      <>
-                        <button
-                          onClick={() => onApprove(request)}
-                          className="text-xs text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:text-[var(--color-success-text)]/80 font-medium flex items-center gap-1 cursor-pointer"
-                        >
-                          <Check className="w-3.5 h-3.5" />
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => onReject(request)}
-                          className="text-xs text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:text-[var(--color-danger-text)]/80 font-medium flex items-center gap-1 cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                          Reject
-                        </button>
-                      </>
-                    )}
-                    {request.processedBy && (
-                      <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">
-                        Processed by {request.processedBy} on {request.processedDate}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{request.user.name}</p>
+                        <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] truncate">{request.user.email}</p>
+                      </div>
+                      <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full border ${getStatusBadge(request.status)}`}>
+                        {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                       </span>
-                    )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full border ${getTypeBadge(request.type)}`}>
+                        <TypeIcon className="w-3 h-3" />
+                        {getTypeLabel(request.type)}
+                      </span>
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full border ${getUrgencyBadge(request.urgency)}`}>
+                        <AlertCircle className="w-3 h-3" />
+                        {request.urgency.toUpperCase()}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1.5 line-clamp-2">{request.reason}</p>
+
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => onViewDetails(request)}
+                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      {request.status === 'pending' && (
+                        <>
+                          <button
+                            onClick={() => onApprove(request)}
+                            className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
+                            title="Approve"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => onReject(request)}
+                            className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
+                            title="Reject"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })
-      ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">📋</div>
-          <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No requests found</h3>
-          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
-          {hasActiveFilters && (
-            <button
-              onClick={onClearFilters}
-              className="mt-3 px-4 py-2 text-sm text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors"
-            >
-              Clear all filters
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+            );
+          })
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📋</div>
+            <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No requests found</h3>
+            <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden sm:block overflow-x-auto">
+        <table className="min-w-full divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
+          <thead className="bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">#</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">User</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Type</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Urgency</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Reason</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
+            {requests.length > 0 ? (
+              requests.map((request, index) => {
+                const TypeIcon = getTypeIcon(request.type);
+                return (
+                  <tr key={request.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                      {String(startIndex + index + 1).padStart(2, '0')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
+                          <User className="w-4 h-4 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{request.user.name}</p>
+                          <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{request.user.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full border ${getTypeBadge(request.type)}`}>
+                        <TypeIcon className="w-3 h-3" />
+                        {getTypeLabel(request.type)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border ${getUrgencyBadge(request.urgency)}`}>
+                        <AlertCircle className="w-3 h-3" />
+                        {request.urgency.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] line-clamp-1 max-w-xs">{request.reason}</p>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
+                      {request.requestDate}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border ${getStatusBadge(request.status)}`}>
+                        {request.status === 'pending' && <Clock className="w-3 h-3" />}
+                        {request.status === 'approved' && <Check className="w-3 h-3" />}
+                        {request.status === 'rejected' && <X className="w-3 h-3" />}
+                        {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => onViewDetails(request)}
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        {request.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => onApprove(request)}
+                              className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                              title="Approve"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => onReject(request)}
+                              className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                              title="Reject"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="8" className="text-center py-12">
+                  <div className="text-6xl mb-4">📋</div>
+                  <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No requests found</h3>
+                  <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
+                  {hasActiveFilters && (
+                    <button
+                      onClick={onClearFilters}
+                      className="mt-3 px-4 py-2 text-sm text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
+                    >
+                      Clear all filters
+                    </button>
+                  )}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

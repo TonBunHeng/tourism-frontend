@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Activity,
   PartyPopper,
   Clapperboard,
   Ship,
   Utensils,
-  Music
+  Music,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import EventsHeader from './EventsHeader';
 import EventsStats from './EventsStats';
@@ -129,13 +131,52 @@ export default function Events() {
       featured: false,
       rating: 4.5,
       tags: ['music', 'festival', 'local']
+    },
+    {
+      id: 7,
+      title: 'Sea Festival Sihanoukville',
+      category: 'Cultural',
+      description: 'Annual coastal celebration with water sports, beach concert, and seafood expo',
+      location: 'Preah Sihanouk, Cambodia',
+      date: '2024-12-22',
+      time: '09:00 AM',
+      attendees: 12000,
+      price: 'Free',
+      status: 'Upcoming',
+      image: Ship,
+      imageUrl: siemReapImg,
+      organizer: 'Ministry of Tourism',
+      featured: true,
+      rating: 4.8,
+      tags: ['beach', 'festival', 'sea']
+    },
+    {
+      id: 8,
+      title: 'Phnom Penh Art & Craft Expo',
+      category: 'Arts & Entertainment',
+      description: 'Exhibition of handmade crafts, paintings, and traditional Cambodian pottery',
+      location: 'Phnom Penh, Cambodia',
+      date: '2024-10-05',
+      time: '09:30 AM',
+      attendees: 1800,
+      price: '$5',
+      status: 'Upcoming',
+      image: Clapperboard,
+      imageUrl: historicalImg,
+      organizer: 'Cambodian Artisans Guild',
+      featured: false,
+      rating: 4.7,
+      tags: ['arts', 'crafts', 'exhibition']
     }
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -167,6 +208,16 @@ export default function Events() {
     const matchesStatus = selectedStatus === 'All' || event.status === selectedStatus;
     return matchesSearch && matchesCategory && matchesStatus;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedStatus, filteredEvents.length]);
+
+  const totalRecords = filteredEvents.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedEvents = filteredEvents.slice(startIndex, startIndex + itemsPerPage);
 
   const handleOpenCreateModal = () => {
     setEditingEvent(null);
@@ -266,18 +317,71 @@ export default function Events() {
         {/* Grid or List View */}
         {viewMode === 'grid' ? (
           <EventsGrid
-            events={filteredEvents}
+            events={paginatedEvents}
             onViewDetails={handleViewDetails}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
           <EventsList
-            events={filteredEvents}
+            events={paginatedEvents}
             onViewDetails={handleViewDetails}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            startIndex={startIndex}
           />
+        )}
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> events
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

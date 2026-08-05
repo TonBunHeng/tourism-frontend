@@ -4,13 +4,13 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4 flex-shrink-0 transition-colors duration-200">
+    <footer className="w-full bg-white dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800 px-4 sm:px-6 py-4 flex-shrink-0 transition-colors duration-200">
       <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between text-center sm:text-left">
 
         {/* Left section: Copyright & Version */}
-        <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
           <span>© {currentYear} Smart Tourism</span>
-          <span className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">
+          <span className="bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-zinc-300">
             v1.2
           </span>
         </div>
@@ -19,16 +19,16 @@ export default function Footer() {
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
           <Link
             to="/privacy"
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline transition-colors"
+            className="text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:underline transition-colors"
           >
             Privacy Policy
           </Link>
 
-          <span className="text-gray-300 dark:text-gray-600 hidden sm:inline">•</span>
+          <span className="text-gray-300 dark:text-zinc-700 hidden sm:inline">•</span>
 
           <Link
             to="/terms"
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline transition-colors"
+            className="text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:underline transition-colors"
           >
             Terms of Service
           </Link>

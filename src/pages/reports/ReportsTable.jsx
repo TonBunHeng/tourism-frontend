@@ -1,6 +1,6 @@
 // src/pages/reports/ReportsTable.jsx
-import React from 'react';
-import { Search, Filter, Star, ChevronDown, MapPin, Calendar, Users, FolderTree } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, Star, ChevronDown, MapPin, Calendar, Users, FolderTree, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ReportsTable({
   activeTab,
@@ -12,6 +12,14 @@ export default function ReportsTable({
   data,
   isLoading
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Reset to first page whenever tab, search, or status filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchTerm, statusFilter, data.length]);
+
   const tabs = [
     { id: 'places', label: 'Places Report', icon: MapPin },
     { id: 'events', label: 'Events Report', icon: Calendar },
@@ -19,6 +27,12 @@ export default function ReportsTable({
     { id: 'reviews', label: 'Reviews Report', icon: Star },
     { id: 'categories', label: 'Categories Report', icon: FolderTree }
   ];
+
+  const totalRecords = data.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+  const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (status) => {
     switch (status?.toLowerCase()) {
@@ -120,13 +134,13 @@ export default function ReportsTable({
           </div>
 
           <span className="text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-            {data.length} records
+            {totalRecords} records
           </span>
         </div>
       </div>
 
       {/* Mobile Card List View (Visible on Mobile Screens < sm) */}
-      <div key={`mobile-${activeTab}`} className="block sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)] animate-page-enter">
+      <div key={`mobile-${activeTab}-${currentPage}`} className="block sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)] animate-page-enter">
         {isLoading ? (
           [...Array(4)].map((_, i) => (
             <div key={i} className="p-4 space-y-3 animate-pulse">
@@ -138,12 +152,12 @@ export default function ReportsTable({
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
             </div>
           ))
-        ) : data.length === 0 ? (
+        ) : paginatedData.length === 0 ? (
           <div className="py-10 px-4 text-center text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium text-xs">
             No report data matching selected search or status filters.
           </div>
         ) : (
-          data.map((row, i) => (
+          paginatedData.map((row, i) => (
             <div key={i} className="p-4 space-y-2 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/40 transition-colors">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-mono text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-bold">
@@ -297,7 +311,7 @@ export default function ReportsTable({
               </tr>
             )}
           </thead>
-          <tbody key={activeTab} className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)] animate-page-enter">
+          <tbody key={`${activeTab}-${currentPage}`} className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)] animate-page-enter">
             {isLoading ? (
               [...Array(5)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
@@ -311,14 +325,14 @@ export default function ReportsTable({
                   <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-20" /></td>
                 </tr>
               ))
-            ) : data.length === 0 ? (
+            ) : paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={8} className="py-10 text-center text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium">
                   No report data matching selected search or status filters.
                 </td>
               </tr>
             ) : (
-              data.map((row, i) => (
+              paginatedData.map((row, i) => (
                 <tr key={i} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/40 transition-colors">
                   {activeTab === 'places' && (
                     <>
@@ -384,6 +398,59 @@ export default function ReportsTable({
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Footer */}
+      {totalRecords > 0 && (
+        <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+          <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+            Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
+            <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+            <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> records
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || isLoading}
+              className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              title="Previous Page"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {[...Array(totalPages)].map((_, idx) => {
+              const pageNum = idx + 1;
+              const isActive = pageNum === currentPage;
+              return (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => setCurrentPage(pageNum)}
+                  disabled={isLoading}
+                  className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
+                      : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || isLoading}
+              className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              title="Next Page"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

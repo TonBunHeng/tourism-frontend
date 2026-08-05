@@ -113,7 +113,7 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
           {/* Right section - Actions */}
           <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             {/* Search - Desktop */}
-            <div ref={searchRef} className="hidden md:flex items-center relative">
+            {/* <div ref={searchRef} className="hidden md:flex items-center relative">
               <div className={`relative transition-all duration-300 ${isSearchOpen ? 'w-64' : 'w-40'}`}>
                 <input
                   type="text"
@@ -125,16 +125,16 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                 />
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
-            </div>
+            </div> */}
 
             {/* Search - Mobile Toggle */}
-            <button
+            {/* <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label="Toggle search"
             >
               <Search size={20} className="text-gray-600 dark:text-gray-300" />
-            </button>
+            </button> */}
 
             {/* Dark / Light Mode Toggle - now directly in header */}
             <button
@@ -162,14 +162,14 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
               </button>
 
               {showLangMenu && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                   <div className="p-1.5">
                     <button
                       onClick={() => {
                         setCurrentLang('EN');
                         setShowLangMenu(false);
                       }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-xl transition-colors ${currentLang === 'EN'
+                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors ${currentLang === 'EN'
                         ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
@@ -182,7 +182,7 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
                         setCurrentLang('KH');
                         setShowLangMenu(false);
                       }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-xl transition-colors mt-1 ${currentLang === 'KH'
+                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors mt-1 ${currentLang === 'KH'
                         ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-semibold'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
@@ -209,7 +209,7 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                   <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
                     <h3 className="font-semibold text-gray-800 dark:text-white">Notifications</h3>
                     <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium">
@@ -241,7 +241,7 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
             <div ref={profileRef} className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-1 sm:gap-2 p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center gap-1 sm:gap-2 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 aria-label="Profile menu"
               >
                 <img
@@ -253,26 +253,26 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                   <div className="p-4 border-b border-gray-100 dark:border-gray-700">
                     <p className="text-sm font-semibold text-gray-800 dark:text-white truncate">BunHeng Ton</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">bunheng@email.com</p>
                   </div>
                   <div className="p-2">
-                    <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors">
+                    <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
                       <User size={18} className="text-gray-400" />
                       My Profile
                     </Link>
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors">
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
                       <Settings size={18} className="text-gray-400" />
                       Settings
                     </Link>
-                    <Link to="/chat" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors">
+                    <Link to="/chat" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
                       <MessageCircle size={18} className="text-gray-400" />
                       Messages
                     </Link>
 
-                    <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition-colors w-full text-left">
+                    <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors w-full text-left">
                       <LogOut size={18} className="text-red-500 dark:text-red-400" />
                       Log Out
                     </button>

@@ -11,7 +11,7 @@ export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
             const UserAvatar = user.avatar;
             return (
               <div key={user.id} className="p-4 flex gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-dark-bg)] flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-md bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-dark-bg)] flex items-center justify-center shrink-0">
                   <UserAvatar className="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -84,7 +84,7 @@ export default function UsersList({ users, onViewDetails, onEdit, onDelete }) {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-dark-bg)] flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-dark-bg)] flex items-center justify-center flex-shrink-0">
                           <UserAvatar className="w-5 h-5 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
                         </div>
                         <div>

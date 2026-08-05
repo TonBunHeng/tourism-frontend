@@ -47,9 +47,9 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Categories", icon: Tags, path: "/categories" },
     { name: "Places", icon: MapPinned, path: "/place" },
     { name: "Provinces", icon: Map, path: "/provinces" },
-    { name: "Gallery", icon: Images, path: "/gallery" },
+    { name: "Galleries", icon: Images, path: "/galleries" },
     { name: "Events", icon: CalendarDays, path: "/events" },
-    { name: "Reports", icon: FileText, path: "/reports" },
+    
   ];
 
   const engagementItems = [
@@ -58,6 +58,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Ratings", icon: Star, path: "/ratings" },
     { name: "Favorites", icon: Heart, path: "/favorites" },
     { name: "Deletion Requests", icon: Trash2, path: "/deletion-requests" },
+    { name: "Reports", icon: FileText, path: "/reports" },
   ];
 
   const accountItems = [
@@ -76,7 +77,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         <button
           key={item.name}
           onClick={() => setShowLogoutAlert(true)}
-          className="group relative flex items-center w-full px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)]"
+          className="group relative flex items-center w-full px-3 py-2.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)]"
         >
           <div className="flex items-center w-full">
             <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'md:mx-auto' : ''}`}>
@@ -100,7 +101,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       <Link
         to={item.path || '#'}
         key={item.name}
-        className={`group relative flex items-center px-3 py-2.5 my-0.5 rounded-xl cursor-pointer transition-colors duration-200 
+        className={`group relative flex items-center px-3 py-2.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 
           ${isActive
             ? 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] font-semibold'
             : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'}`}
@@ -149,7 +150,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         <div className={`h-20 flex items-center justify-between px-5 ${!isExpanded ? 'md:justify-center md:px-2' : ''}`}>
           <div className={`flex items-center gap-3 overflow-hidden w-full ${!isExpanded ? 'md:w-auto' : ''}`}>
             <div
-              className="w-10 h-10 rounded-xl bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] flex items-center justify-center shrink-0"
+              className="w-10 h-10 rounded-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] flex items-center justify-center shrink-0"
             >
               <img src={tourism_app_icon} alt="Tourism App Icon" className="w-10 h-10" />
             </div>
@@ -217,17 +218,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
         {/* User Profile Footer */}
         <div
-          className="p-4 relative border-t border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]"
-        >
-          <div
-            className={`flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors w-full text-left ${!isExpanded ? 'md:justify-center' : ''}`}
-          >
+          className="p-1 relative border-t border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]">
+          <div className={`flex items-center gap-3 p-2 rounded-md transition-colors w-full text-left ${!isExpanded ? 'md:justify-center' : ''}`}>
             <div className="relative shrink-0">
               <img
                 src={profile_v2}
                 alt="User profile"
-                className="w-9 h-9 rounded-full object-cover bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
-              />
+                className="w-9 h-9 rounded-full object-cover bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"/>
             </div>
             <div className={`flex flex-col overflow-hidden ${isExpanded ? 'flex' : 'flex md:hidden'}`}>
               <span className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] truncate">BunHeng Ton</span>

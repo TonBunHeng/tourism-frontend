@@ -318,7 +318,7 @@ export default function Users() {
       <UsersStats users={users} />
 
       {/* Users Table / Grid Container */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         {/* Toolbar */}
         <UsersToolbar
           totalCount={filteredUsers.length}

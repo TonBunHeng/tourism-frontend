@@ -12,21 +12,17 @@ export default function ReviewsHeader({ onReset }) {
             Manage and moderate user reviews across all destinations
           </p>
         </div>
-        <div className="grid grid-cols-3 md:flex gap-2 md:gap-3">
+        <div className="grid grid-cols-2 md:flex gap-2 md:gap-2">
           <button
             onClick={onReset}
-            className="flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2.5 border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] rounded-xl hover:bg-[var(--color-warning-bg)] dark:hover:bg-[var(--color-warning-dark-bg)] transition-colors hover:border-[var(--color-warning-hover-border)] dark:hover:border-[var(--color-warning-dark-hover-border)]"
+            className="flex items-center justify-center gap-2 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] rounded-md hover:bg-[var(--color-warning-bg)] dark:hover:bg-[var(--color-warning-dark-bg)] transition-all shrink-0"
           >
-            <RotateCcw size={18} className="shrink-0" />
-            <span className="font-medium text-xs md:text-sm">Reset</span>
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span>Reset</span>
           </button>
-          <button className="flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2.5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors">
-            <Download size={18} className="shrink-0" />
-            <span className="font-medium text-xs md:text-sm">Export</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--color-white)] rounded-xl hover:bg-[var(--color-primary-hover)] transition-colors shadow-lg shadow-[var(--color-primary)]/25">
-            <BarChart2 size={18} className="shrink-0" />
-            <span className="font-medium text-xs md:text-sm">Analytics</span>
+          <button className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0">
+            <BarChart2 className="w-4 h-4 shrink-0" />
+            <span>Analytics</span>
           </button>
         </div>
       </div>

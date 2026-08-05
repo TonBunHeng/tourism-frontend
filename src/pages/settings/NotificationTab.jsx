@@ -76,7 +76,7 @@ export default function NotificationTab({ settings, setSettings }) {
       </div>
 
       {/* Card 1: Delivery Channels */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Smartphone className="w-4 h-4 text-[var(--color-primary)]" />
           Notification Channels
@@ -89,7 +89,7 @@ export default function NotificationTab({ settings, setSettings }) {
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all"
+                className="flex items-center justify-between p-3.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all"
               >
                 <div className="flex items-center space-x-3">
                   <div className={`p-2.5 rounded-lg ${item.color}`}>
@@ -125,7 +125,7 @@ export default function NotificationTab({ settings, setSettings }) {
       </div>
 
       {/* Card 2: System Event Alerts */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Bell className="w-4 h-4 text-[var(--color-primary)]" />
           Event Alerts & Trigger Rules
@@ -138,7 +138,7 @@ export default function NotificationTab({ settings, setSettings }) {
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all"
+                className="flex items-center justify-between p-3.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all"
               >
                 <div className="flex items-center space-x-3 pr-2">
                   <div className={`p-2.5 rounded-lg shrink-0 ${item.color}`}>

@@ -14,7 +14,7 @@ export default function CategoriesGrid({
           return (
             <div
               key={category.id}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02]"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02]"
             >
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="min-w-0">

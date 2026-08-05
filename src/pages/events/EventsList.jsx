@@ -16,7 +16,7 @@ export default function EventsList({
             return (
               <div key={event.id} className="p-4 flex flex-col sm:flex-row gap-3">
                 {event.imageUrl && (
-                  <img src={event.imageUrl} alt={event.title} className="w-full sm:w-16 h-20 sm:h-16 rounded-xl object-cover shrink-0" />
+                  <img src={event.imageUrl} alt={event.title} className="w-full sm:w-16 h-20 sm:h-16 rounded-md object-cover shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
@@ -87,7 +87,7 @@ export default function EventsList({
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {event.imageUrl && (
-                          <img src={event.imageUrl} alt={event.title} className="w-10 h-10 rounded-xl object-cover flex-shrink-0" />
+                          <img src={event.imageUrl} alt={event.title} className="w-10 h-10 rounded-md object-cover flex-shrink-0" />
                         )}
                         <div>
                           <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{event.title}</p>

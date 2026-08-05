@@ -44,7 +44,7 @@ export default function AppearanceTab({ settings, setSettings }) {
       </div>
 
       {/* Card 1: Dark / Light Mode */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Sun className="w-4 h-4 text-[var(--color-primary)]" />
           Theme Mode (Dark / Light)
@@ -59,7 +59,7 @@ export default function AppearanceTab({ settings, setSettings }) {
                 key={opt.id}
                 type="button"
                 onClick={() => handleChange('theme', opt.id)}
-                className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all relative ${
+                className={`flex flex-col items-start p-4 rounded-md border text-left transition-all relative ${
                   isSelected
                     ? 'border-[var(--color-primary)] bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] ring-2 ring-[var(--color-primary)]/20'
                     : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]'
@@ -84,7 +84,7 @@ export default function AppearanceTab({ settings, setSettings }) {
       </div>
 
       {/* Card 2: Sidebar Style & Compact Toggle */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Sidebar className="w-4 h-4 text-[var(--color-primary)]" />
           Navigation Sidebar Customization
@@ -98,7 +98,7 @@ export default function AppearanceTab({ settings, setSettings }) {
                 key={style.id}
                 type="button"
                 onClick={() => handleChange('sidebarStyle', style.id)}
-                className={`p-4 rounded-xl border text-left transition-all ${
+                className={`p-4 rounded-md border text-left transition-all ${
                   isSelected
                     ? 'border-[var(--color-primary)] bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] ring-2 ring-[var(--color-primary)]/20'
                     : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]'
@@ -145,7 +145,7 @@ export default function AppearanceTab({ settings, setSettings }) {
       </div>
 
       {/* Card 4: Typography & Font Size */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Type className="w-4 h-4 text-[var(--color-primary)]" />
           Typography & Font Size
@@ -159,7 +159,7 @@ export default function AppearanceTab({ settings, setSettings }) {
                 key={size.id}
                 type="button"
                 onClick={() => handleChange('fontSize', size.id)}
-                className={`p-4 rounded-xl border text-left transition-all ${
+                className={`p-4 rounded-md border text-left transition-all ${
                   isSelected
                     ? 'border-[var(--color-primary)] bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] ring-2 ring-[var(--color-primary)]/20'
                     : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]'

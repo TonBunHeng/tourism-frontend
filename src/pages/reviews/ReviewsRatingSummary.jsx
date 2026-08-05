@@ -4,7 +4,7 @@ export default function ReviewsRatingSummary({ reviews, renderStars }) {
       {[5, 4, 3, 2].map(rating => {
         const count = reviews.filter(r => r.rating === rating).length;
         return (
-          <div key={rating} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-3 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between gap-2">
+          <div key={rating} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-3 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between gap-2">
             <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
               {renderStars(rating)}
             </div>

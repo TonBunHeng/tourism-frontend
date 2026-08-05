@@ -20,12 +20,12 @@ export default function CategoriesToolbar({
               placeholder="Search categories..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 pr-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent w-full sm:w-48 text-sm bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+              className="pl-9 pr-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent w-full sm:w-48 text-sm bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
             />
           </div>
 
           {/* View Toggle */}
-          <div className="flex bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] rounded-xl p-1 self-start sm:self-auto">
+          <div className="flex bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] rounded-md p-1 self-start sm:self-auto">
             <button
               onClick={() => onViewModeChange("grid")}
               className={`p-1.5 rounded-lg transition-colors ${viewMode === "grid" ? "bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] shadow-sm" : "hover:bg-[var(--color-border-subtle-light)] dark:hover:bg-[var(--color-border-dark)]"}`}

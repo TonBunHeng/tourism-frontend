@@ -37,7 +37,7 @@ export default function ChatsStats({ chats }) {
       {stats.map((stat, idx) => {
         const IconComponent = stat.icon;
         return (
-          <div key={idx} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div key={idx} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-4 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{stat.label}</p>

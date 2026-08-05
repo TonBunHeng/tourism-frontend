@@ -10,7 +10,7 @@ export default function ChatUserInfo({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/30 md:static md:z-auto md:bg-transparent flex md:block justify-end">
-      <div className="w-full max-w-sm md:max-w-none md:w-80 h-full md:h-auto bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] md:rounded-2xl shadow-sm border-l md:border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col overflow-hidden flex-shrink-0">
+      <div className="w-full max-w-sm md:max-w-none md:w-80 h-full md:h-auto bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] md:rounded-lg shadow-sm border-l md:border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col overflow-hidden flex-shrink-0">
         <div className="p-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">User Info</h3>
@@ -74,7 +74,7 @@ export default function ChatUserInfo({
             </div>
           </div>
 
-          <div className="mt-4 p-3 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] rounded-xl border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]">
+          <div className="mt-4 p-3 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] rounded-md border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]">
             <div className="flex items-center gap-2">
               <Bot className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] shrink-0" />
               <p className="text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">

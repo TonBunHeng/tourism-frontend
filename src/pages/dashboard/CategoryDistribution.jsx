@@ -20,7 +20,7 @@ export default function CategoryDistribution() {
   const totalCategoryCount = categoryDistribution.reduce((sum, c) => sum + c.count, 0);
 
   return (
-    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
+    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Category Distribution</h3>
@@ -54,7 +54,7 @@ export default function CategoryDistribution() {
           {statusCounts.map((status, index) => {
             const Icon = status.icon;
             return (
-              <div key={index} className={`p-3 rounded-xl ${status.bg}`}>
+              <div key={index} className={`p-3 rounded-md ${status.bg}`}>
                 <div className="flex items-center gap-2">
                   <Icon className={`w-4 h-4 ${status.color}`} />
                   <div>

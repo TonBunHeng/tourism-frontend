@@ -2,7 +2,7 @@ import { Check } from 'lucide-react';
 
 export default function ProfileAchievements({ achievements }) {
   return (
-    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-4 md:p-5 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-4 md:p-5 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
       <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-3">Achievements</h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
         {achievements.map((achievement, index) => {

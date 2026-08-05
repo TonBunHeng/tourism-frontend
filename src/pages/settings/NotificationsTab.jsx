@@ -14,7 +14,7 @@ export default function NotificationsTab({ settings, setSettings }) {
         <h3 className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Notification Settings</h3>
         <div className="space-y-3">
           {notificationItems.map(({ key, label, desc }) => (
-            <div key={key} className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-xl">
+            <div key={key} className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md">
               <div className="min-w-0">
                 <p className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{label}</p>
                 <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{desc}</p>

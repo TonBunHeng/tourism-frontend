@@ -14,10 +14,10 @@ export default function GalleryHeader({ onUploadClick }) {
         </div>
         <button
           onClick={onUploadClick}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--color-white)] rounded-xl hover:bg-[var(--color-primary-hover)] transition-colors shadow-lg shadow-[var(--color-primary)]/25 w-full sm:w-auto"
+          className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 w-full sm:w-auto"
         >
-          <Upload size={18} className="shrink-0" />
-          <span className="font-medium">Upload Media</span>
+          <Upload className="w-4 h-4 shrink-0" />
+          <span>Upload Media</span>
         </button>
       </div>
     </div>

@@ -10,7 +10,7 @@ export default function TopPlaces() {
   ];
 
   return (
-    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">
+    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div>
           <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Top Places</h3>
@@ -24,8 +24,8 @@ export default function TopPlaces() {
         {topPlaces.map((place, index) => {
           const Icon = place.icon;
           return (
-            <div key={index} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
-              <div className="w-10 h-10 rounded-xl bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center flex-shrink-0">
+            <div key={index} className="flex items-center gap-3 p-3 rounded-md hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
+              <div className="w-10 h-10 rounded-md bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center flex-shrink-0">
                 <Icon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
               </div>
               <div className="flex-1 min-w-0">

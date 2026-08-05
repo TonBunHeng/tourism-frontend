@@ -1,5 +1,5 @@
 // src/pages/reports/Reports.jsx
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ReportsHeader from './ReportsHeader';
 import ReportsStats from './ReportsStats';
 import ReportsTable from './ReportsTable';
@@ -12,21 +12,19 @@ import {
   categoriesReportData
 } from './reportsData';
 import { exportToPDF, exportToExcel } from '../../utils/exportReports';
-import { setPageTitle } from '../../utils/PagesTitle';
 
 export default function Reports() {
   const [activeTab, setActiveTab] = useState('places');
   const [dateRange, setDateRange] = useState('all');
+  const [selectedDay, setSelectedDay] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
   const [totalExports, setTotalExports] = useState(14);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
-
-  useEffect(() => {
-    setPageTitle('Reports & Analytics');
-  }, []);
 
   const getRawDataByTab = () => {
     switch (activeTab) {
@@ -42,6 +40,19 @@ export default function Reports() {
   const currentDataset = getRawDataByTab();
 
   const filteredData = currentDataset.filter(item => {
+    const itemDate = item.createdAt || item.startDate || item.joinedDate || item.date;
+
+    let matchesDate = true;
+    if (dateRange === 'day' && selectedDay && itemDate) {
+      matchesDate = itemDate === selectedDay;
+    } else if (dateRange === 'month' && selectedMonth && itemDate) {
+      const monthPart = itemDate.slice(5, 7);
+      matchesDate = monthPart === selectedMonth;
+    } else if (dateRange === 'year' && selectedYear && itemDate) {
+      const yearPart = itemDate.slice(0, 4);
+      matchesDate = yearPart === selectedYear;
+    }
+
     const matchesSearch = Object.values(item).some(val =>
       String(val).toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -49,7 +60,7 @@ export default function Reports() {
       statusFilter === 'All' ||
       (item.status && item.status.toLowerCase().includes(statusFilter.toLowerCase()));
 
-    return matchesSearch && matchesStatus;
+    return matchesDate && matchesSearch && matchesStatus;
   });
 
   const handleTabChange = (tabId) => {
@@ -61,6 +72,12 @@ export default function Reports() {
   };
 
   const handleRefresh = () => {
+    setDateRange('all');
+    setSelectedDay('');
+    setSelectedMonth('');
+    setSelectedYear('');
+    setSearchTerm('');
+    setStatusFilter('All');
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -147,6 +164,12 @@ export default function Reports() {
         activeTab={activeTab}
         dateRange={dateRange}
         setDateRange={setDateRange}
+        selectedDay={selectedDay}
+        setSelectedDay={setSelectedDay}
+        selectedMonth={selectedMonth}
+        setSelectedMonth={setSelectedMonth}
+        selectedYear={selectedYear}
+        setSelectedYear={setSelectedYear}
         onExportPDF={handleOpenExportPDF}
         onExportExcel={handleOpenExportExcel}
         onRefresh={handleRefresh}

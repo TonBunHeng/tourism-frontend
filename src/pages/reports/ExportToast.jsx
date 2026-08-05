@@ -16,8 +16,8 @@ export default function ExportToast({ toast, onClose }) {
   const isPDF = toast.format === 'pdf';
 
   return (
-    <div className="fixed top-5 right-5 z-[9999] flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl animate-toast-in max-w-sm w-full">
-      <div className={`p-2.5 rounded-xl shrink-0 ${
+    <div className="fixed top-5 right-5 z-[9999] flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-2xl animate-toast-in max-w-sm w-full">
+      <div className={`p-2.5 rounded-md shrink-0 ${
         isPDF
           ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400'
           : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'

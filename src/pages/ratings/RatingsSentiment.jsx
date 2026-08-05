@@ -3,7 +3,7 @@ import { Star, ThumbsUp, MessageSquare, ThumbsDown } from 'lucide-react';
 export default function RatingsSentiment({ reviews, ratingDistribution }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6 sm:mb-8">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-4 sm:p-6 lg:col-span-2">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-4 sm:p-6 lg:col-span-2">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Rating Distribution</h3>
         <div className="space-y-3">
           {ratingDistribution.map((item) => (
@@ -25,10 +25,10 @@ export default function RatingsSentiment({ reviews, ratingDistribution }) {
           ))}
         </div>
       </div>
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-4 sm:p-6">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-4 sm:p-6">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Overall Sentiment</h3>
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] rounded-xl">
+          <div className="flex items-center justify-between p-3 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] rounded-md">
             <div className="flex items-center gap-2">
               <ThumbsUp className="w-5 h-5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
               <span className="text-sm font-medium text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]">Positive</span>
@@ -37,7 +37,7 @@ export default function RatingsSentiment({ reviews, ratingDistribution }) {
               {reviews.length > 0 ? Math.round((reviews.filter(r => r.rating >= 4).length / reviews.length) * 100) : 0}%
             </span>
           </div>
-          <div className="flex items-center justify-between p-3 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] rounded-xl">
+          <div className="flex items-center justify-between p-3 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] rounded-md">
             <div className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" />
               <span className="text-sm font-medium text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]">Neutral</span>
@@ -46,7 +46,7 @@ export default function RatingsSentiment({ reviews, ratingDistribution }) {
               {reviews.length > 0 ? Math.round((reviews.filter(r => r.rating === 3).length / reviews.length) * 100) : 0}%
             </span>
           </div>
-          <div className="flex items-center justify-between p-3 bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] rounded-xl">
+          <div className="flex items-center justify-between p-3 bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] rounded-md">
             <div className="flex items-center gap-2">
               <ThumbsDown className="w-5 h-5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
               <span className="text-sm font-medium text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]">Negative</span>

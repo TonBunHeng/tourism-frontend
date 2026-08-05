@@ -94,7 +94,7 @@ export default function DashboardStats() {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-6 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:shadow-md transition-all duration-200">
+            <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-6 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:shadow-md transition-all duration-200">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">{stat.title}</p>
@@ -109,7 +109,7 @@ export default function DashboardStats() {
                     <span>{stat.change}</span>
                   </div>
                 </div>
-                <div className={`p-3 rounded-xl ${stat.bg}`}>
+                <div className={`p-3 rounded-md ${stat.bg}`}>
                   <Icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
               </div>
@@ -123,7 +123,7 @@ export default function DashboardStats() {
         {stats2.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-6 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:shadow-md transition-all duration-200">
+            <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-6 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:shadow-md transition-all duration-200">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">{stat.title}</p>
@@ -138,7 +138,7 @@ export default function DashboardStats() {
                     <span>{stat.change}</span>
                   </div>
                 </div>
-                <div className={`p-3 rounded-xl ${stat.bg}`}>
+                <div className={`p-3 rounded-md ${stat.bg}`}>
                   <Icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
               </div>

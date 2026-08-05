@@ -170,7 +170,7 @@ export default function DeletionList({
           {hasActiveFilters && (
             <button
               onClick={onClearFilters}
-              className="mt-3 px-4 py-2 text-sm text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-xl transition-colors"
+              className="mt-3 px-4 py-2 text-sm text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors"
             >
               Clear all filters
             </button>

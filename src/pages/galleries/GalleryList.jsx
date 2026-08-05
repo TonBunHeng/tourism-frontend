@@ -11,7 +11,7 @@ export default function GalleryList({ media, onPreview, onEdit, onDelete }) {
             const TypeIcon = getTypeIcon(item.type);
             return (
               <div key={item.id} className="p-4 flex gap-3">
-                <div className="w-16 h-16 rounded-xl bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] overflow-hidden relative flex-shrink-0">
+                <div className="w-16 h-16 rounded-md bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] overflow-hidden relative flex-shrink-0">
                   <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
                   {item.type === 'video' && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20">
@@ -82,7 +82,7 @@ export default function GalleryList({ media, onPreview, onEdit, onDelete }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] overflow-hidden relative flex-shrink-0">
+                        <div className="w-12 h-12 rounded-md bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] overflow-hidden relative flex-shrink-0">
                           <img
                             src={item.url}
                             alt={item.title}

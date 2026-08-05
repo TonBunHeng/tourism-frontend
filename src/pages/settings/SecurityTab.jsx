@@ -65,7 +65,7 @@ export default function SecurityTab({ settings, setSettings }) {
       </div>
 
       {/* Card 1: Change Password */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Key className="w-4 h-4 text-[var(--color-primary)]" />
           Change Password
@@ -160,7 +160,7 @@ export default function SecurityTab({ settings, setSettings }) {
           <button
             type="button"
             onClick={handlePasswordChange}
-            className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] text-sm font-medium rounded-xl shadow-lg shadow-[var(--color-primary)]/25 transition-colors"
+            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent shadow-lg shadow-[var(--color-primary)]/25 transition-all"
           >
             Update Password
           </button>
@@ -168,13 +168,13 @@ export default function SecurityTab({ settings, setSettings }) {
       </div>
 
       {/* Card 2: Two-Factor Authentication (2FA) */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Smartphone className="w-4 h-4 text-[var(--color-primary)]" />
           Two-Factor Authentication (2FA)
         </h3>
 
-        <div className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]">
+        <div className="flex items-center justify-between p-3.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]">
           <div className="flex items-center space-x-3">
             <div className="p-2.5 rounded-lg bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]">
               <Shield className="w-5 h-5" />
@@ -228,7 +228,7 @@ export default function SecurityTab({ settings, setSettings }) {
       </div>
 
       {/* Card 3: Session & Password Policies */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Clock className="w-4 h-4 text-[var(--color-primary)]" />
           Session & Password Policies
@@ -285,7 +285,7 @@ export default function SecurityTab({ settings, setSettings }) {
       </div>
 
       {/* Card 4: Active Login Sessions */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Shield className="w-4 h-4 text-[var(--color-primary)]" />
           Active Login Sessions
@@ -315,7 +315,7 @@ export default function SecurityTab({ settings, setSettings }) {
       {/* 2FA QR Code Setup Modal */}
       {show2FAModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-modal-overlay)] backdrop-blur-xs animate-in fade-in">
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-2xl p-6 max-w-sm w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4 text-center">
+          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-sm w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4 text-center">
             <div className="flex justify-between items-center pb-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
                 <Shield className="w-4 h-4 text-[var(--color-primary)]" /> 2FA Setup
@@ -331,7 +331,7 @@ export default function SecurityTab({ settings, setSettings }) {
               Scan this QR code with Google Authenticator or Authy to configure two-factor login.
             </p>
 
-            <div className="w-40 h-40 mx-auto bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-3 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center">
+            <div className="w-40 h-40 mx-auto bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-3 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center">
               <img
                 src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/SmartTourismAdmin:admin@tourism.gov.kh?secret=JBSWY3DPEHPK3PXP"
                 alt="2FA QR Code"
@@ -348,7 +348,7 @@ export default function SecurityTab({ settings, setSettings }) {
 
             <button
               onClick={() => setShow2FAModal(false)}
-              className="w-full py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] text-xs font-medium rounded-lg"
+              className="w-full flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent transition-all"
             >
               Done / Close
             </button>

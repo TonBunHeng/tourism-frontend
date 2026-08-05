@@ -36,7 +36,7 @@ export default function QuickActions() {
   ];
 
   return (
-    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
+    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
       <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Quick Actions</h3>
       <div className="grid grid-cols-2 gap-3">
         {quickActions.map((action, index) => {
@@ -45,7 +45,7 @@ export default function QuickActions() {
             <button
               key={index}
               onClick={() => navigate(action.path)}
-              className={`p-4 ${action.bg} rounded-xl hover:shadow-md transition-all duration-200 hover:scale-105 transform text-center cursor-pointer flex flex-col items-center justify-center`}
+              className={`p-4 ${action.bg} rounded-md hover:shadow-md transition-all duration-200 hover:scale-105 transform text-center cursor-pointer flex flex-col items-center justify-center`}
             >
               <Icon className={`w-6 h-6 ${action.color} mb-1`} />
               <span className="text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{action.label}</span>

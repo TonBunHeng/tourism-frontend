@@ -18,7 +18,7 @@ export default function DashboardHeader({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-1">
+          <div className="flex bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-1">
             <button
               onClick={() => onTimeRangeChange('weekly')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${timeRange === 'weekly'
@@ -49,12 +49,12 @@ export default function DashboardHeader({
           </div>
           <button
             onClick={onRefresh}
-            className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors"
+            className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors"
             title="Refresh dashboard"
           >
             <RefreshCw className={`w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] ${isLoading ? 'animate-spin' : ''}`} />
           </button>
-          <button className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors" title="Export report">
+          <button className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors" title="Export report">
             <Download className="w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
           </button>
         </div>

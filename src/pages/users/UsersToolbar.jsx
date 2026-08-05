@@ -33,7 +33,7 @@ export default function UsersToolbar({
           </div>
 
           {/* View Toggle */}
-          <div className="flex bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-border-dark)] rounded-xl p-1 shrink-0">
+          <div className="flex bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-border-dark)] rounded-md p-1 shrink-0">
             <button
               onClick={() => onViewModeChange('grid')}
               className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] shadow-sm' : 'hover:bg-[var(--color-border-subtle-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'}`}
@@ -59,7 +59,7 @@ export default function UsersToolbar({
             placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 pr-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent w-full text-sm bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+            className="pl-9 pr-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent w-full text-sm bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
           />
         </div>
 
@@ -70,7 +70,7 @@ export default function UsersToolbar({
             <select
               value={selectedRole}
               onChange={(e) => onRoleChange(e.target.value)}
-              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
             >
               {roles.map(role => (
                 <option key={role} value={role}>{role}</option>
@@ -84,7 +84,7 @@ export default function UsersToolbar({
             <select
               value={selectedStatus}
               onChange={(e) => onStatusChange(e.target.value)}
-              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
             >
               {statuses.map(status => (
                 <option key={status} value={status}>{status}</option>
@@ -98,7 +98,7 @@ export default function UsersToolbar({
             <select
               value={selectedSubscription}
               onChange={(e) => onSubscriptionChange(e.target.value)}
-              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
             >
               {subscriptions.map(sub => (
                 <option key={sub} value={sub}>{sub}</option>
@@ -112,7 +112,7 @@ export default function UsersToolbar({
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              className="appearance-none w-full pl-4 pr-9 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
             >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -127,7 +127,7 @@ export default function UsersToolbar({
           {hasActiveFilters && (
             <button
               onClick={onClearFilters}
-              className="col-span-2 sm:col-span-1 px-3 py-2 text-sm text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-xl transition-colors flex items-center justify-center gap-1"
+              className="col-span-2 sm:col-span-1 px-3 py-2 text-sm text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-colors flex items-center justify-center gap-1"
             >
               <X className="w-4 h-4" />
               Clear

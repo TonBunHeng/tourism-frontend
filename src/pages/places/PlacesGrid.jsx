@@ -5,7 +5,7 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
       {places.length > 0 ? (
         places.map((place) => (
-          <div key={place.id} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-4 hover:shadow-lg transition-all duration-200 group">
+          <div key={place.id} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 hover:shadow-lg transition-all duration-200 group">
             <div className="flex items-start justify-between gap-2 mb-3">
               <div className="min-w-0">
                 <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{place.name}</h3>

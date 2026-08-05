@@ -50,7 +50,7 @@ export default function RecentActivity() {
   ];
 
   return (
-    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">
+    <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div>
           <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Recent Activity</h3>
@@ -66,7 +66,7 @@ export default function RecentActivity() {
         {recentActivity.map((activity) => {
           const Icon = activity.icon;
           return (
-            <div key={activity.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
+            <div key={activity.id} className="flex items-start gap-3 p-3 rounded-md hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors">
               <div className="w-10 h-10 rounded-full bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Icon className="w-5 h-5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
               </div>

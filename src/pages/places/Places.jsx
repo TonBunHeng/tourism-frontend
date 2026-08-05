@@ -150,7 +150,7 @@ export default function Places() {
       <FeaturedPlaces />
 
       {/* All Places Section */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         <PlacesToolbar
           viewMode={viewMode}
           onViewModeChange={setViewMode}

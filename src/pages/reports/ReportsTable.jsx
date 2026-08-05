@@ -1,6 +1,6 @@
 // src/pages/reports/ReportsTable.jsx
 import React from 'react';
-import { Search, Filter, Star, ChevronDown } from 'lucide-react';
+import { Search, Filter, Star, ChevronDown, MapPin, Calendar, Users, FolderTree } from 'lucide-react';
 
 export default function ReportsTable({
   activeTab,
@@ -13,11 +13,11 @@ export default function ReportsTable({
   isLoading
 }) {
   const tabs = [
-    { id: 'places', label: 'Places Report' },
-    { id: 'events', label: 'Events Report' },
-    { id: 'users', label: 'Users Report' },
-    { id: 'reviews', label: 'Reviews Report' },
-    { id: 'categories', label: 'Categories Report' }
+    { id: 'places', label: 'Places Report', icon: MapPin },
+    { id: 'events', label: 'Events Report', icon: Calendar },
+    { id: 'users', label: 'Users Report', icon: Users },
+    { id: 'reviews', label: 'Reviews Report', icon: Star },
+    { id: 'categories', label: 'Categories Report', icon: FolderTree }
   ];
 
   const getStatusBadge = (status) => {
@@ -56,25 +56,38 @@ export default function ReportsTable({
   };
 
   return (
-    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm overflow-hidden transition-colors duration-200">
-      {/* Category Navigation Tabs */}
-      <div className="flex items-center overflow-x-auto border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] px-4 pt-3 scrollbar-hide">
-        {tabs.map((tab) => {
-          const isSelected = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={`px-4 py-3 text-xs md:text-sm font-bold whitespace-nowrap border-b-2 transition-all cursor-pointer ${
-                isSelected
-                  ? 'border-[var(--color-primary)] text-[var(--color-primary)] dark:border-[var(--color-brand-teal)] dark:text-[var(--color-brand-teal)]'
-                  : 'border-transparent text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
+    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm overflow-hidden transition-colors duration-200">
+      {/* Category Navigation Tabs - System Settings Style */}
+      <div className="w-full border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-2.5 sm:p-3 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isSelected = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => onTabChange(tab.id)}
+                className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+                  isSelected
+                    ? 'bg-[var(--color-primary)] text-[var(--color-white)] shadow-md shadow-[var(--color-primary)]/20 font-semibold'
+                    : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
+                }`}
+              >
+                {Icon && (
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      isSelected
+                        ? 'text-[var(--color-white)]'
+                        : 'text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]'
+                    }`}
+                  />
+                )}
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Table Toolbar Search & Filter */}
@@ -86,7 +99,7 @@ export default function ReportsTable({
             placeholder="Search report dataset..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+            className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
           />
         </div>
 
@@ -96,7 +109,7 @@ export default function ReportsTable({
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-xs bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl pl-8 pr-7 py-2 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none cursor-pointer font-medium"
+              className="text-xs bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md pl-8 pr-7 py-2 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none cursor-pointer font-medium"
             >
               <option value="All">All Statuses</option>
               <option value="Active">Active / Approved</option>

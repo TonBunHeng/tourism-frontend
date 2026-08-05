@@ -19,7 +19,7 @@ export default function FavoritesGrid({
           return (
             <div
               key={favorite.id}
-              className={`group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-xl p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] ${isSelected ? 'border-[var(--color-rose-badge-text)] dark:border-[var(--color-rose-badge-dark-text)] ring-2 ring-[var(--color-rose-badge-text)] dark:ring-[var(--color-rose-badge-dark-text)]' : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
+              className={`group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] ${isSelected ? 'border-[var(--color-rose-badge-text)] dark:border-[var(--color-rose-badge-dark-text)] ring-2 ring-[var(--color-rose-badge-text)] dark:ring-[var(--color-rose-badge-dark-text)]' : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
                 }`}
             >
               <div className="absolute top-3 left-3 z-10">
@@ -36,7 +36,7 @@ export default function FavoritesGrid({
               </div>
 
               <div className="flex items-start gap-3 mb-3 mt-2">
-                <div className="w-14 h-14 flex-shrink-0 rounded-xl bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center">
+                <div className="w-14 h-14 flex-shrink-0 rounded-md bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center">
                   <FavoriteIcon className="w-7 h-7 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
                 </div>
                 <div className="flex-1 min-w-0">

@@ -61,9 +61,9 @@ export default function AboutTab() {
           return (
             <div
               key={idx}
-              className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-4 shadow-xs flex items-center space-x-3.5"
+              className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-4 shadow-xs flex items-center space-x-3.5"
             >
-              <div className={`p-3 rounded-xl shrink-0 ${info.color}`}>
+              <div className={`p-3 rounded-md shrink-0 ${info.color}`}>
                 <Icon className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
@@ -83,7 +83,7 @@ export default function AboutTab() {
       </div>
 
       {/* Card 2: Server Status & Operational Uptime */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
             <Cpu className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
@@ -96,17 +96,17 @@ export default function AboutTab() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/40 p-3 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/40 p-3 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <span className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block">Server Host IP</span>
             <span className="font-mono font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5 block">103.24.58.12</span>
           </div>
 
-          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/40 p-3 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/40 p-3 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <span className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block">Current Operational Uptime</span>
             <span className="font-mono font-bold text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] mt-0.5 block">99.98% (42d 18h)</span>
           </div>
 
-          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/40 p-3 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/40 p-3 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <span className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block">SSL Certificate</span>
             <span className="font-mono font-bold text-[var(--color-primary)] mt-0.5 flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> Valid (Let's Encrypt)
@@ -116,7 +116,7 @@ export default function AboutTab() {
       </div>
 
       {/* Card 3: Storage Usage Metric */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <HardDrive className="w-4 h-4 text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)]" />
           System Storage Utilization
@@ -148,7 +148,7 @@ export default function AboutTab() {
       </div>
 
       {/* Card 4: Last Updated Timestamp */}
-      <div className="p-4 rounded-xl bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+      <div className="p-4 rounded-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
         <div className="flex items-center space-x-2">
           <Clock className="w-4 h-4 text-[var(--color-text-muted-light)]" />
           <span>Last System Build & Settings Update:</span>

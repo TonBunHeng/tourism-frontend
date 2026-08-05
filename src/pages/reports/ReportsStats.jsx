@@ -41,7 +41,7 @@ export default function ReportsStats({ totalCount, activeCount, avgRating, total
         return (
           <div
             key={index}
-            className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
+            className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
@@ -52,7 +52,7 @@ export default function ReportsStats({ totalCount, activeCount, avgRating, total
                   {stat.value}
                 </p>
               </div>
-              <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${stat.bg}`}>
+              <div className={`p-2.5 sm:p-3 rounded-md shrink-0 ${stat.bg}`}>
                 <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color}`} />
               </div>
             </div>

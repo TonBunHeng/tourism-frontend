@@ -57,7 +57,7 @@ export default function FeaturedPlaces() {
         {featuredPlaces.map((place, index) => (
           <div
             key={index}
-            className="relative overflow-hidden rounded-2xl p-6 text-[var(--color-white)] shadow-lg hover:shadow-xl transition-all duration-300 transform group cursor-pointer h-52 flex flex-col justify-end"
+            className="relative overflow-hidden rounded-lg p-6 text-[var(--color-white)] shadow-lg hover:shadow-xl transition-all duration-300 transform group cursor-pointer h-52 flex flex-col justify-end"
           >
             {/* Background Image */}
             <img

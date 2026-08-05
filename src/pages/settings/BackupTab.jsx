@@ -109,7 +109,7 @@ export default function BackupTab({ settings, setSettings }) {
 
       {notification && (
         <div
-          className={`p-3 rounded-xl text-xs flex items-center justify-between shadow-xs ${
+          className={`p-3 rounded-md text-xs flex items-center justify-between shadow-xs ${
             notification.type === 'success'
               ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)]'
               : 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]'
@@ -128,7 +128,7 @@ export default function BackupTab({ settings, setSettings }) {
       {/* Card 1: Action Controls (Create, Restore, Schedule) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Create Backup */}
-        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs flex flex-col justify-between space-y-3">
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs flex flex-col justify-between space-y-3">
           <div>
             <div className="flex items-center space-x-2 text-[var(--color-primary)] mb-1">
               <Database className="w-4 h-4" />
@@ -145,7 +145,7 @@ export default function BackupTab({ settings, setSettings }) {
             type="button"
             onClick={handleCreateBackup}
             disabled={creatingBackup}
-            className="w-full py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-[var(--color-white)] text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-[var(--color-primary)]/25"
+            className="w-full px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent flex items-center justify-center gap-1.5 md:gap-2 transition-all shadow-lg shadow-[var(--color-primary)]/25"
           >
             {creatingBackup ? (
               <>
@@ -162,7 +162,7 @@ export default function BackupTab({ settings, setSettings }) {
         </div>
 
         {/* Restore Backup */}
-        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs flex flex-col justify-between space-y-3">
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs flex flex-col justify-between space-y-3">
           <div>
             <div className="flex items-center space-x-2 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] mb-1">
               <Upload className="w-4 h-4" />
@@ -178,7 +178,7 @@ export default function BackupTab({ settings, setSettings }) {
           <button
             type="button"
             onClick={() => setRestoreModalOpen(true)}
-            className="w-full py-2 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] hover:bg-[var(--color-warning-hover-border)]/20 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors"
+            className="w-full px-4 py-2 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] hover:bg-[var(--color-warning-hover-border)]/20 text-xs md:text-sm font-semibold rounded-md flex items-center justify-center gap-1.5 md:gap-2 transition-all"
           >
             <Upload className="w-3.5 h-3.5" />
             <span>Upload & Restore</span>
@@ -186,7 +186,7 @@ export default function BackupTab({ settings, setSettings }) {
         </div>
 
         {/* Automatic Backup Schedule */}
-        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs flex flex-col justify-between space-y-3">
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs flex flex-col justify-between space-y-3">
           <div>
             <div className="flex items-center space-x-2 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] mb-1">
               <Clock className="w-4 h-4" />
@@ -213,7 +213,7 @@ export default function BackupTab({ settings, setSettings }) {
       </div>
 
       {/* Card 2: Backup History Table */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
             <FileSpreadsheet className="w-4 h-4 text-[var(--color-primary)]" />
@@ -278,7 +278,7 @@ export default function BackupTab({ settings, setSettings }) {
       {/* Restore Warning Modal */}
       {restoreModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-modal-overlay)] backdrop-blur-xs animate-in fade-in">
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-2xl p-6 max-w-md w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4">
+          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-md w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" /> Restore Database File
@@ -291,7 +291,7 @@ export default function BackupTab({ settings, setSettings }) {
               </button>
             </div>
 
-            <div className="p-3 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] rounded-xl text-xs text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] space-y-1">
+            <div className="p-3 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] rounded-md text-xs text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] space-y-1">
               <span className="font-bold block">⚠️ Warning: Irreversible Action</span>
               <p className="text-[11px] leading-relaxed">
                 Restoring a database snapshot will overwrite all current system records, tourist reviews, and activity logs with the uploaded dump data.
@@ -314,7 +314,7 @@ export default function BackupTab({ settings, setSettings }) {
               <button
                 type="button"
                 onClick={() => setRestoreModalOpen(false)}
-                className="px-4 py-2 bg-[var(--color-neutral-badge-bg)] hover:bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-xs font-medium rounded-lg text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+                className="px-4 py-2 bg-[var(--color-neutral-badge-bg)] hover:bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-xs md:text-sm font-semibold rounded-md border border-transparent text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] transition-all"
               >
                 Cancel
               </button>
@@ -322,9 +322,9 @@ export default function BackupTab({ settings, setSettings }) {
                 type="button"
                 onClick={handleRestoreSubmit}
                 disabled={!selectedFile || restoring}
-                className="px-4 py-2 bg-[var(--color-warning-text)] dark:bg-[var(--color-warning-dark-text)] hover:opacity-90 disabled:opacity-50 text-[var(--color-white)] text-xs font-semibold rounded-lg flex items-center gap-1.5"
+                className="px-4 py-2 bg-[var(--color-warning-text)] dark:bg-[var(--color-warning-dark-text)] hover:opacity-90 disabled:opacity-50 text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent flex items-center justify-center gap-1.5 md:gap-2 transition-all"
               >
-                {restoring ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                {restoring ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                 <span>{restoring ? 'Restoring...' : 'Confirm & Restore'}</span>
               </button>
             </div>

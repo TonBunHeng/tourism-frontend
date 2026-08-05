@@ -15,18 +15,18 @@ export default function DeletionHeader({ onReset }) {
         <div className="grid grid-cols-3 gap-2 sm:flex sm:gap-3">
           <button 
             onClick={onReset}
-            className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] rounded-xl hover:bg-[var(--color-warning-bg)] dark:hover:bg-[var(--color-warning-dark-bg)] transition-colors hover:border-[var(--color-warning-border)] dark:hover:border-[var(--color-warning-dark-border)]"
+            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] rounded-md hover:bg-[var(--color-warning-bg)] dark:hover:bg-[var(--color-warning-dark-bg)] transition-all shrink-0"
           >
-            <RotateCcw size={18} className="flex-shrink-0" />
-            <span className="font-medium text-xs sm:text-sm truncate">Reset</span>
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span className="truncate">Reset</span>
           </button>
-          <button className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] rounded-xl hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors">
-            <Download size={18} className="flex-shrink-0" />
-            <span className="font-medium text-xs sm:text-sm truncate">Export</span>
+          <button className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] rounded-md hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all shrink-0">
+            <Download className="w-4 h-4 shrink-0" />
+            <span className="truncate">Export</span>
           </button>
-          <button className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-[var(--color-primary)] text-[var(--color-white)] rounded-xl hover:bg-[var(--color-primary-hover)] transition-colors shadow-lg shadow-[var(--color-primary)]/25">
-            <Shield size={18} className="flex-shrink-0" />
-            <span className="font-medium text-xs sm:text-sm truncate">Bulk Actions</span>
+          <button className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0">
+            <Shield className="w-4 h-4 shrink-0" />
+            <span className="truncate">Bulk Actions</span>
           </button>
         </div>
       </div>

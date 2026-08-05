@@ -16,7 +16,7 @@ export default function ChatWindow({
   return (
     <div
       className={`${selectedChat ? 'flex' : 'hidden md:flex'
-        } flex-1 min-w-0 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-col overflow-hidden`}
+        } flex-1 min-w-0 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-col overflow-hidden`}
     >
       {selectedChat ? (
         <>
@@ -100,7 +100,7 @@ export default function ChatWindow({
                       </div>
                     )}
                     <div
-                      className={`rounded-2xl px-4 py-2 ${isAdmin
+                      className={`rounded-lg px-4 py-2 ${isAdmin
                         ? 'bg-[var(--color-primary)] text-[var(--color-white)]'
                         : isAI
                           ? 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]'
@@ -125,7 +125,7 @@ export default function ChatWindow({
             })}
             {isAITyping && (
               <div className="flex justify-start">
-                <div className="bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] rounded-2xl px-4 py-2">
+                <div className="bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] rounded-lg px-4 py-2">
                   <div className="flex items-center gap-2">
                     <Bot className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
                     <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Chat Support is typing</span>
@@ -171,7 +171,7 @@ export default function ChatWindow({
                   onKeyPress={onKeyPress}
                   placeholder="Type your message..."
                   rows="2"
-                  className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none text-sm bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+                  className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none text-sm bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
                 />
               </div>
               <button className="hidden sm:inline-flex p-2 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors flex-shrink-0">
@@ -180,7 +180,7 @@ export default function ChatWindow({
               <button
                 onClick={onSendMessage}
                 disabled={!newMessage.trim()}
-                className="p-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="p-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 <Send className="w-5 h-5 text-[var(--color-white)]" />
               </button>

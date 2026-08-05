@@ -18,7 +18,7 @@ export default function DeletionDetailsModal({
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-rose-50 dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center">
               <User className="w-5 h-5 text-rose-600 dark:text-[var(--color-rose-badge-dark-text)]" />
             </div>
             <div>
@@ -28,7 +28,7 @@ export default function DeletionDetailsModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-xl transition-colors"
+            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -43,23 +43,23 @@ export default function DeletionDetailsModal({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Request Type</span>
               <p className="text-sm font-medium text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] mt-1">{getTypeLabel(request.type)}</p>
             </div>
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Status & Urgency</span>
               <p className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1 capitalize">{request.status} • <span className="uppercase text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]">{request.urgency}</span></p>
             </div>
           </div>
 
-          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Reason</span>
             <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 leading-relaxed">{request.reason}</p>
           </div>
 
           {request.additionalInfo && (
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Additional Information</span>
               <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 leading-relaxed">{request.additionalInfo}</p>
             </div>
@@ -70,7 +70,7 @@ export default function DeletionDetailsModal({
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block mb-2">Items to Delete</span>
               <div className="space-y-2">
                 {request.itemsToDelete.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between gap-2 p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                  <div key={idx} className="flex items-center justify-between gap-2 p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
                     <div className="flex items-center gap-2 min-w-0">
                       <Trash2 className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] flex-shrink-0" />
                       <div className="min-w-0">
@@ -91,7 +91,7 @@ export default function DeletionDetailsModal({
               onChange={(e) => onAdminNotesChange(e.target.value)}
               placeholder="Add admin notes..."
               rows="3"
-              className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none transition-all"
+              className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none transition-all"
             />
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function DeletionDetailsModal({
               <button
                 type="button"
                 onClick={() => onApprove(request)}
-                className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer"
+                className="py-2.5 px-4 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 Approve
@@ -111,7 +111,7 @@ export default function DeletionDetailsModal({
               <button
                 type="button"
                 onClick={() => onReject(request)}
-                className="py-2.5 px-4 rounded-xl bg-[var(--color-danger-text)] hover:opacity-90 text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
+                className="py-2.5 px-4 rounded-md bg-[var(--color-danger-text)] hover:opacity-90 text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
               >
                 <X className="w-4 h-4" />
                 Reject
@@ -121,7 +121,7 @@ export default function DeletionDetailsModal({
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-4 rounded-xl bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-border-subtle-light)] dark:hover:bg-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-white)] font-medium text-sm transition-colors"
+              className="py-2.5 px-4 rounded-md bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-border-subtle-light)] dark:hover:bg-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-white)] font-medium text-sm transition-colors"
             >
               Close
             </button>

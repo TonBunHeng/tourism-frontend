@@ -66,7 +66,7 @@ export default function GeneralTab({ settings, setSettings }) {
       </div>
 
       {/* Card 1: System Identity */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Globe className="w-4 h-4 text-[var(--color-primary)]" />
           System Identity & Organization
@@ -115,7 +115,7 @@ export default function GeneralTab({ settings, setSettings }) {
       </div>
 
       {/* Card 2: Contact Information */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Mail className="w-4 h-4 text-[var(--color-primary)]" />
           System Contact Details
@@ -161,7 +161,7 @@ export default function GeneralTab({ settings, setSettings }) {
       </div>
 
       {/* Card 3: Localization & Regional Settings */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Clock className="w-4 h-4 text-[var(--color-primary)]" />
           Localization & Date Formats
@@ -219,7 +219,7 @@ export default function GeneralTab({ settings, setSettings }) {
       </div>
 
       {/* Card 4: Branding Assets Upload (Logo & Favicon) */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <ImageIcon className="w-4 h-4 text-[var(--color-primary)]" />
           Brand Assets (Logo & Favicon)
@@ -233,7 +233,7 @@ export default function GeneralTab({ settings, setSettings }) {
             </label>
 
             {logoPreview ? (
-              <div className="relative border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 flex items-center justify-between">
+              <div className="relative border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-14 h-14 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center overflow-hidden">
                     <img src={logoPreview} alt="System Logo" className="max-h-full max-w-full object-contain" />
@@ -257,7 +257,7 @@ export default function GeneralTab({ settings, setSettings }) {
                 </button>
               </div>
             ) : (
-              <label className="border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[var(--color-primary)] rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/30">
+              <label className="border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[var(--color-primary)] rounded-md p-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/30">
                 <Upload className="w-6 h-6 text-[var(--color-text-muted-light)] mb-1" />
                 <span className="text-xs font-medium text-[var(--color-primary)]">Click to upload logo</span>
                 <span className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">PNG, SVG, or JPG (max 2MB)</span>
@@ -273,7 +273,7 @@ export default function GeneralTab({ settings, setSettings }) {
             </label>
 
             {faviconPreview ? (
-              <div className="relative border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 flex items-center justify-between">
+              <div className="relative border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center overflow-hidden">
                     <img src={faviconPreview} alt="Favicon" className="max-h-full max-w-full object-contain" />
@@ -297,7 +297,7 @@ export default function GeneralTab({ settings, setSettings }) {
                 </button>
               </div>
             ) : (
-              <label className="border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[var(--color-primary)] rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/30">
+              <label className="border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[var(--color-primary)] rounded-md p-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/30">
                 <Upload className="w-6 h-6 text-[var(--color-text-muted-light)] mb-1" />
                 <span className="text-xs font-medium text-[var(--color-primary)]">Click to upload favicon</span>
                 <span className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">ICO, PNG, or SVG (32x32px)</span>

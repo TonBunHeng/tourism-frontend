@@ -4,7 +4,7 @@ export default function ContentTab({ settings, setSettings }) {
       <div>
         <h3 className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Content Settings</h3>
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-xl">
+          <div className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md">
             <div className="min-w-0">
               <p className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Auto-Approve Content</p>
               <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Automatically approve user-submitted content</p>
@@ -28,7 +28,7 @@ export default function ContentTab({ settings, setSettings }) {
             <select
               value={settings.moderationLevel}
               onChange={(e) => setSettings({ ...settings, moderationLevel: e.target.value })}
-              className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+              className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -41,7 +41,7 @@ export default function ContentTab({ settings, setSettings }) {
             <select
               value={settings.imageQuality}
               onChange={(e) => setSettings({ ...settings, imageQuality: e.target.value })}
-              className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+              className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -54,7 +54,7 @@ export default function ContentTab({ settings, setSettings }) {
             <select
               value={settings.videoQuality}
               onChange={(e) => setSettings({ ...settings, videoQuality: e.target.value })}
-              className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+              className="w-full px-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
             >
               <option value="480p">480p</option>
               <option value="720p">720p</option>
@@ -62,7 +62,7 @@ export default function ContentTab({ settings, setSettings }) {
               <option value="4k">4K</option>
             </select>
           </div>
-          <div className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-xl">
+          <div className="flex items-center justify-between gap-4 p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md">
             <div className="min-w-0">
               <p className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Spam Protection</p>
               <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Enable comment spam detection and filtering</p>

@@ -60,7 +60,7 @@ export default function IntegrationTab({ settings, setSettings }) {
       </div>
 
       {/* Card 1: Google Maps API Key */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
             <MapPin className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
@@ -98,7 +98,7 @@ export default function IntegrationTab({ settings, setSettings }) {
                 type="button"
                 onClick={() => handleTestConnection('Google Maps API')}
                 disabled={testingService['Google Maps API']}
-                className="px-3 py-2 bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-surface-hover-light)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-xs font-medium rounded-lg flex items-center gap-1.5 shrink-0 transition-colors"
+                className="px-4 py-2 bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-surface-hover-light)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent flex items-center justify-center gap-1.5 md:gap-2 shrink-0 transition-all"
               >
                 {testingService['Google Maps API'] ? (
                   <RefreshCw className="w-3.5 h-3.5 animate-spin text-[var(--color-primary)]" />
@@ -118,7 +118,7 @@ export default function IntegrationTab({ settings, setSettings }) {
       </div>
 
       {/* Card 2: Firebase Configuration */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <Flame className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" />
           Firebase Cloud Storage & Analytics
@@ -189,7 +189,7 @@ export default function IntegrationTab({ settings, setSettings }) {
       </div>
 
       {/* Card 3: SMTP Email Settings */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
             <Mail className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
@@ -199,7 +199,7 @@ export default function IntegrationTab({ settings, setSettings }) {
             type="button"
             onClick={() => handleTestConnection('SMTP Email')}
             disabled={testingService['SMTP Email']}
-            className="px-3 py-1.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:opacity-90 text-xs md:text-sm font-semibold rounded-md border border-transparent flex items-center justify-center gap-1.5 md:gap-2 transition-all"
           >
             {testingService['SMTP Email'] ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -298,7 +298,7 @@ export default function IntegrationTab({ settings, setSettings }) {
       {/* Card 4: Weather API (Optional) & AI Service Integration */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Weather API */}
-        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-3">
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-3">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
             <CloudSun className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" />
             Live Destination Weather API
@@ -328,7 +328,7 @@ export default function IntegrationTab({ settings, setSettings }) {
         </div>
 
         {/* AI Service API */}
-        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-3">
+        <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-3">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
             <Bot className="w-4 h-4 text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)]" />
             AI Assistant Service API Key

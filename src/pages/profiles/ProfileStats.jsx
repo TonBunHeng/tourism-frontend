@@ -4,7 +4,7 @@ export default function ProfileStats({ userStats }) {
       {userStats.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl p-3 md:p-4 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div key={index} className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-3 md:p-4 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium truncate">{stat.label}</p>

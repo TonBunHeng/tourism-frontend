@@ -315,7 +315,7 @@ export default function Favorites() {
       <FavoritesStats favorites={favorites} />
 
       {/* Main Content */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-2xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         {/* Toolbar */}
         <FavoritesToolbar
           totalCount={filteredFavorites.length}

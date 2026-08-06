@@ -77,7 +77,7 @@ export default function Users() {
       email: 'james@email.com',
       phone: '+855 77 123 456',
       avatar: User,
-      role: 'Moderator',
+      role: 'User',
       status: 'Active',
       joinDate: '2023-03-10',
       lastActive: '2024-02-25 16:45',
@@ -202,7 +202,7 @@ export default function Users() {
     location: 'Siem Reap'
   });
 
-  const roles = ['All', 'Admin', 'Moderator', 'User'];
+  const roles = ['All', 'Admin', 'User'];
   const statuses = ['All', 'Active', 'Inactive', 'Suspended'];
   const subscriptions = ['All', 'Free', 'Basic', 'Premium'];
 

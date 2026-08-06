@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Bell, Search, User, Settings, LogOut, Menu,
-  X, ChevronDown, MessageCircle, Globe, Sun, Moon
+  X, MessageCircle, Globe, Sun, Moon
 } from "lucide-react";
 import profile_v2 from "../../assets/images/profile_v2.png";
 import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
@@ -114,19 +114,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
 
               {/* Desktop Icon */}
               <span className="hidden md:inline-flex">
-                {isExpanded ? (
-                  <svg className="w-5 h-5 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
-                    <path d="M9 3v18" strokeWidth="2" />
-                    <path d="M14 15l-3-3 3-3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5 text-gray-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
-                    <path d="M9 3v18" strokeWidth="2" />
-                    <path d="M13 9l3 3-3 3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
+                <Menu size={20} />
               </span>
             </button>
           </div>

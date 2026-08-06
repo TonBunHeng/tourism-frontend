@@ -63,13 +63,13 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
         <button
           key={item.name}
           onClick={() => setShowLogoutAlert(true)}
-          className="group relative flex items-center w-full px-3 py-2.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)]"
+          className="group relative flex items-center w-full px-4 py-2.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] overflow-hidden"
         >
-          <div className="flex items-center w-full">
-            <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'md:mx-auto' : ''}`}>
+          <div className="flex items-center w-full min-w-0">
+            <div className="flex items-center justify-center w-6 h-6 shrink-0">
               <Icon size={20} strokeWidth={2} className="text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
             </div>
-            <span className={`ml-3 text-sm font-medium whitespace-nowrap text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] ${isExpanded ? 'block' : 'block md:hidden'}`}>
+            <span className={`text-sm font-medium whitespace-nowrap text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] transition-all duration-300 ease-in-out ${isExpanded ? 'ml-3 opacity-100 max-w-[200px] translate-x-0' : 'opacity-100 md:opacity-0 md:max-w-0 md:overflow-hidden md:ml-0 md:-translate-x-3 md:pointer-events-none'}`}>
               {item.name}
             </span>
           </div>
@@ -87,17 +87,17 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
       <Link
         to={item.path || '#'}
         key={item.name}
-        className={`group relative flex items-center px-3 py-2.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 
+        className={`group relative flex items-center px-4 py-2.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 overflow-hidden
           ${isActive
             ? 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] font-semibold'
             : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'}`}
       >
-        <div className="flex items-center w-full">
-          <div className={`flex items-center justify-center shrink-0 ${!isExpanded ? 'md:mx-auto' : ''}`}>
+        <div className="flex items-center w-full min-w-0">
+          <div className="flex items-center justify-center w-6 h-6 shrink-0">
             <Icon size={20} strokeWidth={2} />
           </div>
 
-          <span className={`ml-3 text-sm font-medium whitespace-nowrap ${isExpanded ? 'block' : 'block md:hidden'}`}>
+          <span className={`text-sm font-medium whitespace-nowrap transition-all duration-300 ease-in-out ${isExpanded ? 'ml-3 opacity-100 max-w-[200px] translate-x-0' : 'opacity-100 md:opacity-0 md:max-w-0 md:overflow-hidden md:ml-0 md:-translate-x-3 md:pointer-events-none'}`}>
             {item.name}
           </span>
         </div>
@@ -114,27 +114,25 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
 
   return (
     <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      <div
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsOpen(false)}
+      />
 
       <aside
         ref={sidebarRef}
-        className={`fixed md:static inset-y-0 left-0 z-40 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border-r border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] transition-all duration-300 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        className={`fixed md:static inset-y-0 left-0 z-40 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border-r border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] transition-all duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
           } ${isExpanded ? 'w-64' : 'w-64 md:w-20'}`}
       >
         {/* Brand Header */}
-        <div className={`h-20 flex items-center justify-between px-5 ${!isExpanded ? 'md:justify-center md:px-2' : ''}`}>
-          <div className={`flex items-center gap-3 overflow-hidden w-full ${!isExpanded ? 'md:w-auto' : ''}`}>
+        <div className="h-20 flex items-center justify-between px-4 overflow-hidden">
+          <div className="flex items-center gap-3 w-full min-w-0">
             <div
               className="w-10 h-10 rounded-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] flex items-center justify-center shrink-0"
             >
               <img src={tourism_app_icon} alt="Tourism App Icon" className="w-10 h-10" />
             </div>
-            <div className={`flex flex-col whitespace-nowrap ${isExpanded ? 'flex' : 'flex md:hidden'}`}>
+            <div className={`flex flex-col whitespace-nowrap transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-100 md:opacity-0 md:max-w-0 md:overflow-hidden md:-translate-x-3 md:pointer-events-none'}`}>
               <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-base leading-tight">Smart Tourism</span>
               <span className="text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium">Technology</span>
             </div>
@@ -151,9 +149,9 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
 
 
         {/* Navigation Areas */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-2 px-4 flex flex-col gap-6">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-2 px-3 flex flex-col gap-6">
           <div>
-            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest ${isExpanded ? 'block' : 'block md:hidden'}`}>
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-2 max-h-6' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
               Management
             </h3>
             <div className="flex flex-col">
@@ -162,7 +160,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
           </div>
 
           <div>
-            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest ${isExpanded ? 'block' : 'block md:hidden'}`}>
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-2 max-h-6' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
               Engagement
             </h3>
             <div className="flex flex-col">
@@ -171,7 +169,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
           </div>
 
           <div>
-            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] mb-2 uppercase tracking-widest ${isExpanded ? 'block' : 'block md:hidden'}`}>
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-2 max-h-6' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
               Preferences
             </h3>
             <div className="flex flex-col">
@@ -182,15 +180,15 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
 
         {/* User Profile Footer */}
         <div
-          className="p-1 relative border-t border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)]">
-          <div className={`flex items-center gap-3 p-2 rounded-md transition-colors w-full text-left ${!isExpanded ? 'md:justify-center' : ''}`}>
+          className="p-1 relative border-t border-[var(--color-sidebar-border)] dark:border-[var(--color-sidebar-dark-border)] overflow-hidden">
+          <div className="flex items-center gap-3 p-2 rounded-md transition-all duration-300 ease-in-out w-full text-left">
             <div className="relative shrink-0">
               <img
                 src={profile_v2}
                 alt="User profile"
                 className="w-9 h-9 rounded-full object-cover bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]" />
             </div>
-            <div className={`flex flex-col overflow-hidden ${isExpanded ? 'flex' : 'flex md:hidden'}`}>
+            <div className={`flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-100 md:opacity-0 md:max-w-0 md:overflow-hidden md:-translate-x-3 md:pointer-events-none'}`}>
               <span className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] truncate">BunHeng Ton</span>
               <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">bunheng@email.com</span>
             </div>

@@ -12,12 +12,12 @@ export default function CategoriesHeader({ onAddClick }) {
             Organize and manage all place categories
           </p>
         </div>
-        <button 
+        <button
           onClick={onAddClick}
           className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 w-full sm:w-auto"
         >
           <Plus className="w-4 h-4 shrink-0" />
-          <span>Add Category</span>
+          <span>Add New Category</span>
         </button>
       </div>
     </div>

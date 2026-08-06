@@ -9,21 +9,21 @@ export default function SalesChart() {
     { month: 'Apr', unitsSold: 170, totalTransaction: 7000 },
     { month: 'May', unitsSold: 110, totalTransaction: 5050 },
     { month: 'Jun', unitsSold: 150, totalTransaction: 7500 },
+    { month: 'Jul', unitsSold: 90, totalTransaction: 1200 },
+    { month: 'Aug', unitsSold: 170, totalTransaction: 7000 },
+    { month: 'Sep', unitsSold: 110, totalTransaction: 5050 },
+    { month: 'Oct', unitsSold: 150, totalTransaction: 7500 },
+    { month: 'Nov', unitsSold: 90, totalTransaction: 1200 },
+    { month: 'Dec', unitsSold: 170, totalTransaction: 7000 },
   ];
 
   return (
     <div className="lg:col-span-2 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Sales Overview</h3>
-          <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Units sold vs total transaction</p>
+          <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">User Growth Overview</h3>
         </div>
         <div className="flex items-center gap-3">
-          <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] font-medium flex items-center gap-1">
-            <span>View Details</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-
           <button
             type="button"
             aria-label="View profile"

@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
           <span>© {currentYear} Smart Tourism</span>
           <span className="bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-zinc-300">
-            v1.2
+            v1.5
           </span>
         </div>
 

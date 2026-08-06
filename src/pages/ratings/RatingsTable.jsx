@@ -1,11 +1,10 @@
-import { Calendar, Check, Image as ImageIcon, MapPin, ThumbsUp, ThumbsDown, Clock, X, Eye, Trash2 } from 'lucide-react';
+import { Calendar, Check, Image as ImageIcon, MapPin, ThumbsUp, ThumbsDown, Clock, X, Eye, User } from 'lucide-react';
 import { getStatusColor, renderStars } from '../../utils/StatusUtils';
 
 export default function RatingsTable({
   reviews,
   onStatusChange,
   onViewDetails,
-  onDelete,
   startIndex = 0
 }) {
   return (
@@ -25,7 +24,11 @@ export default function RatingsTable({
         <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
           {reviews.length > 0 ? (
             reviews.map((review, index) => {
-              const AvatarIcon = review.avatar;
+              const AvatarIcon = review.avatar || (typeof review.user === 'object' && review.user.avatar) || User;
+              const userName = typeof review.user === 'object' ? review.user.name : review.user;
+              const userVerified = typeof review.user === 'object' ? review.user.verified : review.verified;
+              const placeName = typeof review.place === 'object' ? review.place.name : review.place;
+
               return (
                 <tr key={review.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
@@ -37,14 +40,14 @@ export default function RatingsTable({
                         <AvatarIcon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{review.user}</p>
+                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{userName}</p>
                         <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] line-clamp-1">{review.title}</p>
                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                           <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             {review.date}
                           </span>
-                          {review.verified && (
+                          {userVerified && (
                             <span className="text-xs flex items-center gap-0.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]">
                               <Check className="w-3 h-3" />
                               Verified
@@ -62,7 +65,7 @@ export default function RatingsTable({
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     <div className="flex items-center gap-1">
                       <MapPin className="w-3.5 h-3.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]" />
-                      {review.place}
+                      {placeName}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -76,7 +79,7 @@ export default function RatingsTable({
                       </div>
                       <div className="flex items-center gap-0.5">
                         <ThumbsDown className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
-                        <span>{review.dislikes}</span>
+                        <span>{review.dislikes || 0}</span>
                       </div>
                     </div>
                   </td>
@@ -92,14 +95,14 @@ export default function RatingsTable({
                         <>
                           <button
                             onClick={() => onStatusChange(review.id, 'Approved')}
-                            className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
+                            className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors cursor-pointer"
                             title="Approve"
                           >
                             <Check className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => onStatusChange(review.id, 'Rejected')}
-                            className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
+                            className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
                             title="Reject"
                           >
                             <X className="w-4 h-4" />
@@ -108,17 +111,10 @@ export default function RatingsTable({
                       )}
                       <button
                         onClick={() => onViewDetails(review)}
-                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => onDelete(review.id)}
-                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -139,3 +135,4 @@ export default function RatingsTable({
     </div>
   );
 }
+

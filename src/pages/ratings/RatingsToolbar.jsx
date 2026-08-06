@@ -1,4 +1,4 @@
-import { Search, ChevronDown } from 'lucide-react';
+import { Search, ChevronDown, Table, LayoutList } from 'lucide-react';
 
 export default function RatingsToolbar({
   searchTerm,
@@ -13,13 +13,49 @@ export default function RatingsToolbar({
   onPlaceChange,
   places,
   sortBy,
-  onSortChange
+  onSortChange,
+  viewMode = 'table',
+  onViewModeChange
 }) {
   return (
     <div className="px-4 sm:px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Title */}
-        <h2 className="text-lg sm:text-xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">All Reviews</h2>
+        {/* Title & View Switcher */}
+        <div className="flex items-center gap-4">
+          <h2 className="text-lg sm:text-xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">All Ratings & Reviews</h2>
+          
+          {onViewModeChange && (
+            <div className="flex items-center bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)] p-1 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+              <button
+                type="button"
+                onClick={() => onViewModeChange('table')}
+                className={`p-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === 'table'
+                    ? 'bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-primary)] shadow-xs font-bold'
+                    : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)]'
+                }`}
+                title="Table View"
+              >
+                <Table className="w-4 h-4" />
+                <span className="hidden md:inline">Table</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onViewModeChange('feed')}
+                className={`p-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === 'feed'
+                    ? 'bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-primary)] shadow-xs font-bold'
+                    : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)]'
+                }`}
+                title="List Feed View"
+              >
+                <LayoutList className="w-4 h-4" />
+                <span className="hidden md:inline">Feed</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Right Controls */}
         <div className="flex flex-col sm:flex-row gap-3">
@@ -68,3 +104,4 @@ export default function RatingsToolbar({
     </div>
   );
 }
+

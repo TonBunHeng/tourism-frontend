@@ -34,7 +34,7 @@ export default function QuickActions() {
       path: '/reports'
     },
     {
-      label: 'View Ratings',
+      label: 'Ratings & Reviews',
       icon: Star,
       color: 'text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]',
       bg: 'bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] border border-[var(--color-rose-badge-border)] dark:border-[var(--color-rose-badge-dark-border)]',

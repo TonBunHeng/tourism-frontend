@@ -1,6 +1,6 @@
-import { Download, Share2 } from 'lucide-react';
+import { PieChart } from 'lucide-react';
 
-export default function RatingsHeader() {
+export default function RatingsHeader({ onOpenAnalytics }) {
   return (
     <div className="mb-6 sm:mb-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -12,13 +12,17 @@ export default function RatingsHeader() {
             Manage user reviews and ratings across all destinations
           </p>
         </div>
-        <div className="grid grid-cols md:flex gap md:gap-3">
-          <button className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0">
-            <Share2 className="w-4 h-4 shrink-0"/>
-            <span>Share Report</span>
+        <div className="grid grid-cols-1 md:flex gap-1.5 md:gap-1.5">
+          <button
+            onClick={onOpenAnalytics}
+            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 cursor-pointer active:scale-95"
+          >
+            <PieChart className="w-4 h-4 shrink-0" />
+            <span>Ratings Analytics</span>
           </button>
         </div>
       </div>
     </div>
   );
 }
+

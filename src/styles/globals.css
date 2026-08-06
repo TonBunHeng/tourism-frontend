@@ -220,3 +220,9 @@
   background: #1e293b;
   border-radius: 50px;
 }
+
+/* Hide default mm/dd/yyyy text on empty date inputs when not focused */
+input[type="date"][value=""]:not(:focus)::-webkit-datetime-edit,
+input[type="date"]:invalid:not(:focus)::-webkit-datetime-edit {
+  color: transparent;
+}

@@ -13,7 +13,6 @@ import Provinces from '../pages/provinces/Provinces';
 import Gallery from '../pages/galleries/Gallery';
 import Events from '../pages/events/Events';
 import Users from '../pages/users/Users';
-import Reviews from '../pages/reviews/Reviews';
 import Ratings from '../pages/ratings/Ratings';
 import Favorites from '../pages/favorites/Favorites';
 import DeletionRequests from '../pages/delete/DeletionRequests';
@@ -42,7 +41,7 @@ const AppRoutes = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/users" element={<Users />} />
-          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/reviews" element={<Ratings />} />
           <Route path="/ratings" element={<Ratings />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/deletion-requests" element={<DeletionRequests />} />

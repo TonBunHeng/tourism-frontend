@@ -21,8 +21,8 @@ export default function DashboardHeader({
           <div className="flex bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-1">
             <button
               onClick={() => onTimeRangeChange('weekly')}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${timeRange === 'weekly'
-                ? 'bg-[var(--color-primary)] text-[var(--color-white)]'
+              className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer active:scale-95 ${timeRange === 'weekly'
+                ? 'bg-[var(--color-primary)] text-[var(--color-white)] font-semibold'
                 : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
                 }`}
             >
@@ -30,8 +30,8 @@ export default function DashboardHeader({
             </button>
             <button
               onClick={() => onTimeRangeChange('monthly')}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${timeRange === 'monthly'
-                ? 'bg-[var(--color-primary)] text-[var(--color-white)]'
+              className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer active:scale-95 ${timeRange === 'monthly'
+                ? 'bg-[var(--color-primary)] text-[var(--color-white)] font-semibold'
                 : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
                 }`}
             >
@@ -39,9 +39,9 @@ export default function DashboardHeader({
             </button>
             <button
               onClick={() => onTimeRangeChange('yearly')}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${timeRange === 'yearly'
-                ? 'bg-[var(--color-primary)] text-[var(--color-white)]'
-                : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
+              className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer active:scale-95 ${timeRange === 'yearly'
+                ? 'bg-[var(--color-primary)] text-[var(--color-white)] font-semibold'
+                : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-dark)]'
                 }`}
             >
               Yearly
@@ -49,12 +49,12 @@ export default function DashboardHeader({
           </div>
           <button
             onClick={onRefresh}
-            className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors"
+            className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all cursor-pointer active:scale-95"
             title="Refresh dashboard"
           >
             <RefreshCw className={`w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] ${isLoading ? 'animate-spin' : ''}`} />
           </button>
-          <button className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors" title="Export report">
+          <button className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all cursor-pointer active:scale-95" title="Export report">
             <Download className="w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
           </button>
         </div>

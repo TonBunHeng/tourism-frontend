@@ -36,7 +36,7 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
 
   return (
     <div 
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md transition-opacity"
       onClick={onClose} // Close when clicking the backdrop
       role="dialog"
       aria-modal="true"

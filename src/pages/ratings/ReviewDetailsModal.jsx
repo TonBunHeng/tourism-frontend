@@ -1,16 +1,19 @@
-import { X, Check, Trash2 } from 'lucide-react';
+import { X, Check, User } from 'lucide-react';
 import { renderStars } from '../../utils/StatusUtils';
 
 export default function ReviewDetailsModal({
   isOpen,
   review,
   onClose,
-  onStatusChange,
-  onDelete
+  onStatusChange
 }) {
   if (!isOpen || !review) return null;
 
-  const AvatarIcon = review.avatar;
+  const AvatarIcon = review.avatar || (typeof review.user === 'object' && review.user.avatar) || User;
+  const userName = typeof review.user === 'object' ? review.user.name : review.user;
+  const userVerified = typeof review.user === 'object' ? review.user.verified : review.verified;
+  const placeName = typeof review.place === 'object' ? review.place.name : review.place;
+  const repliesCount = Array.isArray(review.replies) ? review.replies.length : (review.replies || 0);
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -28,7 +31,7 @@ export default function ReviewDetailsModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors"
+            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -39,8 +42,8 @@ export default function ReviewDetailsModal({
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">User</span>
             <p className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1 flex items-center gap-2">
-              {review.user}
-              {review.verified && (
+              {userName}
+              {userVerified && (
                 <span className="text-xs px-2 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] inline-flex items-center gap-1">
                   <Check className="w-3 h-3" /> Verified
                 </span>
@@ -52,7 +55,7 @@ export default function ReviewDetailsModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Place</span>
-              <p className="text-sm font-medium text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] mt-1 truncate">{review.place}</p>
+              <p className="text-sm font-medium text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] mt-1 truncate">{placeName}</p>
               <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">{review.category}</p>
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
@@ -82,11 +85,11 @@ export default function ReviewDetailsModal({
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-center">
               <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Dislikes</span>
-              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{review.dislikes}</p>
+              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{review.dislikes || 0}</p>
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-center">
               <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Replies</span>
-              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{review.replies}</p>
+              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{repliesCount}</p>
             </div>
           </div>
 
@@ -116,26 +119,15 @@ export default function ReviewDetailsModal({
                 onStatusChange(review.id, 'Approved');
                 onClose();
               }}
-              className="py-2.5 px-4 rounded-md bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] hover:bg-[var(--color-success-border)] dark:hover:bg-[var(--color-success-dark-bg)]/80 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] font-medium text-sm transition-colors flex items-center gap-2 border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)]"
+              className="py-2.5 px-4 rounded-md bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] hover:bg-[var(--color-success-border)] dark:hover:bg-[var(--color-success-dark-bg)]/80 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] font-medium text-sm transition-colors flex items-center gap-2 border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)] cursor-pointer"
             >
               <Check className="w-4 h-4" />
               Approve
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => {
-              const revId = review.id;
-              onClose();
-              onDelete(revId);
-            }}
-            className="py-2.5 px-4 rounded-md bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] hover:bg-[var(--color-danger-border)] dark:hover:bg-[var(--color-danger-dark-bg)]/80 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] font-medium text-sm transition-colors flex items-center gap-2 border border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)]/50"
-          >
-            <Trash2 className="w-4 h-4" />
-            Delete
-          </button>
         </div>
       </div>
     </div>
   );
 }
+

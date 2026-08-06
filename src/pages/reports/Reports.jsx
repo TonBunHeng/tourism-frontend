@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ReportsHeader from './ReportsHeader';
 import ReportsStats from './ReportsStats';
 import ReportsTable from './ReportsTable';
+import ReportsAnalyticsModal from './ReportsAnalyticsModal';
 import ExportAlertModal from './ExportAlertModal';
 import {
   placesReportData,
@@ -16,7 +17,7 @@ import { exportToPDF, exportToExcel } from '../../utils/exportReports';
 export default function Reports() {
   const [activeTab, setActiveTab] = useState('places');
   const [selectedDay, setSelectedDay] = useState('');
-  
+
   // Only apply date filter when user clicks Submit
   const [appliedDay, setAppliedDay] = useState('');
 
@@ -27,6 +28,7 @@ export default function Reports() {
   const [isResetting, setIsResetting] = useState(false);
   const [totalExports, setTotalExports] = useState(14);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
 
   const getRawDataByTab = () => {
@@ -174,6 +176,7 @@ export default function Reports() {
         onResetFilter={handleResetFilter}
         onExportPDF={handleOpenExportPDF}
         onExportExcel={handleOpenExportExcel}
+        onOpenAnalytics={() => setIsAnalyticsModalOpen(true)}
         isSubmitting={isSubmitting}
         isResetting={isResetting}
       />
@@ -194,6 +197,12 @@ export default function Reports() {
         setStatusFilter={setStatusFilter}
         data={filteredData}
         isLoading={isLoading}
+      />
+      {/* Reports Analytics Modal */}
+      <ReportsAnalyticsModal
+        isOpen={isAnalyticsModalOpen}
+        onClose={() => setIsAnalyticsModalOpen(false)}
+        activeTab={activeTab}
       />
     </div>
   );

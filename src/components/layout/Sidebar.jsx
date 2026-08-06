@@ -40,9 +40,8 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }
 
   const engagementItems = [
     { name: "Users", icon: Users, path: "/users" },
-    { name: "Reviews", icon: MessageSquareText, path: "/reviews" },
-    { name: "Ratings", icon: Star, path: "/ratings" },
     { name: "Favorites", icon: Heart, path: "/favorites" },
+    { name: "Ratings & Reviews", icon: Star, path: "/ratings" },
     { name: "Reports", icon: FileText, path: "/reports" },
     { name: "Deletion Requests", icon: Trash2, path: "/deletion-requests" },
   ];

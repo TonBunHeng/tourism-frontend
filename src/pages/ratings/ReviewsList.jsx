@@ -11,14 +11,16 @@ import {
   Eye,
   X,
   Reply,
-  Trash2,
-  FileText
+  FileText,
+  User
 } from 'lucide-react';
 
 const getStatusColor = (status) => {
   const colors = {
+    'Approved': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
     'Published': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
     'Pending': 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] dark:bg-[var(--color-warning-dark-bg)] dark:text-[var(--color-warning-dark-text)] dark:border-[var(--color-warning-dark-border)]',
+    'Rejected': 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]',
     'Flagged': 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]',
     'Archived': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-surface-hover-dark)]/50 dark:text-[var(--color-text-secondary-dark)] dark:border-[var(--color-border-dark)]'
   };
@@ -43,19 +45,24 @@ export default function ReviewsList({
   reviews,
   onViewDetails,
   onStatusChange,
-  onOpenReplyModal,
-  onDelete
+  onOpenReplyModal
 }) {
   return (
     <div className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
       {reviews.length > 0 ? (
         reviews.map((review) => {
-          const UserAvatar = review.user.avatar;
+          const userName = typeof review.user === 'object' ? review.user.name : review.user;
+          const userVerified = typeof review.user === 'object' ? review.user.verified : review.verified;
+          const placeName = typeof review.place === 'object' ? review.place.name : review.place;
+          const placeLocation = typeof review.place === 'object' ? review.place.location : 'Cambodia';
+          const repliesList = Array.isArray(review.replies) ? review.replies : [];
+          const repliesCount = typeof review.replies === 'number' ? review.replies : repliesList.length;
+
           return (
             <div key={review.id} className="p-4 sm:p-6 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
               <div className="flex items-start gap-3 sm:gap-4">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center flex-shrink-0">
-                  <UserAvatar className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
                 </div>
 
                 {/* Review Content */}
@@ -63,8 +70,8 @@ export default function ReviewsList({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm sm:text-base">{review.user.name}</span>
-                        {review.user.verified && (
+                        <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm sm:text-base">{userName}</span>
+                        {userVerified && (
                           <span className="text-xs px-2 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] inline-flex items-center gap-1">
                             <Check className="w-3 h-3" /> Verified
                           </span>
@@ -75,11 +82,11 @@ export default function ReviewsList({
                         {renderStars(review.rating)}
                         <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">({review.rating}.0)</span>
                         <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] hidden sm:inline">•</span>
-                        <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{review.place.name}</span>
+                        <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{placeName}</span>
                         <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] hidden sm:inline">•</span>
                         <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
-                          {review.place.location}
+                          {placeLocation}
                         </span>
                       </div>
                     </div>
@@ -92,12 +99,6 @@ export default function ReviewsList({
                           <Star className="w-3 h-3 fill-[var(--color-warning-text)] text-[var(--color-warning-text)]" /> Featured
                         </span>
                       )}
-                      {review.reported && (
-                        <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] flex items-center gap-1">
-                          <Flag className="w-3 h-3" />
-                          Reported
-                        </span>
-                      )}
                     </div>
                   </div>
 
@@ -106,17 +107,6 @@ export default function ReviewsList({
                     <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border ${getStatusColor(review.status)}`}>
                       {review.status}
                     </span>
-                    {review.featured && (
-                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)]">
-                        Featured
-                      </span>
-                    )}
-                    {review.reported && (
-                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full border bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] flex items-center gap-1">
-                        <Flag className="w-3 h-3" />
-                        Reported
-                      </span>
-                    )}
                   </div>
 
                   <h4 className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-2 sm:mt-1">{review.title}</h4>
@@ -142,24 +132,18 @@ export default function ReviewsList({
                     </button>
                     <button className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-danger-text)] dark:hover:text-[var(--color-danger-dark-text)] transition-colors">
                       <ThumbsDown className="w-3.5 h-3.5" />
-                      <span>{review.dislikes}</span>
+                      <span>{review.dislikes || 0}</span>
                     </button>
                     <button className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                       <MessageSquare className="w-3.5 h-3.5" />
-                      <span>{review.replies.length} replies</span>
+                      <span>{repliesCount} replies</span>
                     </button>
-                    {review.helpful > 0 && (
-                      <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
-                        <Award className="w-3.5 h-3.5" />
-                        {review.helpful} found helpful
-                      </span>
-                    )}
                   </div>
 
-                  {/* Replies */}
-                  {review.replies.length > 0 && (
+                  {/* Replies thread */}
+                  {repliesList.length > 0 && (
                     <div className="mt-3 pl-4 border-l-2 border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-                      {review.replies.map((reply) => (
+                      {repliesList.map((reply) => (
                         <div key={reply.id} className="flex items-start gap-2 mt-2">
                           <div className="w-6 h-6 rounded-full bg-[var(--color-neutral-badge-border)] dark:bg-[var(--color-surface-hover-dark)] flex items-center justify-center text-xs flex-shrink-0">
                             <Bot className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
@@ -175,56 +159,13 @@ export default function ReviewsList({
                       ))}
                     </div>
                   )}
-
-                  {/* Actions: mobile row */}
-                  <div className="flex sm:hidden items-center gap-1 mt-3 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-                    <button
-                      onClick={() => onViewDetails(review)}
-                      className="p-1.5 hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
-                      title="View Details"
-                    >
-                      <Eye className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
-                    </button>
-                    {review.status === 'Pending' && (
-                      <>
-                        <button
-                          onClick={() => onStatusChange(review.id, 'Published')}
-                          className="p-1.5 hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
-                          title="Approve"
-                        >
-                          <Check className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
-                        </button>
-                        <button
-                          onClick={() => onStatusChange(review.id, 'Archived')}
-                          className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                          title="Archive"
-                        >
-                          <X className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => onOpenReplyModal(review)}
-                      className="p-1.5 hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
-                      title="Reply"
-                    >
-                      <Reply className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                    </button>
-                    <button
-                      onClick={() => onDelete(review.id)}
-                      className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
-                    </button>
-                  </div>
                 </div>
 
-                {/* Actions: desktop sidebar */}
+                {/* Actions */}
                 <div className="hidden sm:flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                   <button
                     onClick={() => onViewDetails(review)}
-                    className="p-1.5 hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                     title="View Details"
                   >
                     <Eye className="w-4 h-4 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
@@ -232,16 +173,16 @@ export default function ReviewsList({
                   {review.status === 'Pending' && (
                     <>
                       <button
-                        onClick={() => onStatusChange(review.id, 'Published')}
-                        className="p-1.5 hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
+                        onClick={() => onStatusChange(review.id, 'Approved')}
+                        className="p-1.5 hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors cursor-pointer"
                         title="Approve"
                       >
                         <Check className="w-4 h-4 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
                       </button>
                       <button
-                        onClick={() => onStatusChange(review.id, 'Archived')}
-                        className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                        title="Archive"
+                        onClick={() => onStatusChange(review.id, 'Rejected')}
+                        className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                        title="Reject"
                       >
                         <X className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                       </button>
@@ -249,17 +190,10 @@ export default function ReviewsList({
                   )}
                   <button
                     onClick={() => onOpenReplyModal(review)}
-                    className="p-1.5 hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
-                    title="Reply"
+                    className="p-1.5 hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    title="Reply as Admin"
                   >
                     <Reply className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                  </button>
-                  <button
-                    onClick={() => onDelete(review.id)}
-                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
                   </button>
                 </div>
               </div>

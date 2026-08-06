@@ -26,7 +26,7 @@ export default function ExportAlertModal({ isOpen, format, activeTab, recordCoun
 
   return (
     <div
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md transition-opacity"
       onClick={onClose}
       role="dialog"
       aria-modal="true"

@@ -1,4 +1,4 @@
-import { Star, MapPin, ThumbsUp, Check, X, Eye, Trash2 } from 'lucide-react';
+import { Star, MapPin, ThumbsUp, Check, X, Eye, User } from 'lucide-react';
 
 const getStatusColor = (status) => {
   const colors = {
@@ -26,14 +26,17 @@ const renderStars = (rating, size = 'sm') => {
 export default function RatingsGrid({
   reviews,
   onStatusChange,
-  onViewDetails,
-  onDelete
+  onViewDetails
 }) {
   return (
     <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
       {reviews.length > 0 ? (
         reviews.map((review) => {
-          const AvatarIcon = review.avatar;
+          const AvatarIcon = review.avatar || (typeof review.user === 'object' && review.user.avatar) || User;
+          const userName = typeof review.user === 'object' ? review.user.name : review.user;
+          const userVerified = typeof review.user === 'object' ? review.user.verified : review.verified;
+          const placeName = typeof review.place === 'object' ? review.place.name : review.place;
+
           return (
             <div key={review.id} className="p-4">
               <div className="flex items-start gap-3">
@@ -42,7 +45,7 @@ export default function RatingsGrid({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{review.user}</p>
+                    <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{userName}</p>
                     <span className={`shrink-0 inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-full border ${getStatusColor(review.status)}`}>
                       {review.status}
                     </span>
@@ -50,7 +53,7 @@ export default function RatingsGrid({
                   <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">{review.title}</p>
                   <div className="flex items-center gap-1 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5 min-w-0">
                     <MapPin className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{review.place}</span>
+                    <span className="truncate">{placeName}</span>
                   </div>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     {renderStars(review.rating)}
@@ -58,7 +61,7 @@ export default function RatingsGrid({
                       <ThumbsUp className="w-3 h-3 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
                       {review.likes}
                     </span>
-                    {review.verified && (
+                    {userVerified && (
                       <span className="text-xs flex items-center gap-0.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]">
                         <Check className="w-3 h-3" />
                         Verified
@@ -70,14 +73,14 @@ export default function RatingsGrid({
                       <>
                         <button
                           onClick={() => onStatusChange(review.id, 'Approved')}
-                          className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors"
+                          className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors cursor-pointer"
                           title="Approve"
                         >
                           <Check className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => onStatusChange(review.id, 'Rejected')}
-                          className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
+                          className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
                           title="Reject"
                         >
                           <X className="w-4 h-4" />
@@ -86,17 +89,10 @@ export default function RatingsGrid({
                     )}
                     <button
                       onClick={() => onViewDetails(review)}
-                      className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                      className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                       title="View Details"
                     >
                       <Eye className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onDelete(review.id)}
-                      className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -114,3 +110,4 @@ export default function RatingsGrid({
     </div>
   );
 }
+

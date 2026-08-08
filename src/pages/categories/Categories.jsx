@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   FolderTree,
   Landmark,
@@ -103,9 +103,10 @@ export default function Categories() {
     cat.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
     setCurrentPage(1);
-  }, [searchTerm, filteredCategories.length]);
+  };
 
   const totalRecords = filteredCategories.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -178,7 +179,7 @@ export default function Categories() {
         {/* Toolbar */}
         <CategoriesToolbar
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
         />

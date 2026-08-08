@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import RatingsHeader from './RatingsHeader';
 import RatingsStats from './RatingsStats';
@@ -207,9 +207,11 @@ export default function Ratings() {
     return 0;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedStatus, selectedRating, selectedPlace, sortBy, sortedReviews.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleStatusFilterChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
+  const handleRatingChange = (val) => { setSelectedRating(val); setCurrentPage(1); };
+  const handlePlaceChange = (val) => { setSelectedPlace(val); setCurrentPage(1); };
+  const handleSortChange = (val) => { setSortBy(val); setCurrentPage(1); };
 
   const totalRecords = sortedReviews.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -274,18 +276,18 @@ export default function Ratings() {
         {/* Toolbar */}
         <RatingsToolbar
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
+          onStatusChange={handleStatusFilterChange}
           statuses={statuses}
           selectedRating={selectedRating}
-          onRatingChange={setSelectedRating}
+          onRatingChange={handleRatingChange}
           ratings={ratings}
           selectedPlace={selectedPlace}
-          onPlaceChange={setSelectedPlace}
+          onPlaceChange={handlePlaceChange}
           places={places}
           sortBy={sortBy}
-          onSortChange={setSortBy}
+          onSortChange={handleSortChange}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
         />

@@ -93,11 +93,6 @@ export default function Settings() {
     { id: 'about', label: 'About System', icon: Info }
   ];
 
-  const showToastNotification = (type, message) => {
-    setToast({ type, message });
-    setTimeout(() => setToast(null), 4000);
-  };
-
   const handleSave = () => {
     setSaving(true);
     setTimeout(() => {

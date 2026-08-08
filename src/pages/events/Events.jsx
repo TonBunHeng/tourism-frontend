@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Activity,
   PartyPopper,
@@ -209,9 +209,9 @@ export default function Events() {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedStatus, filteredEvents.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
+  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
 
   const totalRecords = filteredEvents.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -303,12 +303,12 @@ export default function Events() {
         {/* Toolbar */}
         <EventsToolbar
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
+          onCategoryChange={handleCategoryChange}
           categories={categories}
           selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
+          onStatusChange={handleStatusChange}
           statuses={statuses}
           viewMode={viewMode}
           onViewModeChange={setViewMode}

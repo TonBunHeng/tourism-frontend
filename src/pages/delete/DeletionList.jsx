@@ -1,4 +1,4 @@
-import { User, AlertCircle, Clock, Check, X, Calendar, Eye, UserX, Trash2 } from 'lucide-react';
+import { User, AlertCircle, Clock, Check, X, Eye, UserX, Trash2 } from 'lucide-react';
 
 const getStatusBadge = (status) => {
   const colors = {

@@ -1,4 +1,4 @@
-import { Search, ChevronDown, X } from 'lucide-react';
+import { Search, ChevronDown } from 'lucide-react';
 
 export default function UsersToolbar({
   totalCount,
@@ -11,15 +11,8 @@ export default function UsersToolbar({
   roles,
   selectedStatus,
   onStatusChange,
-  statuses,
-  selectedSubscription,
-  onSubscriptionChange,
-  subscriptions,
-  sortBy,
-  onSortChange,
-  onClearFilters
+  statuses
 }) {
-  const hasActiveFilters = searchTerm || selectedRole !== 'All' || selectedStatus !== 'All' || selectedSubscription !== 'All';
 
   return (
     <div className="px-4 sm:px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">

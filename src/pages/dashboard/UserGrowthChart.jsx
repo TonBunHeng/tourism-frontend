@@ -1,4 +1,4 @@
-import { ArrowUpRight, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function SalesChart() {

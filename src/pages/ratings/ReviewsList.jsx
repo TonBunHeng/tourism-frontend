@@ -1,12 +1,10 @@
 import {
   Check,
   Star,
-  Flag,
   MapPin,
   ThumbsUp,
   ThumbsDown,
   MessageSquare,
-  Award,
   Bot,
   Eye,
   X,

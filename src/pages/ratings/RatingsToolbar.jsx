@@ -9,11 +9,6 @@ export default function RatingsToolbar({
   selectedRating,
   onRatingChange,
   ratings,
-  selectedPlace,
-  onPlaceChange,
-  places,
-  sortBy,
-  onSortChange,
   viewMode = 'table',
   onViewModeChange
 }) {

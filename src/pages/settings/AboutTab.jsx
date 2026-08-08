@@ -6,8 +6,7 @@ import {
   HardDrive,
   Clock,
   ShieldCheck,
-  Cpu,
-  Layers
+  Cpu
 } from 'lucide-react';
 
 export default function AboutTab() {

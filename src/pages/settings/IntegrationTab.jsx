@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Server,
   MapPin,
   Flame,
   Mail,
@@ -9,7 +8,6 @@ import {
   Eye,
   EyeOff,
   CheckCircle2,
-  AlertCircle,
   RefreshCw,
   Send
 } from 'lucide-react';

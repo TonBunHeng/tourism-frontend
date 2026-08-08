@@ -3,13 +3,13 @@ import { useLocation, Link } from 'react-router-dom';
 import profile_v2 from "../../assets/images/profile_v2.png";
 import tourism_app_icon from "../../assets/images/tourism_app_icon.png";
 import {
-  LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays, MessageSquareText,
-  Star, Heart, Trash2, MessageCircle, Settings, LogOut, ChevronRight, ChevronLeft,
+  LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays,
+  Star, Heart, Trash2, MessageCircle, Settings, LogOut,
   Users, User, X, FileText
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
 
-export default function Sidebar({ isOpen, setIsOpen, isExpanded, setIsExpanded }) {
+export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const sidebarRef = useRef(null);
   const location = useLocation();

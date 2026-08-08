@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Shield,
   Key,
-  Lock,
   Eye,
   EyeOff,
   Smartphone,

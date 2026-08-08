@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import GalleryHeader from './GalleryHeader';
 import GalleryStats from './GalleryStats';
@@ -157,9 +157,9 @@ export default function Gallery() {
     return matchesSearch && matchesCategory && matchesType;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedType, filteredMedia.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
+  const handleTypeChange = (val) => { setSelectedType(val); setCurrentPage(1); };
 
   const totalRecords = filteredMedia.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -206,12 +206,12 @@ export default function Gallery() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
+          onCategoryChange={handleCategoryChange}
           categories={categories}
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={handleTypeChange}
           types={types}
         />
 

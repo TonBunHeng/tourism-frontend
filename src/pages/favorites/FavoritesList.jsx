@@ -90,22 +90,25 @@ export default function FavoritesList({
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex items-center gap-1">
                       <button
+                        type="button"
                         onClick={() => onToggleVisited(favorite.id)}
-                        className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors cursor-pointer"
                         title={favorite.visited ? 'Mark as not visited' : 'Mark as visited'}
                       >
                         <Check className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                       </button>
                       <button
+                        type="button"
                         onClick={() => onViewDetails(favorite)}
-                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
+                        type="button"
                         onClick={() => onDelete(favorite.id)}
-                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
                         title="Remove"
                       >
                         <Trash2 className="w-4 h-4" />

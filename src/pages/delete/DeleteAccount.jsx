@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import DeletionHeader from './DeletionHeader';
 import DeletionStats from './DeletionStats';
@@ -276,9 +276,11 @@ export default function DeleteAccount() {
     return 0;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedType, selectedStatus, selectedUrgency, sortBy, sortedRequests.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleTypeChange = (val) => { setSelectedType(val); setCurrentPage(1); };
+  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
+  const handleUrgencyChange = (val) => { setSelectedUrgency(val); setCurrentPage(1); };
+  const handleSortChange = (val) => { setSortBy(val); setCurrentPage(1); };
 
   const totalRecords = sortedRequests.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -354,6 +356,7 @@ export default function DeleteAccount() {
     setSelectedStatus('All');
     setSelectedUrgency('All');
     setSortBy('newest');
+    setCurrentPage(1);
   };
 
   const hasActiveFilters = searchTerm || selectedType !== 'All' || selectedStatus !== 'All' || selectedUrgency !== 'All';
@@ -375,18 +378,18 @@ export default function DeleteAccount() {
         <DeletionToolbar
           totalCount={filteredRequests.length}
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={handleTypeChange}
           types={types}
           selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
+          onStatusChange={handleStatusChange}
           statuses={statuses}
           selectedUrgency={selectedUrgency}
-          onUrgencyChange={setSelectedUrgency}
+          onUrgencyChange={handleUrgencyChange}
           urgencies={urgencies}
           sortBy={sortBy}
-          onSortChange={setSortBy}
+          onSortChange={handleSortChange}
           onClearFilters={handleClearFilters}
         />
 

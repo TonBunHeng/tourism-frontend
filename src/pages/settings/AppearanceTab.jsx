@@ -1,4 +1,4 @@
-import { Sun, Moon, Monitor, Layout, Type, Check, Sidebar } from 'lucide-react';
+import { Sun, Moon, Monitor, Type, Check, Sidebar } from 'lucide-react';
 import { applyTheme } from '../../utils/Theme';
 
 export default function AppearanceTab({ settings, setSettings }) {

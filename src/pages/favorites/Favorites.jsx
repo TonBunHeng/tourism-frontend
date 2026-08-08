@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Landmark,
   Crown,
@@ -216,9 +216,10 @@ export default function Favorites() {
     return 0;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedStatus, sortBy, sortedFavorites.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
+  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
+  const handleSortChange = (val) => { setSortBy(val); setCurrentPage(1); };
 
   const totalRecords = sortedFavorites.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -336,6 +337,7 @@ export default function Favorites() {
     setSelectedCategory('All');
     setSelectedStatus('All');
     setSortBy('recent');
+    setCurrentPage(1);
   };
 
   return (
@@ -356,15 +358,15 @@ export default function Favorites() {
           totalCount={filteredFavorites.length}
           selectedCount={selectedFavorites.length}
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
+          onCategoryChange={handleCategoryChange}
           categories={categories}
           selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
+          onStatusChange={handleStatusChange}
           statuses={statuses}
           sortBy={sortBy}
-          onSortChange={setSortBy}
+          onSortChange={handleSortChange}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           onClearFilters={handleClearFilters}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Home,
   Landmark,
@@ -153,9 +153,8 @@ export default function Provinces() {
     return matchesSearch && matchesType;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedType, filteredProvinces.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleTypeChange = (val) => { setSelectedType(val); setCurrentPage(1); };
 
   const totalRecords = filteredProvinces.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -224,9 +223,9 @@ export default function Provinces() {
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         <ProvincesToolbar
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={handleTypeChange}
           provinceTypes={provinceTypes}
           viewMode={viewMode}
           onViewModeChange={setViewMode}

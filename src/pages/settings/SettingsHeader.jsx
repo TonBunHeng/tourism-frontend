@@ -1,4 +1,4 @@
-import { Settings as SettingsIcon, Save, RotateCcw, Search, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Save, RotateCcw, Search, CheckCircle2, RefreshCw } from 'lucide-react';
 
 export default function SettingsHeader({
   saving,

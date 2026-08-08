@@ -1,5 +1,5 @@
 // src/pages/reports/ExportToast.jsx
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { CheckCircle2, FileSpreadsheet, FileText, X } from 'lucide-react';
 
 export default function ExportToast({ toast, onClose }) {

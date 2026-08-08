@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import UsersHeader from './UsersHeader';
 import UsersStats from './UsersStats';
@@ -225,9 +225,11 @@ export default function Users() {
     return 0;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedRole, selectedStatus, selectedSubscription, sortBy, sortedUsers.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleRoleChange = (val) => { setSelectedRole(val); setCurrentPage(1); };
+  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
+  const handleSubscriptionChange = (val) => { setSelectedSubscription(val); setCurrentPage(1); };
+  const handleSortChange = (val) => { setSortBy(val); setCurrentPage(1); };
 
   const totalRecords = sortedUsers.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -340,6 +342,7 @@ export default function Users() {
     setSelectedStatus('All');
     setSelectedSubscription('All');
     setSortBy('newest');
+    setCurrentPage(1);
   };
 
   return (
@@ -361,18 +364,18 @@ export default function Users() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedRole={selectedRole}
-          onRoleChange={setSelectedRole}
+          onRoleChange={handleRoleChange}
           roles={roles}
           selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
+          onStatusChange={handleStatusChange}
           statuses={statuses}
           selectedSubscription={selectedSubscription}
-          onSubscriptionChange={setSelectedSubscription}
+          onSubscriptionChange={handleSubscriptionChange}
           subscriptions={subscriptions}
           sortBy={sortBy}
-          onSortChange={setSortBy}
+          onSortChange={handleSortChange}
           onClearFilters={handleClearFilters}
         />
 

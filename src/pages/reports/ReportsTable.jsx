@@ -1,6 +1,5 @@
-// src/pages/reports/ReportsTable.jsx
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Star, ChevronDown, MapPin, Calendar, Users, FolderTree, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Filter, Star, ChevronDown, MapPin, Calendar, Users, FolderTree, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 
 export default function ReportsTable({
   activeTab,
@@ -14,11 +13,6 @@ export default function ReportsTable({
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-
-  // Reset to first page whenever tab, search, or status filter changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab, searchTerm, statusFilter, data.length]);
 
   const tabs = [
     { id: 'places', label: 'Places Report', icon: MapPin },
@@ -81,7 +75,7 @@ export default function ReportsTable({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => onTabChange(tab.id)}
+                onClick={() => { onTabChange(tab.id); setCurrentPage(1); }}
                 className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-all shrink-0 cursor-pointer ${
                   isSelected
                     ? 'bg-[var(--color-primary)] text-[var(--color-white)] shadow-md shadow-[var(--color-primary)]/20 font-semibold'
@@ -112,7 +106,7 @@ export default function ReportsTable({
             type="text"
             placeholder="Search report dataset..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
           />
         </div>
@@ -122,7 +116,7 @@ export default function ReportsTable({
             <Filter className="w-3.5 h-3.5 absolute left-3 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] pointer-events-none" />
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
               className="text-xs bg-[var(--color-white)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md pl-8 pr-7 py-2 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none cursor-pointer font-medium"
             >
               <option value="All">All Statuses</option>
@@ -247,12 +241,21 @@ export default function ReportsTable({
                   </div>
                 </>
               )}
+
+              <div className="flex items-center justify-end mt-2 pt-2 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                <button
+                  type="button"
+                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                  title="View Details"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Main Data Table (Desktop & Tablet View >= sm) */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-left text-xs md:text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
           <thead className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider text-[11px] font-bold">
@@ -266,6 +269,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Reviews</th>
                 <th className="py-3.5 px-4">Status</th>
                 <th className="py-3.5 px-4">Created Date</th>
+                <th className="py-3.5 px-4">Actions</th>
               </tr>
             )}
             {activeTab === 'events' && (
@@ -277,6 +281,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">End Date</th>
                 <th className="py-3.5 px-4">Attendees</th>
                 <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Actions</th>
               </tr>
             )}
             {activeTab === 'users' && (
@@ -288,6 +293,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Joined Date</th>
                 <th className="py-3.5 px-4">Reviews Written</th>
                 <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Actions</th>
               </tr>
             )}
             {activeTab === 'reviews' && (
@@ -299,6 +305,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Comment</th>
                 <th className="py-3.5 px-4">Date</th>
                 <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Actions</th>
               </tr>
             )}
             {activeTab === 'categories' && (
@@ -308,6 +315,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Description</th>
                 <th className="py-3.5 px-4">Total Places</th>
                 <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Actions</th>
               </tr>
             )}
           </thead>
@@ -323,11 +331,12 @@ export default function ReportsTable({
                   <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-14" /></td>
                   <td className="py-4 px-4"><div className="h-5 bg-gray-200 dark:bg-gray-700 rounded-full w-24" /></td>
                   <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-20" /></td>
+                  <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-8" /></td>
                 </tr>
               ))
             ) : paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-10 text-center text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium">
+                <td colSpan={9} className="py-10 text-center text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] font-medium">
                   No report data matching selected search or status filters.
                 </td>
               </tr>
@@ -346,6 +355,15 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4">{row.reviews}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
                       <td className="py-3.5 px-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{row.createdAt}</td>
+                      <td className="py-3.5 px-4">
+                        <button
+                          type="button"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </td>
                     </>
                   )}
                   {activeTab === 'events' && (
@@ -357,6 +375,15 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4">{row.endDate}</td>
                       <td className="py-3.5 px-4 font-semibold">{row.attendees?.toLocaleString()}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
+                      <td className="py-3.5 px-4">
+                        <button
+                          type="button"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </td>
                     </>
                   )}
                   {activeTab === 'users' && (
@@ -368,6 +395,15 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{row.joinedDate}</td>
                       <td className="py-3.5 px-4 font-semibold">{row.reviewsCount}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
+                      <td className="py-3.5 px-4">
+                        <button
+                          type="button"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </td>
                     </>
                   )}
                   {activeTab === 'reviews' && (
@@ -381,6 +417,15 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4 max-w-xs truncate">{row.comment}</td>
                       <td className="py-3.5 px-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{row.date}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
+                      <td className="py-3.5 px-4">
+                        <button
+                          type="button"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </td>
                     </>
                   )}
                   {activeTab === 'categories' && (
@@ -390,6 +435,15 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4 max-w-md">{row.description}</td>
                       <td className="py-3.5 px-4 font-semibold">{row.totalPlaces}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
+                      <td className="py-3.5 px-4">
+                        <button
+                          type="button"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </td>
                     </>
                   )}
                 </tr>

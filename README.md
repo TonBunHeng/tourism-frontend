@@ -48,3 +48,6 @@ Welcome to the **AngkorVerse WebAdmin Panel** repository. This administrative da
 - **globals** (Predefined global variables for ESLint)
 - **@types/react** (Type definitions for React)
 - **@types/react-dom** (Type definitions for React DOM)
+
+### IF can't run the project fix and barch this cmd
+- `npm install recharts` (Install recharts library) 

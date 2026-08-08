@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Landmark, ChevronLeft, ChevronRight } from 'lucide-react';
 import PlacesHeader from './PlacesHeader';
 import PlacesStats from './PlacesStats';
@@ -121,9 +121,8 @@ export default function Places() {
     return matchesSearch && matchesCategory;
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory, filteredPlaces.length]);
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
 
   const totalRecords = filteredPlaces.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
@@ -209,9 +208,9 @@ export default function Places() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
+          onCategoryChange={handleCategoryChange}
           categories={categories}
         />
 

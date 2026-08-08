@@ -14,6 +14,7 @@ import ProfileHeader from './ProfileHeader';
 import ProfileStats from './ProfileStats';
 import ProfileAchievements from './ProfileAchievements';
 import ProfileActivity from './ProfileActivity';
+import EditProfileModal from './EditProfileModal';
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -71,6 +72,18 @@ export default function Profile() {
     }
   };
 
+  const handleSaveProfile = (updatedData) => {
+    setUserData(prev => ({
+      ...prev,
+      name: updatedData.name,
+      email: updatedData.email,
+      phone: updatedData.phone
+    }));
+    if (updatedData.image) {
+      setProfileImage(updatedData.image);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       {/* Header */}
@@ -99,6 +112,15 @@ export default function Profile() {
         <ProfileAchievements achievements={achievements} />
         <ProfileActivity recentActivity={recentActivity} />
       </div>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+        userData={userData}
+        profileImage={profileImage}
+        onSave={handleSaveProfile}
+      />
     </div>
   );
 }

@@ -1,17 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Bell, Search, User, Settings, LogOut, Menu,
   X, MessageCircle, Globe, Sun, Moon
 } from "lucide-react";
 import profile_v2 from "../../assets/images/profile_v2.png";
 import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
+import LogoutAlert from './LogoutAlert';
 
 export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggleExpand }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
+  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const [currentLang, setCurrentLang] = useState('EN');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -26,7 +28,6 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const langRef = useRef(null);
-  const location = useLocation();
 
   useEffect(() => {
     const handleThemeChange = (e) => {
@@ -73,27 +74,15 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    const titles = {
-      '/dashboard': 'Dashboard',
-      '/place': 'Places',
-      '/categories': 'Categories',
-      '/provinces': 'Provinces',
-      '/gallery': 'Gallery',
-      '/events': 'Events',
-      '/users': 'Users',
-      '/reviews': 'Ratings & Reviews',
-      '/ratings': 'Ratings & Reviews',
-      '/favorites': 'Favorites',
-      '/profile': 'Profile',
-      '/settings': 'Settings',
-      '/chat': 'Chat',
-    };
-    return titles[path] || 'Smart Tourism';
-  };
-
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  const handleSidebarToggle = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (toggleSidebar) toggleSidebar();
+    } else {
+      if (toggleExpand) toggleExpand();
+    }
+  };
 
   return (
     <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-30 transition-colors duration-200 w-full">
@@ -102,9 +91,10 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
           {/* Left section - Unified Sidebar Toggle Button */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
-              onClick={toggleExpand}
+              type="button"
+              onClick={handleSidebarToggle}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors shrink-0 cursor-pointer flex items-center justify-center"
-              title={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
+              title={isSidebarOpen ? "Close Sidebar" : isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
               aria-label="Toggle Sidebar Navigation"
             >
               {/* Mobile Icon */}
@@ -241,11 +231,11 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                     <p className="text-xs text-gray-500 dark:text-zinc-400 truncate">bunheng@email.com</p>
                   </div>
                   <div className="p-2">
-                    <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
+                    <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <User size={18} className="text-gray-400" />
                       My Profile
                     </Link>
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
+                    <Link to="/settings" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <Settings size={18} className="text-gray-400" />
                       Settings
                     </Link>
@@ -254,7 +244,14 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                       Messages
                     </Link>
 
-                    <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md transition-colors w-full text-left">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        setShowLogoutAlert(true);
+                      }}
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md transition-colors w-full text-left cursor-pointer"
+                    >
                       <LogOut size={18} className="text-red-500 dark:text-red-400" />
                       Log Out
                     </button>
@@ -282,6 +279,12 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
           </div>
         )}
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutAlert
+        isOpen={showLogoutAlert}
+        onClose={() => setShowLogoutAlert(false)}
+      />
     </header>
   );
 }

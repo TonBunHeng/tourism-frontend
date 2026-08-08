@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function ReportsAnalyticsModal({ isOpen, onClose, activeTab = 'places' }) {
+export default function ReportsAnalyticsModal({ isOpen, onClose }) {
   const [timeframe, setTimeframe] = useState('2024');
   const [selectedDataset, setSelectedDataset] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -44,7 +44,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose, activeTab = 'pl
     const stMult = statusMultipliers[statusFilter] || 1.0;
     const combinedMult = dsMult * stMult;
 
-    let baseMonthly = [];
+    let baseMonthly;
     let ingestedTotal = 14580;
     let exportsTotal = 2270;
     let activePct = 98.4;
@@ -182,7 +182,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose, activeTab = 'pl
     const finalIngested = Math.round(ingestedTotal * combinedMult);
     const finalExports = Math.round(exportsTotal * combinedMult);
 
-    let distribution = [];
+    let distribution;
     if (selectedDataset === 'ALL') {
       distribution = [
         { name: 'Places Dataset', count: Math.round(finalIngested * 0.38), percentage: 38, color: 'bg-blue-500' },
@@ -223,7 +223,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose, activeTab = 'pl
       ];
     }
 
-    let statusBreakdownData = [];
+    let statusBreakdownData;
     if (statusFilter === 'Active') {
       statusBreakdownData = [
         { label: 'Active / Published Data', count: finalIngested, percentage: 100, color: 'from-emerald-400 to-emerald-600' },

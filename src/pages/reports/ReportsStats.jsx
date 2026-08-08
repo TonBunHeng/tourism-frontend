@@ -1,5 +1,4 @@
 // src/pages/reports/ReportsStats.jsx
-import React from 'react';
 import { Database, CheckCircle, Star, Download } from 'lucide-react';
 
 export default function ReportsStats({ totalCount, activeCount, avgRating, totalExports }) {

@@ -10,12 +10,11 @@ import {
   Award,
   Filter,
   RotateCcw,
-  Layers,
-  Activity
+  Layers
 } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function RatingsAnalyticsModal({ isOpen, onClose, reviews = [] }) {
+export default function RatingsAnalyticsModal({ isOpen, onClose }) {
   const [timeframe, setTimeframe] = useState('2024');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [ratingFilter, setRatingFilter] = useState('ALL');
@@ -48,7 +47,7 @@ export default function RatingsAnalyticsModal({ isOpen, onClose, reviews = [] })
     const rateMult = ratingMultipliers[ratingFilter] || 1.0;
     const combinedMult = catMult * rateMult;
 
-    let baseMonthly = [];
+    let baseMonthly;
     let baseTotal = 2264;
     let baseAvg = 4.72;
     let baseGrowth = '+20.1% volume growth';
@@ -189,7 +188,7 @@ export default function RatingsAnalyticsModal({ isOpen, onClose, reviews = [] })
     const finalTotal = Math.round(baseTotal * combinedMult);
 
     // Distribution by Category
-    let categoryData = [];
+    let categoryData;
     if (selectedCategory === 'ALL') {
       categoryData = [
         { name: 'Temples & Heritage', count: Math.round(finalTotal * 0.38), percentage: 38, color: 'bg-blue-500' },
@@ -229,7 +228,7 @@ export default function RatingsAnalyticsModal({ isOpen, onClose, reviews = [] })
     }
 
     // Rating Score Breakdown calculation
-    let ratingDistribution = [];
+    let ratingDistribution;
     if (ratingFilter === '5') {
       ratingDistribution = [
         { stars: 5, count: finalTotal, percentage: 100 },

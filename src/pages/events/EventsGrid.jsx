@@ -21,7 +21,7 @@ export default function EventsGrid({
                 {event.imageUrl ? (
                   <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center p-3 text-center">
+                  <div className="w-full h-full bg-[var(--color-primary)] flex items-center justify-center p-3 text-center">
                     <span className="text-white text-xs font-semibold drop-shadow">{event.title}</span>
                   </div>
                 )}

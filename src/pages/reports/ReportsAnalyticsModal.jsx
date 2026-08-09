@@ -226,27 +226,27 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
     let statusBreakdownData;
     if (statusFilter === 'Active') {
       statusBreakdownData = [
-        { label: 'Active / Published Data', count: finalIngested, percentage: 100, color: 'from-emerald-400 to-emerald-600' },
-        { label: 'Pending Review Data', count: 0, percentage: 0, color: 'from-amber-400 to-amber-600' },
-        { label: 'Archived / Inactive Data', count: 0, percentage: 0, color: 'from-rose-400 to-rose-600' }
+        { label: 'Active / Published Data', count: finalIngested, percentage: 100, color: 'bg-emerald-500' },
+        { label: 'Pending Review Data', count: 0, percentage: 0, color: 'bg-amber-500' },
+        { label: 'Archived / Inactive Data', count: 0, percentage: 0, color: 'bg-rose-500' }
       ];
     } else if (statusFilter === 'Pending') {
       statusBreakdownData = [
-        { label: 'Active / Published Data', count: 0, percentage: 0, color: 'from-emerald-400 to-emerald-600' },
-        { label: 'Pending Review Data', count: finalIngested, percentage: 100, color: 'from-amber-400 to-amber-600' },
-        { label: 'Archived / Inactive Data', count: 0, percentage: 0, color: 'from-rose-400 to-rose-600' }
+        { label: 'Active / Published Data', count: 0, percentage: 0, color: 'bg-emerald-500' },
+        { label: 'Pending Review Data', count: finalIngested, percentage: 100, color: 'bg-amber-500' },
+        { label: 'Archived / Inactive Data', count: 0, percentage: 0, color: 'bg-rose-500' }
       ];
     } else if (statusFilter === 'Archived') {
       statusBreakdownData = [
-        { label: 'Active / Published Data', count: 0, percentage: 0, color: 'from-emerald-400 to-emerald-600' },
-        { label: 'Pending Review Data', count: 0, percentage: 0, color: 'from-amber-400 to-amber-600' },
-        { label: 'Archived / Inactive Data', count: finalIngested, percentage: 100, color: 'from-rose-400 to-rose-600' }
+        { label: 'Active / Published Data', count: 0, percentage: 0, color: 'bg-emerald-500' },
+        { label: 'Pending Review Data', count: 0, percentage: 0, color: 'bg-amber-500' },
+        { label: 'Archived / Inactive Data', count: finalIngested, percentage: 100, color: 'bg-rose-500' }
       ];
     } else {
       statusBreakdownData = [
-        { label: 'Active / Published Data', count: Math.round(finalIngested * 0.83), percentage: 83, color: 'from-emerald-400 to-emerald-600' },
-        { label: 'Pending Review Data', count: Math.round(finalIngested * 0.12), percentage: 12, color: 'from-amber-400 to-amber-600' },
-        { label: 'Archived / Inactive Data', count: Math.round(finalIngested * 0.05), percentage: 5, color: 'from-rose-400 to-rose-600' }
+        { label: 'Active / Published Data', count: Math.round(finalIngested * 0.83), percentage: 83, color: 'bg-emerald-500' },
+        { label: 'Pending Review Data', count: Math.round(finalIngested * 0.12), percentage: 12, color: 'bg-amber-500' },
+        { label: 'Archived / Inactive Data', count: Math.round(finalIngested * 0.05), percentage: 5, color: 'bg-rose-500' }
       ];
     }
 
@@ -541,7 +541,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
                     </div>
                     <div className="w-full h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
-                        className={`h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-500`}
+                        className={`h-full ${item.color} rounded-full transition-all duration-500`}
                         style={{ width: `${item.percentage}%` }}
                       />
                     </div>

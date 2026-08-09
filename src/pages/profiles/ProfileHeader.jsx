@@ -11,7 +11,7 @@ export default function ProfileHeader({
     <div className="flex flex-col sm:flex-row items-start gap-6">
       <div className="flex items-start gap-4 sm:gap-6 w-full sm:w-auto">
         <div className="relative flex-shrink-0">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center overflow-hidden">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center overflow-hidden">
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (

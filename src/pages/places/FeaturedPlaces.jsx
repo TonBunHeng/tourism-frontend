@@ -13,7 +13,6 @@ export default function FeaturedPlaces() {
       reviews: 35,
       icon: Landmark,
       image: siemReapImg,
-      gradient: 'from-amber-500/80 to-orange-600/80'
     },
     {
       name: 'Pursat Mountains',
@@ -22,7 +21,6 @@ export default function FeaturedPlaces() {
       reviews: 6,
       icon: Mountain,
       image: pursatImg,
-      gradient: 'from-emerald-500/80 to-teal-600/80'
     },
     {
       name: 'Historical Sites',
@@ -31,7 +29,6 @@ export default function FeaturedPlaces() {
       reviews: 35,
       icon: Building2,
       image: historicalImg,
-      gradient: 'from-purple-500/80 to-indigo-600/80'
     },
     {
       name: 'Cultural Museum',
@@ -40,7 +37,6 @@ export default function FeaturedPlaces() {
       reviews: 35,
       icon: Palette,
       image: museumImg,
-      gradient: 'from-rose-500/80 to-pink-600/80'
     }
   ];
 
@@ -66,9 +62,8 @@ export default function FeaturedPlaces() {
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
 
-            {/* Gradient Overlays */}
-            <div className={`absolute inset-0 bg-gradient-to-t ${place.gradient} opacity-40 group-hover:opacity-30 transition-opacity duration-300`}></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 group-hover:from-black/90 transition-colors duration-300"></div>
+            {/* Solid Dark Overlay for text legibility */}
+            <div className="absolute inset-0 bg-black/60 group-hover:bg-black/70 transition-colors duration-300"></div>
 
             {/* Content */}
             <div className="relative z-10">

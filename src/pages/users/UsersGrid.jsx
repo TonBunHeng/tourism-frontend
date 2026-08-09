@@ -13,7 +13,7 @@ export default function UsersGrid({ users, onViewDetails, onEdit, onDelete }) {
               className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02]"
             >
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-md bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-dark-bg)] flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-md bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0">
                   <UserAvatar className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
                 </div>
                 <div className="flex-1 min-w-0">

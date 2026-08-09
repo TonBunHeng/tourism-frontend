@@ -77,7 +77,7 @@ export default function EditProfileModal({
                 className="relative group cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-info-bg)] to-[var(--color-purple-badge-bg)] dark:from-[var(--color-info-dark-bg)] dark:to-[var(--color-purple-badge-dark-bg)] flex items-center justify-center overflow-hidden border-2 border-[var(--color-primary)]/20 shadow-md">
+                <div className="w-24 h-24 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center overflow-hidden border-2 border-[var(--color-primary)]/20 shadow-md">
                   {imagePreview ? (
                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                   ) : (

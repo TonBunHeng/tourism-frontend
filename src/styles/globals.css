@@ -9,13 +9,9 @@
   --color-white: #ffffff;
 
   /* Sidebar */
-  --color-sidebar-bg: #ffffff;
-  --color-sidebar-dark-bg: #09090b;
   --color-sidebar-border: #f3f4f6;
   --color-sidebar-dark-border: #27272a;
   --color-brand-teal: #22b7ab;
-  --color-teal-light: #e9f8f6;
-  --color-brand-border: #b2ebe6;
 
   /* Backgrounds & Surfaces */
   --color-bg-light: #ffffff;
@@ -56,7 +52,6 @@
   --color-warning-border: #fde68a;
   --color-warning-dark-border: rgba(234, 179, 8, 0.3);
   --color-warning-hover-border: #fcd34d;
-  --color-warning-dark-hover-border: #b45309;
   --color-danger-text: #dc2626;
   --color-danger-dark-text: #f87171;
   --color-danger-bg: #fef2f2;
@@ -103,27 +98,6 @@
   --color-cyan-badge-dark-bg: rgba(8, 145, 178, 0.25);
   --color-cyan-badge-border: #cffaff;
   --color-cyan-badge-dark-border: rgba(6, 182, 212, 0.3);
-
-  --color-amber-badge-text: #d97706;
-  --color-amber-badge-dark-text: #fbbf24;
-  --color-amber-badge-bg: #fffbeb;
-  --color-amber-badge-dark-bg: rgba(217, 119, 6, 0.25);
-  --color-amber-badge-border: #fef3c7;
-  --color-amber-badge-dark-border: rgba(245, 158, 11, 0.3);
-
-  --color-blue-badge-text: #2563eb;
-  --color-blue-badge-dark-text: #60a5fa;
-  --color-blue-badge-bg: #eff6ff;
-  --color-blue-badge-dark-bg: rgba(37, 99, 235, 0.25);
-  --color-blue-badge-border: #dbeafe;
-  --color-blue-badge-dark-border: rgba(59, 130, 246, 0.3);
-
-  --color-emerald-badge-text: #059669;
-  --color-emerald-badge-dark-text: #34d399;
-  --color-emerald-badge-bg: #f0fdf4;
-  --color-emerald-badge-dark-bg: rgba(16, 185, 129, 0.25);
-  --color-emerald-badge-border: #d1fae5;
-  --color-emerald-badge-dark-border: rgba(16, 185, 129, 0.3);
 }
 
 /* Logout alert animation */

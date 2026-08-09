@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { LogOut, X } from 'lucide-react';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function LogoutAlert({ isOpen, onClose, onLogout }) {
   const navigate = useNavigate();
@@ -34,9 +35,9 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md transition-opacity"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-md transition-opacity"
       onClick={onClose} // Close when clicking the backdrop
       role="dialog"
       aria-modal="true"
@@ -49,7 +50,7 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
+          className="absolute right-4 top-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
           aria-label="Close modal"
         >
           <X size={20} />
@@ -76,18 +77,19 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-300 font-medium rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+            className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-300 font-medium rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleLogout}
-            className="flex-1 px-4 py-2.5 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 focus:ring-4 focus:ring-red-500/20 transition-all"
+            className="flex-1 px-4 py-2.5 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 focus:ring-4 focus:ring-red-500/20 transition-all cursor-pointer"
           >
             Logout
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

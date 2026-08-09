@@ -581,7 +581,7 @@ export default function RatingsAnalyticsModal({ isOpen, onClose }) {
                     </div>
                     <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500"
+                        className="h-full bg-[var(--color-warning-text)] rounded-full transition-all duration-500"
                         style={{ width: `${item.percentage}%` }}
                       />
                     </div>

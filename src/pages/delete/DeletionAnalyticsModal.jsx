@@ -42,26 +42,26 @@ export default function DeletionAnalyticsModal({ isOpen, onClose, requests = [] 
       label: 'Approved & Permanently Deleted',
       count: approvedCount,
       percentage: Math.round((approvedCount / totalCount) * 100),
-      color: 'from-emerald-400 to-emerald-600'
+      color: 'bg-emerald-500'
     },
     {
       label: 'Pending Admin Review',
       count: pendingCount,
       percentage: Math.round((pendingCount / totalCount) * 100),
-      color: 'from-amber-400 to-amber-600'
+      color: 'bg-amber-500'
     },
     {
       label: 'Rejected or Cancelled Requests',
       count: rejectedCount,
       percentage: Math.round((rejectedCount / totalCount) * 100),
-      color: 'from-rose-400 to-rose-600'
+      color: 'bg-rose-500'
     },
   ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
+
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-input-dark-bg)]/50">
           <div className="flex items-center gap-3">
@@ -104,7 +104,7 @@ export default function DeletionAnalyticsModal({ isOpen, onClose, requests = [] 
 
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 scrollbar-hide">
-          
+
           {/* Key Metric Summary Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs">
@@ -214,7 +214,7 @@ export default function DeletionAnalyticsModal({ isOpen, onClose, requests = [] 
 
           {/* Breakdown Section: Type Distribution & Status Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
+
             {/* Type Distribution */}
             <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-xs border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5">
               <h3 className="font-semibold text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">
@@ -256,7 +256,7 @@ export default function DeletionAnalyticsModal({ isOpen, onClose, requests = [] 
                     </div>
                     <div className="w-full h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
-                        className={`h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-500`}
+                        className={`h-full ${item.color} rounded-full transition-all duration-500`}
                         style={{ width: `${item.percentage}%` }}
                       />
                     </div>

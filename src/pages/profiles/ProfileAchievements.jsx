@@ -12,7 +12,7 @@ export default function ProfileAchievements({ achievements }) {
               key={index}
               className={`text-center p-3 rounded-lg transition-all ${
                 achievement.unlocked
-                  ? 'bg-gradient-to-br from-[var(--color-warning-bg)] to-[var(--color-warning-bg)]/80 dark:from-[var(--color-warning-dark-bg)] dark:to-[var(--color-warning-dark-bg)]/50 border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)]'
+                  ? 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)]'
                   : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] opacity-50'
               }`}
             >

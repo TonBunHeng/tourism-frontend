@@ -14,7 +14,7 @@ export default function RatingsSentiment({ reviews, ratingDistribution }) {
               </div>
               <div className="flex-1 h-2 bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-surface-hover-dark)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[var(--color-warning-dark-text)] to-[var(--color-warning-text)] rounded-full transition-all duration-500"
+                  className="h-full bg-[var(--color-warning-text)] rounded-full transition-all duration-500"
                   style={{
                     width: `${reviews.length > 0 ? (item.count / reviews.length) * 100 : 0}%`
                   }}

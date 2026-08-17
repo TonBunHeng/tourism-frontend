@@ -60,7 +60,7 @@ export default function Login() {
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-100 dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 transition-colors duration-300 overflow-hidden select-none">
       {/* Glassmorphic Container */}
-      <div className="w-full max-w-4xl bg-white/90 dark:bg-zinc-900/85 backdrop-blur-xl border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl shadow-2xl overflow-hidden grid md:grid-cols-12 relative z-10 transition-all duration-300">
+      <div className="w-full max-w-4xl bg-white/90 dark:bg-zinc-900/85 backdrop-blur-xl border border-slate-200/80 dark:border-zinc-800/80 rounded-lg shadow-2xl overflow-hidden grid md:grid-cols-12 relative z-10 transition-all duration-300">
 
         {/* Left Section - Branding & Visuals (Solid Primary Color) */}
         <div className="md:col-span-5 bg-[#003E83] text-white p-8 lg:p-10 flex flex-col justify-between relative overflow-hidden">
@@ -220,11 +220,11 @@ export default function Login() {
           </form>
 
           {/* Quick Demo Credentials Tip */}
-          <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-zinc-800 text-center">
+          {/* <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-zinc-800 text-center">
             <p className="text-xs text-slate-500 dark:text-zinc-500">
               Demo Admin Account: <span className="font-mono text-slate-700 dark:text-zinc-300">admin@kh.com</span> / <span className="font-mono text-slate-700 dark:text-zinc-300">1234</span>
             </p>
-          </div>
+          </div> */}
 
         </div>
       </div>

@@ -269,7 +269,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Reviews</th>
                 <th className="py-3.5 px-4">Status</th>
                 <th className="py-3.5 px-4">Created Date</th>
-                <th className="py-3.5 px-4">Actions</th>
+                
               </tr>
             )}
             {activeTab === 'events' && (
@@ -281,7 +281,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">End Date</th>
                 <th className="py-3.5 px-4">Attendees</th>
                 <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">Actions</th>
+                
               </tr>
             )}
             {activeTab === 'users' && (
@@ -293,7 +293,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Joined Date</th>
                 <th className="py-3.5 px-4">Reviews Written</th>
                 <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">Actions</th>
+                
               </tr>
             )}
             {activeTab === 'reviews' && (
@@ -305,7 +305,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Comment</th>
                 <th className="py-3.5 px-4">Date</th>
                 <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">Actions</th>
+                
               </tr>
             )}
             {activeTab === 'categories' && (
@@ -315,7 +315,7 @@ export default function ReportsTable({
                 <th className="py-3.5 px-4">Description</th>
                 <th className="py-3.5 px-4">Total Places</th>
                 <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">Actions</th>
+                
               </tr>
             )}
           </thead>
@@ -331,7 +331,7 @@ export default function ReportsTable({
                   <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-14" /></td>
                   <td className="py-4 px-4"><div className="h-5 bg-gray-200 dark:bg-gray-700 rounded-full w-24" /></td>
                   <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-20" /></td>
-                  <td className="py-4 px-4"><div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-8" /></td>
+                  
                 </tr>
               ))
             ) : paginatedData.length === 0 ? (
@@ -355,15 +355,6 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4">{row.reviews}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
                       <td className="py-3.5 px-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{row.createdAt}</td>
-                      <td className="py-3.5 px-4">
-                        <button
-                          type="button"
-                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </td>
                     </>
                   )}
                   {activeTab === 'events' && (
@@ -375,15 +366,6 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4">{row.endDate}</td>
                       <td className="py-3.5 px-4 font-semibold">{row.attendees?.toLocaleString()}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
-                      <td className="py-3.5 px-4">
-                        <button
-                          type="button"
-                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </td>
                     </>
                   )}
                   {activeTab === 'users' && (
@@ -395,15 +377,6 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{row.joinedDate}</td>
                       <td className="py-3.5 px-4 font-semibold">{row.reviewsCount}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
-                      <td className="py-3.5 px-4">
-                        <button
-                          type="button"
-                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </td>
                     </>
                   )}
                   {activeTab === 'reviews' && (
@@ -417,15 +390,6 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4 max-w-xs truncate">{row.comment}</td>
                       <td className="py-3.5 px-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{row.date}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
-                      <td className="py-3.5 px-4">
-                        <button
-                          type="button"
-                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </td>
                     </>
                   )}
                   {activeTab === 'categories' && (
@@ -435,15 +399,6 @@ export default function ReportsTable({
                       <td className="py-3.5 px-4 max-w-md">{row.description}</td>
                       <td className="py-3.5 px-4 font-semibold">{row.totalPlaces}</td>
                       <td className="py-3.5 px-4">{getStatusBadge(row.status)}</td>
-                      <td className="py-3.5 px-4">
-                        <button
-                          type="button"
-                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </td>
                     </>
                   )}
                 </tr>

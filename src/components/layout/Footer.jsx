@@ -17,21 +17,21 @@ export default function Footer() {
 
         {/* Right section: Links, Status & Support Button */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
-          <Link
+          {/* <Link
             to="/privacy"
             className="text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:underline transition-colors"
           >
             Privacy Policy
-          </Link>
+          </Link> */}
 
-          <span className="text-gray-300 dark:text-zinc-700 hidden sm:inline">•</span>
+          {/* <span className="text-gray-300 dark:text-zinc-700 hidden sm:inline">•</span> */}
 
-          <Link
+          {/* <Link
             to="/terms"
             className="text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:underline transition-colors"
           >
             Terms of Service
-          </Link>
+          </Link> */}
 
           <span className="text-emerald-500 dark:text-emerald-400 font-medium flex items-center gap-1.5 mx-1">
             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 dark:bg-emerald-400 rounded-full inline-block animate-pulse"></span>
@@ -39,7 +39,8 @@ export default function Footer() {
           </span>
 
           <Link
-            to="/support"
+            // to="/support"
+            to="https://ai-chatbot-psi-sepia.vercel.app/" // for local testing, replace with the actual support URL in production
             className="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 shadow-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200"
           >
             Contact Support

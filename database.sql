@@ -405,4 +405,3 @@ CREATE TABLE `system_settings` (
   CONSTRAINT `uk_system_settings_key` UNIQUE (`setting_key`),
   INDEX `idx_settings_group` (`setting_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-

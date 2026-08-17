@@ -71,8 +71,8 @@ export default function ReportsHeader({
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 title={selectedDay ? `Selected Date: ${selectedDay}` : 'Select Date Filter'}
               />
-              <Calendar className={`w-4 h-4 shrink-0 ${selectedDay ? 'text-[var(--color-primary)] dark:text-sky-400 font-bold' : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`} />
-              <span className={selectedDay ? 'font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]' : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}>
+              <Calendar className={`w-4 h-4 shrink-0 ${selectedDay ? 'text-[var(--color-primary)] dark:text-sky-400 font-bold' : ' text-[var(--color-text-primary-light)] dark:text-[var(--color-text-secondary-dark)]'}`} />
+              <span className={selectedDay ? 'font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]' : ' text-[var(--color-text-primary-light)] dark:text-[var(--color-text-secondary-dark)]'}>
                 {selectedDay || 'Date'}
               </span>
             </div>

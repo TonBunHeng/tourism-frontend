@@ -41,7 +41,7 @@ export default function DashboardHeader({
               onClick={() => onTimeRangeChange('yearly')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer active:scale-95 ${timeRange === 'yearly'
                 ? 'bg-[var(--color-primary)] text-[var(--color-white)] font-semibold'
-                : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-dark)]'
+                : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
                 }`}
             >
               Yearly

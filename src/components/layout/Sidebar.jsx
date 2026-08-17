@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import profile_v2 from "../../assets/images/profile_v2.png";
-import tourism_app_icon from "../../assets/images/tourism_app_icon.png";
+import tourism_app_icon from "../../../public/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays,
   Star, Heart, Trash2, MessageCircle, Settings, LogOut,

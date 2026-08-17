@@ -1,53 +1,7 @@
 import { User } from 'lucide-react';
 
 export default function RecentActivity() {
-  const recentActivity = [
-    {
-      id: 1,
-      user: 'Sokha P.',
-      action: 'Added new place',
-      target: 'Angkor Wat Temple',
-      time: '2 minutes ago',
-      icon: User,
-      type: 'place'
-    },
-    {
-      id: 2,
-      user: 'David C.',
-      action: 'Submitted a review',
-      target: 'Royal Palace',
-      time: '15 minutes ago',
-      icon: User,
-      type: 'review'
-    },
-    {
-      id: 3,
-      user: 'Maria L.',
-      action: 'Registered new account',
-      target: 'New User',
-      time: '1 hour ago',
-      icon: User,
-      type: 'user'
-    },
-    {
-      id: 4,
-      user: 'James R.',
-      action: 'Uploaded gallery images',
-      target: 'Koh Rong Island',
-      time: '3 hours ago',
-      icon: User,
-      type: 'gallery'
-    },
-    {
-      id: 5,
-      user: 'Sophie N.',
-      action: 'Created new event',
-      target: 'Water Festival 2024',
-      time: '5 hours ago',
-      icon: User,
-      type: 'event'
-    },
-  ];
+  const recentActivity = [];
 
   return (
     <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">

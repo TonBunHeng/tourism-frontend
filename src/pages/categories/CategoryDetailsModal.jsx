@@ -1,12 +1,15 @@
 import { X, Layers, Check, Edit } from 'lucide-react';
 
 export default function CategoryDetailsModal({
-  isOpen,
+  isOpen = true,
   category,
   onClose,
-  onEdit
+  onEdit,
+  onEditCategory
 }) {
-  if (!isOpen || !category) return null;
+  if (!category) return null;
+  if (isOpen === false) return null;
+  const handleEditClick = onEdit || onEditCategory || (() => {});
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -53,6 +56,14 @@ export default function CategoryDetailsModal({
           </div>
 
           <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Color Theme</span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: category.color || '#8B5CF6' }} />
+              <span className="text-sm font-semibold uppercase font-mono" style={{ color: category.color || '#8B5CF6' }}>{category.color || '#8B5CF6'}</span>
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Created Date</span>
             <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">{category.createdAt}</p>
           </div>
@@ -64,7 +75,7 @@ export default function CategoryDetailsModal({
             onClick={() => {
               const cat = category;
               onClose();
-              onEdit(cat);
+              handleEditClick(cat);
             }}
             className="py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
           >

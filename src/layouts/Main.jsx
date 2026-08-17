@@ -44,7 +44,7 @@ export default function Main() {
       "/logout": "Logout",
     };
 
-    document.title = `${pageTitles[location.pathname] || "Smart Tourism"} | Smart Tourism`;
+    document.title = `${pageTitles[location.pathname] || "AngkorVerses"} | AngkorVerses`;
   }, [location.pathname]);
 
   // Scroll to top when page changes

@@ -4,7 +4,6 @@ import {
   Bell, Search, User, Settings, LogOut, Menu,
   X, MessageCircle, Globe, Sun, Moon
 } from "lucide-react";
-import profile_v2 from "../../assets/images/profile_v2.png";
 import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
 import LogoutAlert from './LogoutAlert';
 
@@ -17,6 +16,15 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
   const [currentLang, setCurrentLang] = useState('EN');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [userAvatar, setUserAvatar] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      return u.image || u.avatar || u.profile_photo_url || null;
+    } catch (e) {
+      return null;
+    }
+  });
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
@@ -28,6 +36,22 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const langRef = useRef(null);
+
+  useEffect(() => {
+    const handleAvatarSync = () => {
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        setUserAvatar(u.image || u.avatar || u.profile_photo_url || null);
+      } catch (e) {}
+    };
+
+    window.addEventListener('storage', handleAvatarSync);
+    window.addEventListener('user-profile-updated', handleAvatarSync);
+    return () => {
+      window.removeEventListener('storage', handleAvatarSync);
+      window.removeEventListener('user-profile-updated', handleAvatarSync);
+    };
+  }, []);
 
   useEffect(() => {
     const handleThemeChange = (e) => {
@@ -85,9 +109,9 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
   };
 
   return (
-    <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-30 transition-colors duration-200 w-full">
-      <div className="px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="h-16 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-30 transition-colors duration-200 w-full flex items-center shrink-0">
+      <div className="px-3 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between">
           {/* Left section - Unified Sidebar Toggle Button */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
@@ -217,19 +241,13 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                 className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
                 aria-label="Profile menu"
               >
-                <img
-                  src={profile_v2}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-zinc-700"
-                />
+                <div className="w-8 h-8 rounded-full bg-[#181c24] border border-[#2d3442] flex items-center justify-center text-gray-200 shadow-sm">
+                  <User size={16} />
+                </div>
               </button>
 
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
-                  <div className="p-4 border-b border-gray-100 dark:border-zinc-800">
-                    <p className="text-sm font-semibold text-gray-800 dark:text-zinc-100 truncate">BunHeng Ton</p>
-                    <p className="text-xs text-gray-500 dark:text-zinc-400 truncate">bunheng@email.com</p>
-                  </div>
                   <div className="p-2">
                     <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <User size={18} className="text-gray-400" />

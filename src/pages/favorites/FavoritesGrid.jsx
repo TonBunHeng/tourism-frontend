@@ -19,17 +19,8 @@ export default function FavoritesGrid({
           return (
             <div
               key={favorite.id}
-              className={`group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] ${isSelected ? 'border-[var(--color-rose-badge-text)] dark:border-[var(--color-rose-badge-dark-text)] ring-2 ring-[var(--color-rose-badge-text)] dark:ring-[var(--color-rose-badge-dark-text)]' : 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
-                }`}
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
             >
-              <div className="absolute top-3 left-3 z-10">
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => onToggleSelect(favorite.id)}
-                  className="w-4 h-4 text-[var(--color-rose-badge-text)] border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded focus:ring-[var(--color-input)] dark:bg-[var(--color-bg-dark)] dark:checked:bg-[var(--color-rose-badge-text)] cursor-pointer"
-                />
-              </div>
 
               <div className="absolute top-3 right-3 z-10">
                 <Heart className="w-5 h-5 fill-[var(--color-rose-badge-text)] text-[var(--color-rose-badge-text)]" />
@@ -110,9 +101,6 @@ export default function FavoritesGrid({
         })
       ) : (
         <div className="col-span-full text-center py-12">
-          <div className="mb-4 flex justify-center">
-            <Heart className="w-12 h-12 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
-          </div>
           <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No favorites found</h3>
           <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
         </div>

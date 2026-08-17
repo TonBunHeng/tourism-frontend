@@ -3,12 +3,21 @@ import { X } from 'lucide-react';
 export default function CategoryModal({
   isOpen,
   editingCategory,
-  formData,
+  formData = {},
   onFormDataChange,
+  onFormChange,
   onClose,
   onSubmit
 }) {
   if (!isOpen) return null;
+
+  const updateForm = (data) => {
+    if (onFormDataChange) {
+      onFormDataChange(data);
+    } else if (onFormChange) {
+      onFormChange(data);
+    }
+  };
 
   const colors = ["#8B5CF6", "#EC4899", "#3B82F6", "#F59E0B", "#10B981", "#EF4444", "#6366F1", "#14B8A6"];
 
@@ -35,8 +44,8 @@ export default function CategoryModal({
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category Name</label>
               <input
                 type="text"
-                value={formData.name}
-                onChange={(e) => onFormDataChange({ ...formData, name: e.target.value })}
+                value={formData.name || ''}
+                onChange={(e) => updateForm({ ...formData, name: e.target.value })}
                 placeholder="Enter category name"
                 className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
                 required
@@ -45,8 +54,8 @@ export default function CategoryModal({
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Status</label>
               <select
-                value={formData.status}
-                onChange={(e) => onFormDataChange({ ...formData, status: e.target.value })}
+                value={formData.status || 'Active'}
+                onChange={(e) => updateForm({ ...formData, status: e.target.value })}
                 className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all cursor-pointer"
               >
                 <option value="Active" className="bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Active</option>
@@ -56,8 +65,8 @@ export default function CategoryModal({
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Description</label>
               <textarea
-                value={formData.description}
-                onChange={(e) => onFormDataChange({ ...formData, description: e.target.value })}
+                value={formData.description || ''}
+                onChange={(e) => updateForm({ ...formData, description: e.target.value })}
                 placeholder="Enter category description"
                 rows="3"
                 className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none transition-all"
@@ -71,7 +80,7 @@ export default function CategoryModal({
                   <button
                     key={color}
                     type="button"
-                    onClick={() => onFormDataChange({ ...formData, color })}
+                    onClick={() => updateForm({ ...formData, color })}
                     className={`w-8 h-8 rounded-full border-2 transition-transform ${formData.color === color ? "border-[var(--color-primary)] dark:border-[var(--color-white)] scale-110 shadow-lg" : "border-transparent hover:scale-105"}`}
                     style={{ backgroundColor: color }}
                   />

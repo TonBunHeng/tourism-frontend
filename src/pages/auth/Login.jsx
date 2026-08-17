@@ -3,16 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Sun, Moon, ShieldCheck, ArrowRight } from "lucide-react";
 import logo from "../../assets/images/tourism_logo.png";
 import { getInitialTheme, applyTheme, isDarkTheme, THEME_CHANGE_EVENT } from "../../utils/Theme";
+import authService from "../../services/authService";
 
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "admin@kh.com",
-    password: "1234",
+    email: "admin@tourism.gov.kh",
+    password: "password123",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -49,12 +51,20 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage("");
 
-    // Simulate API authentication
-    setTimeout(() => {
+    try {
+      const res = await authService.login(formData);
+      if (res.success) {
+        navigate("/dashboard");
+      } else {
+        setErrorMessage(res.message || "Invalid credentials.");
+      }
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to log in to API backend.");
+    } finally {
       setIsLoading(false);
-      navigate("/dashboard");
-    }, 1200);
+    }
   };
 
   return (
@@ -67,8 +77,8 @@ export default function Login() {
           <div className="absolute -top-12 -right-12 w-40 h-40 bg-white/5 rounded-full pointer-events-none" />
 
           {/* Top Logo & App Title */}
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/10 backdrop-blur-md p-3 flex items-center justify-center shadow-inner border border-white/20 mb-6 mx-auto">
+          <div>
+            <div className="w-24 h-24 mb-4 drop-shadow-lg">
               <img
                 src={logo}
                 alt="Smart Tourism Logo"
@@ -100,6 +110,7 @@ export default function Login() {
             © {new Date().getFullYear()} Smart Tourism. All rights reserved.
           </div>
         </div>
+
         {/* Right Section - Login Form */}
         <div className="md:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white/60 dark:bg-zinc-900/60">
 
@@ -124,6 +135,12 @@ export default function Login() {
             </button>
           </div>
 
+          {errorMessage && (
+            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium">
+              {errorMessage}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Field */}
@@ -141,7 +158,7 @@ export default function Login() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="admin@kh.com"
+                  placeholder="admin@tourism.gov.kh"
                   className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-[#22b7ab] focus:border-transparent transition text-sm"
                   required
                 />
@@ -199,7 +216,7 @@ export default function Login() {
               </label>
             </div>
 
-            {/* Submit Button (Solid Primary Color) */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -218,13 +235,6 @@ export default function Login() {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Credentials Tip */}
-          {/* <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-zinc-800 text-center">
-            <p className="text-xs text-slate-500 dark:text-zinc-500">
-              Demo Admin Account: <span className="font-mono text-slate-700 dark:text-zinc-300">admin@kh.com</span> / <span className="font-mono text-slate-700 dark:text-zinc-300">1234</span>
-            </p>
-          </div> */}
 
         </div>
       </div>

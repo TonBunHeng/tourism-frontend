@@ -1,13 +1,7 @@
 import { Star, Landmark, Building, Waves } from 'lucide-react';
 
 export default function TopPlaces() {
-  const topPlaces = [
-    { name: 'Angkor Wat', rating: 4.9, reviews: 1256, visits: 45231, icon: Landmark },
-    { name: 'Royal Palace', rating: 4.8, reviews: 876, visits: 23456, icon: Building },
-    { name: 'Bayon Temple', rating: 4.8, reviews: 654, visits: 18923, icon: Landmark },
-    { name: 'Koh Rong Island', rating: 4.7, reviews: 543, visits: 15678, icon: Waves },
-    { name: 'Tonle Sap Lake', rating: 4.6, reviews: 432, visits: 12345, icon: Waves }
-  ];
+  const topPlaces = [];
 
   return (
     <div className="lg:col-span-1 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6 flex flex-col h-full">

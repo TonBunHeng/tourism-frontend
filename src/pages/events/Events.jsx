@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Activity,
   PartyPopper,
@@ -16,319 +16,230 @@ import EventsGrid from './EventsGrid';
 import EventsList from './EventsList';
 import EventModal from './EventModal';
 import EventDetailsModal from './EventDetailsModal';
+import eventService from '../../services/eventService';
+import categoryService from '../../services/categoryService';
 
 import siemReapImg from '../../assets/places_img/SiemReapAngkor.jpg';
-import historicalImg from '../../assets/places_img/HistoricalSites.jpeg';
-import pursatImg from '../../assets/places_img/PursatMountains.jpeg';
-import museumImg from '../../assets/places_img/images.jpeg';
 
 export default function Events() {
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: 'Angkor Wat International Half Marathon',
-      category: 'Sports',
-      description: 'Annual international half marathon through the ancient temple complex',
-      location: 'Siem Reap, Cambodia',
-      date: '2024-12-15',
-      time: '06:00 AM',
-      attendees: 2500,
-      price: '$45',
-      status: 'Upcoming',
-      image: Activity,
-      imageUrl: siemReapImg,
-      organizer: 'Cambodia Tourism Board',
-      featured: true,
-      rating: 4.9,
-      tags: ['sports', 'marathon', 'cultural']
-    },
-    {
-      id: 2,
-      title: 'Khmer New Year Festival',
-      category: 'Cultural',
-      description: 'Traditional Khmer New Year celebrations with music, dance, and cultural performances',
-      location: 'Phnom Penh, Cambodia',
-      date: '2024-04-13',
-      time: '08:00 AM',
-      attendees: 15000,
-      price: 'Free',
-      status: 'Ongoing',
-      image: PartyPopper,
-      imageUrl: historicalImg,
-      organizer: 'Ministry of Culture',
-      featured: true,
-      rating: 4.8,
-      tags: ['cultural', 'traditional', 'festival']
-    },
-    {
-      id: 3,
-      title: 'Cambodia International Film Festival',
-      category: 'Arts & Entertainment',
-      description: 'Showcasing the best of Cambodian and international cinema',
-      location: 'Phnom Penh, Cambodia',
-      date: '2024-03-20',
-      time: '10:00 AM',
-      attendees: 800,
-      price: '$15',
-      status: 'Completed',
-      image: Clapperboard,
-      imageUrl: museumImg,
-      organizer: 'Cambodian Film Association',
-      featured: false,
-      rating: 4.7,
-      tags: ['film', 'cinema', 'arts']
-    },
-    {
-      id: 4,
-      title: 'Water Festival (Bon Om Touk)',
-      category: 'Cultural',
-      description: 'Boat racing festival marking the reversal of the Tonle Sap river flow',
-      location: 'Phnom Penh, Cambodia',
-      date: '2024-11-27',
-      time: '07:00 AM',
-      attendees: 20000,
-      price: 'Free',
-      status: 'Upcoming',
-      image: Ship,
-      imageUrl: siemReapImg,
-      organizer: 'Phnom Penh Municipality',
-      featured: true,
-      rating: 4.9,
-      tags: ['cultural', 'festival', 'traditional']
-    },
-    {
-      id: 5,
-      title: 'Siem Reap Food & Culture Festival',
-      category: 'Food & Drink',
-      description: 'Celebrating Cambodian cuisine with food stalls, cooking demonstrations, and cultural shows',
-      location: 'Siem Reap, Cambodia',
-      date: '2024-02-10',
-      time: '11:00 AM',
-      attendees: 3200,
-      price: '$25',
-      status: 'Completed',
-      image: Utensils,
-      imageUrl: museumImg,
-      organizer: 'Siem Reap Tourism Association',
-      featured: false,
-      rating: 4.6,
-      tags: ['food', 'culture', 'culinary']
-    },
-    {
-      id: 6,
-      title: 'Kampot Pepper & Music Festival',
-      category: 'Music',
-      description: 'Annual festival celebrating Kampot pepper with live music performances',
-      location: 'Kampot, Cambodia',
-      date: '2024-09-08',
-      time: '02:00 PM',
-      attendees: 1500,
-      price: '$30',
-      status: 'Upcoming',
-      image: Music,
-      imageUrl: pursatImg,
-      organizer: 'Kampot Provincial Government',
-      featured: false,
-      rating: 4.5,
-      tags: ['music', 'festival', 'local']
-    },
-    {
-      id: 7,
-      title: 'Sea Festival Sihanoukville',
-      category: 'Cultural',
-      description: 'Annual coastal celebration with water sports, beach concert, and seafood expo',
-      location: 'Preah Sihanouk, Cambodia',
-      date: '2024-12-22',
-      time: '09:00 AM',
-      attendees: 12000,
-      price: 'Free',
-      status: 'Upcoming',
-      image: Ship,
-      imageUrl: siemReapImg,
-      organizer: 'Ministry of Tourism',
-      featured: true,
-      rating: 4.8,
-      tags: ['beach', 'festival', 'sea']
-    },
-    {
-      id: 8,
-      title: 'Phnom Penh Art & Craft Expo',
-      category: 'Arts & Entertainment',
-      description: 'Exhibition of handmade crafts, paintings, and traditional Cambodian pottery',
-      location: 'Phnom Penh, Cambodia',
-      date: '2024-10-05',
-      time: '09:30 AM',
-      attendees: 1800,
-      price: '$5',
-      status: 'Upcoming',
-      image: Clapperboard,
-      imageUrl: historicalImg,
-      organizer: 'Cambodian Artisans Guild',
-      featured: false,
-      rating: 4.7,
-      tags: ['arts', 'crafts', 'exhibition']
-    }
-  ]);
-
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [viewMode, setViewMode] = useState('list');
+  const [categoriesList, setCategoriesList] = useState(['All']);
+
+  const loadCategories = async () => {
+    try {
+      const res = await categoryService.getCategories({ all: 'true' });
+      if (res.success && res.data && res.data.length > 0) {
+        const names = res.data.map(c => c.name);
+        setCategoriesList(['All', ...names]);
+      } else {
+        setCategoriesList(['All', 'Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition']);
+      }
+    } catch (e) {
+      console.error(e);
+      setCategoriesList(['All', 'Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition']);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [viewingEvent, setViewingEvent] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
-  // Modal states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-
-  // Form state
   const [formData, setFormData] = useState({
     title: '',
     category: 'Cultural',
     description: '',
     location: '',
-    date: '',
-    time: '',
-    price: '',
-    organizer: '',
-    imageUrl: ''
+    start_date: '',
+    start_time: '08:00 AM',
+    price: 'Free',
+    status: 'Upcoming',
+    organizer: ''
   });
 
-  const categories = ['All', 'Sports', 'Cultural', 'Arts & Entertainment', 'Food & Drink', 'Music'];
-  const statuses = ['All', 'Upcoming', 'Ongoing', 'Completed', 'Cancelled'];
+  const loadEvents = async () => {
+    setIsLoading(true);
+    try {
+      const params = {
+        page: currentPage,
+        per_page: itemsPerPage,
+        search: searchTerm,
+      };
+      if (selectedStatus !== 'All') params.status = selectedStatus;
 
-  const filteredEvents = events.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.organizer.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
-    const matchesStatus = selectedStatus === 'All' || event.status === selectedStatus;
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+      const res = await eventService.getEvents(params);
+      if (res.success && res.data) {
+        const formatted = res.data.map(e => ({
+          ...e,
+          date: e.start_date,
+          time: e.start_time || '08:00 AM',
+          attendees: e.attendees_count || 0,
+          image: Activity,
+          imageUrl: e.image_url || siemReapImg,
+        }));
+        setEvents(formatted);
+        if (res.meta) {
+          setTotalRecords(res.meta.total);
+          setTotalPages(res.meta.last_page);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load events from API', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+  }, [currentPage, searchTerm, selectedStatus]);
 
   const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
   const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
   const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
 
-  const totalRecords = filteredEvents.length;
-  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
-  const paginatedEvents = filteredEvents.slice(startIndex, startIndex + itemsPerPage);
+  const handleView = (idOrEvent) => {
+    const eventToView = typeof idOrEvent === 'object'
+      ? idOrEvent
+      : events.find(event => event.id === idOrEvent);
+    if (eventToView) {
+      setViewingEvent(eventToView);
+    }
+  };
 
-  const handleOpenCreateModal = () => {
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this event?')) {
+      try {
+        await eventService.deleteEvent(id);
+        loadEvents();
+      } catch (e) {
+        alert(e.message || 'Failed to delete event.');
+      }
+    }
+  };
+
+  const openAddModal = () => {
     setEditingEvent(null);
     setFormData({
       title: '',
       category: 'Cultural',
       description: '',
       location: '',
-      date: '',
-      time: '',
-      price: '',
+      start_date: new Date().toISOString().split('T')[0],
+      start_time: '08:00 AM',
+      price: 'Free',
+      status: 'Upcoming',
       organizer: '',
       imageUrl: ''
     });
-    setIsModalOpen(true);
+    setIsAddModalOpen(true);
   };
 
-  const handleEdit = (event) => {
+  const openEditModal = (idOrEvent) => {
+    const event = typeof idOrEvent === 'object'
+      ? idOrEvent
+      : events.find(e => e.id === idOrEvent) || {};
     setEditingEvent(event);
     setFormData({
-      title: event.title,
-      category: event.category,
-      description: event.description,
-      location: event.location,
-      date: event.date,
-      time: event.time,
-      price: event.price,
-      organizer: event.organizer,
-      imageUrl: event.imageUrl || ''
+      title: event.title || '',
+      category: event.category || 'Cultural',
+      description: event.description || '',
+      location: event.location || '',
+      start_date: event.start_date || event.date || '',
+      start_time: event.start_time || event.time || '08:00 AM',
+      price: event.price || 'Free',
+      status: event.status || 'Upcoming',
+      organizer: event.organizer || '',
+      imageUrl: event.imageUrl || event.image_url || ''
     });
-    setIsModalOpen(true);
+    setIsAddModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      setEvents(events.filter(event => event.id !== id));
-    }
-  };
-
-  const handleViewDetails = (event) => {
-    setSelectedEvent(event);
-    setIsDetailsOpen(true);
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.title || !formData.location) {
-      alert('Please fill in required fields');
-      return;
-    }
-
-    if (editingEvent) {
-      setEvents(events.map(e =>
-        e.id === editingEvent.id ? { ...e, ...formData } : e
-      ));
-    } else {
-      const newEvent = {
-        id: events.length ? Math.max(...events.map(e => e.id)) + 1 : 1,
-        ...formData,
-        attendees: 0,
-        status: 'Upcoming',
-        image: PartyPopper,
-        featured: false,
-        rating: 5.0,
-        tags: [formData.category.toLowerCase()]
-      };
-      setEvents([newEvent, ...events]);
-    }
-    setIsModalOpen(false);
+  const closeModal = () => {
+    setIsAddModalOpen(false);
     setEditingEvent(null);
   };
 
+  const handleFormChange = (fieldOrData, value) => {
+    if (typeof fieldOrData === 'object' && fieldOrData !== null) {
+      setFormData(fieldOrData);
+    } else {
+      setFormData(prev => ({ ...prev, [fieldOrData]: value }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.title.trim() || !formData.location.trim()) return;
+
+    try {
+      if (editingEvent) {
+        await eventService.updateEvent(editingEvent.id, formData);
+      } else {
+        await eventService.createEvent(formData);
+      }
+      closeModal();
+      loadEvents();
+    } catch (e) {
+      alert(e.message || 'Failed to save event.');
+    }
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + events.length, totalRecords);
+
   return (
     <div className="flex flex-col">
-      {/* Header */}
-      <EventsHeader onCreateClick={handleOpenCreateModal} />
+      {/* Header Section */}
+      <EventsHeader onOpenAddModal={openAddModal} />
 
-      {/* Stats Cards */}
+      {/* Stats Section */}
       <EventsStats events={events} />
 
-      {/* Main Content */}
+      {/* Main Content Section */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
-        {/* Toolbar */}
         <EventsToolbar
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
-          categories={categories}
+          categories={categoriesList}
           selectedStatus={selectedStatus}
           onStatusChange={handleStatusChange}
-          statuses={statuses}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
         />
 
-        {/* Grid or List View */}
-        {viewMode === 'grid' ? (
-          <EventsGrid
-            events={paginatedEvents}
-            onViewDetails={handleViewDetails}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
+            Loading events from API...
+          </div>
+        ) : viewMode === 'list' ? (
+          <EventsList
+            events={events}
+            onViewEvent={handleView}
+            onEditEvent={openEditModal}
+            onDeleteEvent={handleDelete}
+            startIndex={startIndex}
           />
         ) : (
-          <EventsList
-            events={paginatedEvents}
-            onViewDetails={handleViewDetails}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            startIndex={startIndex}
+          <EventsGrid
+            events={events}
+            onViewEvent={handleView}
+            onEditEvent={openEditModal}
+            onDeleteEvent={handleDelete}
           />
         )}
 
@@ -385,26 +296,31 @@ export default function Events() {
         )}
       </div>
 
-      {/* Add/Edit Event Modal */}
+      {/* Add / Edit Event Modal */}
       <EventModal
-        isOpen={isModalOpen}
+        isOpen={isAddModalOpen}
+        onClose={closeModal}
         editingEvent={editingEvent}
         formData={formData}
-        onFormDataChange={setFormData}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingEvent(null);
-        }}
-        onSubmit={handleFormSubmit}
-        categories={categories}
+        onFormChange={handleFormChange}
+        onFormDataChange={handleFormChange}
+        onSubmit={handleSubmit}
+        categories={categoriesList.filter(c => c !== 'All')}
       />
 
-      {/* Event Details Modal */}
+      {/* View Event Details Modal */}
       <EventDetailsModal
-        isOpen={isDetailsOpen}
-        event={selectedEvent}
-        onClose={() => setIsDetailsOpen(false)}
-        onEdit={handleEdit}
+        isOpen={Boolean(viewingEvent)}
+        event={viewingEvent}
+        onClose={() => setViewingEvent(null)}
+        onEdit={(e) => {
+          setViewingEvent(null);
+          openEditModal(e);
+        }}
+        onEditEvent={(e) => {
+          setViewingEvent(null);
+          openEditModal(e);
+        }}
       />
     </div>
   );

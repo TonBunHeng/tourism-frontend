@@ -1,34 +1,44 @@
-import { X, Check, MapPin, Edit } from 'lucide-react';
+import { X, User, Check, Edit, MapPin } from "lucide-react";
 
-export default function UserDetailsModal({ isOpen, user, onClose, onEdit }) {
-  if (!isOpen || !user) return null;
+export default function UserDetailsModal({ isOpen, user, onClose, onEdit, onEditUser }) {
+  if (!isOpen && !user) return null;
+  if (isOpen === false) return null;
+  if (!user) return null;
 
-  const UserAvatar = user.avatar;
+  const handleEditClick = onEdit || onEditUser || (() => {});
+  const UserAvatar = typeof user.avatar === "function" ? user.avatar : User;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center">
-              <UserAvatar className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+            <div className="relative w-12 h-12 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-[var(--color-info-border)] overflow-hidden">
+              {typeof user.avatar === "string" ? (
+                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-6 h-6 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+              )}
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">User Details</h3>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">ID: #{user.id}</p>
+              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">User Account Details</h3>
+              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{user.email}</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors"
+            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        {/* Content */}
+        <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">User Name</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Full Name</span>
             <p className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1 flex items-center gap-2">
               {user.name}
               {user.verified && (
@@ -46,7 +56,7 @@ export default function UserDetailsModal({ isOpen, user, onClose, onEdit }) {
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Phone</span>
-              <p className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1 truncate">{user.phone}</p>
+              <p className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1 truncate">{user.phone || "N/A"}</p>
             </div>
           </div>
 
@@ -59,43 +69,36 @@ export default function UserDetailsModal({ isOpen, user, onClose, onEdit }) {
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Subscription</span>
-              <p className="text-sm font-medium text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] mt-1">{user.subscription}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] text-center">
-              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Reviews</span>
-              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{user.reviews}</p>
-            </div>
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] text-center">
-              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Favorites</span>
-              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{user.favorites}</p>
-            </div>
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] text-center">
-              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Places</span>
-              <p className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-0.5">{user.places}</p>
+              <p className="text-sm font-medium text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] mt-1">{user.subscription || "Free"}</p>
             </div>
           </div>
 
           <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Location & Activity</span>
             <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1 flex items-center justify-between">
-              <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" /> {user.location}</span>
-              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Last active: {user.lastActive}</span>
+              <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" /> {user.location || "N/A"}</span>
+              <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Last active: {user.lastActive || "Just now"}</span>
             </p>
           </div>
         </div>
 
+        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="py-2.5 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-xs font-semibold hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-colors cursor-pointer"
+          >
+            Close
+          </button>
           <button
             type="button"
             onClick={() => {
               const usr = user;
               onClose();
-              onEdit(usr);
+              handleEditClick(usr);
             }}
-            className="py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
+            className="py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer shadow-md"
           >
             <Edit className="w-4 h-4" />
             Edit User

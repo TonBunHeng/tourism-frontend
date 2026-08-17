@@ -1,142 +1,24 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import GalleryHeader from './GalleryHeader';
-import GalleryStats from './GalleryStats';
-import GalleryToolbar from './GalleryToolbar';
-import GalleryGrid from './GalleryGrid';
-import GalleryList from './GalleryList';
-import GalleryUploadModal from './GalleryUploadModal';
-import GalleryEditModal from './GalleryEditModal';
-import GalleryPreviewModal from './GalleryPreviewModal';
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import GalleryHeader from "./GalleryHeader";
+import GalleryStats from "./GalleryStats";
+import GalleryToolbar from "./GalleryToolbar";
+import GalleryGrid from "./GalleryGrid";
+import GalleryList from "./GalleryList";
+import GalleryUploadModal from "./GalleryUploadModal";
+import GalleryEditModal from "./GalleryEditModal";
+import GalleryPreviewModal from "./GalleryPreviewModal";
+import categoryService from "../../services/categoryService";
+import galleryService from "../../services/galleryService";
 
 export default function Gallery() {
-  const [mediaItems, setMediaItems] = useState([
-    {
-      id: 1,
-      title: 'Angkor Wat Sunrise',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1583418037743-c2e994c1222d?w=400&h=300&fit=crop',
-      category: 'Temple',
-      tags: ['angkor wat', 'sunrise', 'temple'],
-      size: '2.4 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Admin',
-      uploadDate: '2024-01-15',
-      views: 1245,
-      likes: 89,
-      status: 'Published'
-    },
-    {
-      id: 2,
-      title: 'Phnom Penh Skyline',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1572331165267-854da2b10ccc?w=400&h=300&fit=crop',
-      category: 'City',
-      tags: ['phnom penh', 'skyline', 'cityscape'],
-      size: '1.8 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Admin',
-      uploadDate: '2024-01-20',
-      views: 876,
-      likes: 56,
-      status: 'Published'
-    },
-    {
-      id: 3,
-      title: 'Battambang Countryside',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop',
-      category: 'Nature',
-      tags: ['battambang', 'countryside', 'nature'],
-      size: '3.1 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Editor',
-      uploadDate: '2024-02-01',
-      views: 543,
-      likes: 34,
-      status: 'Draft'
-    },
-    {
-      id: 4,
-      title: 'Siem Reap Night Market',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1557732660-2b27a4b6a16e?w=400&h=300&fit=crop',
-      category: 'Culture',
-      tags: ['siem reap', 'night market', 'street food'],
-      size: '2.2 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Admin',
-      uploadDate: '2024-02-10',
-      views: 2100,
-      likes: 134,
-      status: 'Published'
-    },
-    {
-      id: 5,
-      title: 'Koh Rong Beach',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop',
-      category: 'Beach',
-      tags: ['koh rong', 'beach', 'island'],
-      size: '2.9 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Photographer',
-      uploadDate: '2024-02-15',
-      views: 1567,
-      likes: 98,
-      status: 'Published'
-    },
-    {
-      id: 6,
-      title: 'Cambodian Royal Palace',
-      type: 'video',
-      url: 'https://images.unsplash.com/photo-1583418037743-c2e994c1222d?w=400&h=300&fit=crop',
-      category: 'Historical',
-      tags: ['palace', 'royal', 'phnom penh'],
-      size: '45.6 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Admin',
-      uploadDate: '2024-02-20',
-      views: 432,
-      likes: 28,
-      status: 'Draft'
-    },
-    {
-      id: 7,
-      title: 'Kampot Pepper Farm',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop',
-      category: 'Nature',
-      tags: ['kampot', 'pepper', 'farm'],
-      size: '3.4 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Editor',
-      uploadDate: '2024-03-01',
-      views: 780,
-      likes: 62,
-      status: 'Published'
-    },
-    {
-      id: 8,
-      title: 'Preah Vihear Temple Cliff',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1583418037743-c2e994c1222d?w=400&h=300&fit=crop',
-      category: 'Temple',
-      tags: ['preah vihear', 'temple', 'cliff'],
-      size: '4.1 MB',
-      dimensions: '1920x1080',
-      uploadedBy: 'Admin',
-      uploadDate: '2024-03-05',
-      views: 1890,
-      likes: 145,
-      status: 'Published'
-    }
-  ]);
+  const [mediaItems, setMediaItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedType, setSelectedType] = useState('All');
-  const [viewMode, setViewMode] = useState('list');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedType, setSelectedType] = useState("All");
+  const [viewMode, setViewMode] = useState("list");
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingMedia, setEditingMedia] = useState(null);
   const [selectedMedia, setSelectedMedia] = useState(null);
@@ -144,32 +26,88 @@ export default function Gallery() {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
-  const categories = ['All', 'Temple', 'City', 'Nature', 'Culture', 'Beach', 'Historical'];
-  const types = ['All', 'image', 'video'];
+  const [categoriesList, setCategoriesList] = useState(["All", "Temple", "City", "Nature", "Culture", "Beach", "Historical"]);
+  const types = ["All", "image", "video"];
 
-  const filteredMedia = mediaItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
-    const matchesType = selectedType === 'All' || item.type === selectedType;
-    return matchesSearch && matchesCategory && matchesType;
-  });
+  const loadCategories = async () => {
+    try {
+      const res = await categoryService.getCategories({ all: "true" });
+      if (res.success && res.data && res.data.length > 0) {
+        const names = res.data.map(c => c.name);
+        setCategoriesList(["All", ...names]);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadMedia = async () => {
+    setIsLoading(true);
+    try {
+      const params = {
+        page: currentPage,
+        per_page: itemsPerPage,
+      };
+      if (searchTerm) params.search = searchTerm;
+      if (selectedType !== "All") params.type = selectedType;
+
+      const res = await galleryService.getGalleries(params);
+      if (res.success && res.data) {
+        let items = res.data.map(item => ({
+          ...item,
+          category: item.category || item.category_name || item.category_detail?.name || "General",
+          place: item.place || item.place_name || item.place_detail?.name || "General",
+          uploader: typeof item.uploader === "object" ? item.uploader?.name : (item.uploader_name || item.uploader || "Admin"),
+          url: item.url || item.image_url || "",
+          size: item.size || item.file_size || "2.4 MB",
+          views: item.views !== undefined ? item.views : (item.views_count !== undefined ? item.views_count : 0),
+          likes: item.likes !== undefined ? item.likes : (item.likes_count !== undefined ? item.likes_count : 0),
+          uploadDate: item.uploadDate || (item.created_at ? item.created_at.split("T")[0] : "2026-08-17"),
+          tags: Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []),
+        }));
+
+        if (selectedCategory !== "All") {
+          items = items.filter(i => i.category === selectedCategory);
+        }
+
+        setMediaItems(items);
+        setTotalRecords(res.meta?.total || items.length);
+        setTotalPages(res.meta?.last_page || Math.ceil((res.meta?.total || items.length) / itemsPerPage) || 1);
+      }
+    } catch (e) {
+      console.error("Failed to load gallery items:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    loadMedia();
+  }, [currentPage, searchTerm, selectedCategory, selectedType]);
 
   const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
   const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
   const handleTypeChange = (val) => { setSelectedType(val); setCurrentPage(1); };
 
-  const totalRecords = filteredMedia.length;
-  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
-  const paginatedMedia = filteredMedia.slice(startIndex, startIndex + itemsPerPage);
+  const endIndex = Math.min(startIndex + mediaItems.length, totalRecords);
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this media?')) {
-      setMediaItems(mediaItems.filter(item => item.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this media?")) {
+      try {
+        await galleryService.deleteMedia(id);
+        loadMedia();
+      } catch (e) {
+        alert(e.message || "Failed to delete media item.");
+      }
     }
   };
 
@@ -183,12 +121,37 @@ export default function Gallery() {
     setIsEditOpen(true);
   };
 
-  const handleUpdateSubmit = (e) => {
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     if (!editingMedia) return;
-    setMediaItems(mediaItems.map(item => item.id === editingMedia.id ? editingMedia : item));
-    setIsEditOpen(false);
-    setEditingMedia(null);
+    try {
+      await galleryService.updateMedia(editingMedia.id, {
+        title: editingMedia.title,
+        type: editingMedia.type || "image",
+        url: editingMedia.url || editingMedia.image_url,
+        status: editingMedia.status || "Published",
+      });
+      setIsEditOpen(false);
+      setEditingMedia(null);
+      loadMedia();
+    } catch (err) {
+      alert(err.message || "Failed to update media.");
+    }
+  };
+
+  const handleAddMedia = async (newMedia) => {
+    try {
+      await galleryService.uploadMedia({
+        title: newMedia.title || "Untitled Media",
+        type: newMedia.type || "image",
+        url: newMedia.url || newMedia.imageUrl || "",
+        status: "Published",
+      });
+      setIsUploadModalOpen(false);
+      loadMedia();
+    } catch (err) {
+      alert(err.message || "Failed to upload media.");
+    }
   };
 
   return (
@@ -209,23 +172,27 @@ export default function Gallery() {
           onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
-          categories={categories}
+          categories={categoriesList}
           selectedType={selectedType}
           onTypeChange={handleTypeChange}
           types={types}
         />
 
         {/* Grid or List View */}
-        {viewMode === 'grid' ? (
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
+            Loading gallery media from API...
+          </div>
+        ) : viewMode === "grid" ? (
           <GalleryGrid
-            media={paginatedMedia}
+            media={mediaItems}
             onPreview={handlePreview}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
           <GalleryList
-            media={paginatedMedia}
+            media={mediaItems}
             onPreview={handlePreview}
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -237,8 +204,8 @@ export default function Gallery() {
         {totalRecords > 0 && (
           <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
             <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
-              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
-              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{" "}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{" "}
               <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> media items
             </div>
 
@@ -263,8 +230,8 @@ export default function Gallery() {
                     onClick={() => setCurrentPage(pageNum)}
                     className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
-                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                        ? "bg-[var(--color-primary)] text-white shadow-sm font-bold"
+                        : "border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                   >
                     {pageNum}
@@ -290,8 +257,8 @@ export default function Gallery() {
       <GalleryUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
-        categories={categories}
-        onAddMedia={(newMedia) => setMediaItems([newMedia, ...mediaItems])}
+        categories={categoriesList}
+        onAddMedia={handleAddMedia}
       />
 
       {/* Edit Media Modal */}
@@ -301,7 +268,7 @@ export default function Gallery() {
         onEditingMediaChange={setEditingMedia}
         onClose={() => setIsEditOpen(false)}
         onSubmit={handleUpdateSubmit}
-        categories={categories}
+        categories={categoriesList}
       />
 
       {/* Preview Modal */}

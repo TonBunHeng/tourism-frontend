@@ -1,20 +1,42 @@
-import { Check, Eye, Edit, Trash2, Activity, Calendar } from 'lucide-react';
+import { Check, Eye, Edit, Trash2, Activity, Calendar, User as UserIcon } from 'lucide-react';
 import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor } from '../../utils/StatusUtils';
 
-export default function UsersGrid({ users, onViewDetails, onEdit, onDelete }) {
+export default function UsersGrid({
+  users = [],
+  onViewDetails,
+  onEdit,
+  onDelete,
+  onViewUser,
+  onEditUser,
+  onDeleteUser
+}) {
+  const handleView = onViewDetails || onViewUser || (() => {});
+  const handleEdit = onEdit || onEditUser || (() => {});
+  const handleDeleteItem = onDelete || onDeleteUser || (() => {});
+
+  const safeUsers = users || [];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
-      {users.length > 0 ? (
-        users.map((user) => {
-          const UserAvatar = user.avatar;
+      {safeUsers.length > 0 ? (
+        safeUsers.map((user) => {
+          const isOnline = user.status === "Active" || user.onlineStatus === "Online";
           return (
             <div
               key={user.id}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02]"
+              onClick={() => handleView(user)}
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02] cursor-pointer"
             >
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-md bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0">
-                  <UserAvatar className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
+                <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-[var(--color-info-border)] overflow-hidden">
+                  {typeof user.avatar === 'string' && user.avatar ? (
+                    <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                  ) : typeof user.avatar === 'function' ? (
+                    <user.avatar className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
+                  ) : (
+                    <UserIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
+                  )}
+                  <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? "bg-emerald-500" : "bg-gray-400"}`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -33,24 +55,27 @@ export default function UsersGrid({ users, onViewDetails, onEdit, onDelete }) {
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
+                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
                   <button
-                    onClick={() => onViewDetails(user)}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleView(user); }}
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                     title="View Details"
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={() => onEdit(user)}
-                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleEdit(user); }}
+                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors cursor-pointer"
                     title="Edit"
                   >
                     <Edit className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                   </button>
                   <button
-                    onClick={() => onDelete(user.id)}
-                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleDeleteItem(user.id); }}
+                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
                     title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
@@ -93,7 +118,6 @@ export default function UsersGrid({ users, onViewDetails, onEdit, onDelete }) {
         })
       ) : (
         <div className="col-span-full text-center py-12">
-          <div className="text-6xl mb-4">👥</div>
           <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No users found</h3>
           <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
         </div>

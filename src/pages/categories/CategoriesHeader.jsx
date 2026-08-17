@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react';
 
-export default function CategoriesHeader({ onAddClick }) {
+export default function CategoriesHeader({ onAddClick, onOpenAddModal }) {
+  const handleClick = onAddClick || onOpenAddModal;
   return (
     <div className="mb-6 md:mb-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -13,7 +14,7 @@ export default function CategoriesHeader({ onAddClick }) {
           </p>
         </div>
         <button
-          onClick={onAddClick}
+          onClick={handleClick}
           className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 w-full sm:w-auto cursor-pointer active:scale-95"
         >
           <Plus className="w-4 h-4 shrink-0" />

@@ -18,7 +18,7 @@ export default function ProvincesStats({ provinces }) {
     },
     { 
       label: 'Total Population', 
-      value: '5.8M', 
+      value: provinces.length > 0 ? provinces.reduce((sum, p) => sum + (parseInt(p.population) || 0), 0).toLocaleString() : '0', 
       icon: Users, 
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
       bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'

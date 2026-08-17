@@ -2,19 +2,29 @@ import { Eye, Edit, Trash2, Calendar, Clock, MapPin, Users, Star } from 'lucide-
 import { getEventStatusColor as getStatusColor, getCategoryColor } from '../../utils/StatusUtils';
 
 export default function EventsGrid({
-  events,
+  events = [],
   onViewDetails,
   onEdit,
-  onDelete
+  onDelete,
+  onViewEvent,
+  onEditEvent,
+  onDeleteEvent
 }) {
+  const handleView = onViewDetails || onViewEvent || (() => {});
+  const handleEdit = onEdit || onEditEvent || (() => {});
+  const handleDeleteItem = onDelete || onDeleteEvent || (() => {});
+
+  const safeEvents = events || [];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
-      {events.length > 0 ? (
-        events.map((event) => {
+      {safeEvents.length > 0 ? (
+        safeEvents.map((event) => {
           return (
             <div
               key={event.id}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02]"
+              onClick={() => handleView(event)}
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02] cursor-pointer"
             >
               {/* Event Image Picture Header */}
               <div className="relative w-full h-36 mb-3 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
@@ -41,23 +51,25 @@ export default function EventsGrid({
                     {event.category}
                   </span>
                 </div>
-                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
+                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
                   <button
-                    onClick={() => onViewDetails(event)}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleView(event); }}
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                     title="View Details"
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={() => onEdit(event)}
-                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleEdit(event); }}
+                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
                     title="Edit"
                   >
                     <Edit className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={() => onDelete(event.id)}
+                    onClick={() => handleDeleteItem(event.id)}
                     className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
                     title="Delete"
                   >
@@ -83,7 +95,7 @@ export default function EventsGrid({
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                   <Users className="w-3.5 h-3.5 shrink-0" />
-                  <span>{event.attendees.toLocaleString()}</span>
+                  <span>{(event.attendees || event.attendees_count || 0).toLocaleString()}</span>
                 </div>
               </div>
 
@@ -105,7 +117,6 @@ export default function EventsGrid({
         })
       ) : (
         <div className="col-span-full text-center py-12">
-          <div className="text-6xl mb-4">📅</div>
           <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No events found</h3>
           <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
         </div>

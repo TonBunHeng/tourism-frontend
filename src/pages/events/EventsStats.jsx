@@ -1,31 +1,32 @@
 import { Calendar, Bell, Clock, Users } from 'lucide-react';
 
-export default function EventsStats({ events }) {
+export default function EventsStats({ events = [] }) {
+  const safeEvents = events || [];
   const stats = [
     {
       label: 'Total Events',
-      value: events.length,
+      value: safeEvents.length,
       icon: Calendar,
       color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
       bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'
     },
     {
       label: 'Upcoming',
-      value: events.filter(e => e.status === 'Upcoming').length,
+      value: safeEvents.filter(e => e.status === 'Upcoming').length,
       icon: Bell,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
       label: 'Ongoing',
-      value: events.filter(e => e.status === 'Ongoing').length,
+      value: safeEvents.filter(e => e.status === 'Ongoing').length,
       icon: Clock,
       color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
       bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
     },
     {
       label: 'Total Attendees',
-      value: events.reduce((sum, e) => sum + e.attendees, 0).toLocaleString(),
+      value: safeEvents.reduce((sum, e) => sum + (e.attendees || e.attendees_count || 0), 0).toLocaleString(),
       icon: Users,
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
       bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'

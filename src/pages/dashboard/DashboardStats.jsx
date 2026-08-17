@@ -1,11 +1,11 @@
 import { MapPinned, Users, MessageSquareText, Star, Tags, Map, CalendarDays, Heart, TrendingUp, TrendingDown } from 'lucide-react';
 
-export default function DashboardStats() {
+export default function DashboardStats({ apiStats }) {
   const stats = [
     {
       title: 'Total Places',
-      value: '1,284',
-      change: '+12.5%',
+      value: apiStats?.total_places !== undefined ? apiStats.total_places.toLocaleString() : '0',
+      change: '+0%',
       trend: 'up',
       icon: MapPinned,
       color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
@@ -14,8 +14,8 @@ export default function DashboardStats() {
     },
     {
       title: 'Total Users',
-      value: '8,942',
-      change: '+8.3%',
+      value: apiStats?.total_users !== undefined ? apiStats.total_users.toLocaleString() : '0',
+      change: '+0%',
       trend: 'up',
       icon: Users,
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
@@ -24,8 +24,8 @@ export default function DashboardStats() {
     },
     {
       title: 'Total Reviews',
-      value: '5,231',
-      change: '+15.7%',
+      value: apiStats?.total_reviews !== undefined ? apiStats.total_reviews.toLocaleString() : '0',
+      change: '+0%',
       trend: 'up',
       icon: MessageSquareText,
       color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
@@ -34,8 +34,8 @@ export default function DashboardStats() {
     },
     {
       title: 'Avg Rating',
-      value: '4.8',
-      change: '+0.3',
+      value: apiStats?.avg_rating !== undefined ? apiStats.avg_rating.toString() : '0.0',
+      change: '+0.0',
       trend: 'up',
       icon: Star,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
@@ -47,8 +47,8 @@ export default function DashboardStats() {
   const stats2 = [
     {
       title: 'Total Categories',
-      value: '24',
-      change: '+2',
+      value: apiStats?.total_categories !== undefined ? apiStats.total_categories.toLocaleString() : '0',
+      change: '+0',
       trend: 'up',
       icon: Tags,
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
@@ -57,8 +57,8 @@ export default function DashboardStats() {
     },
     {
       title: 'Total Provinces',
-      value: '25',
-      change: '+1',
+      value: apiStats?.total_provinces !== undefined ? apiStats.total_provinces.toLocaleString() : '0',
+      change: '+0',
       trend: 'up',
       icon: Map,
       color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
@@ -67,8 +67,8 @@ export default function DashboardStats() {
     },
     {
       title: 'Total Events',
-      value: '156',
-      change: '+28%',
+      value: apiStats?.total_events !== undefined ? apiStats.total_events.toLocaleString() : '0',
+      change: '+0%',
       trend: 'up',
       icon: CalendarDays,
       color: 'text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]',
@@ -77,8 +77,8 @@ export default function DashboardStats() {
     },
     {
       title: 'Total Favorites',
-      value: '12,847',
-      change: '+22.4%',
+      value: apiStats?.total_favorites !== undefined ? apiStats.total_favorites.toLocaleString() : '0',
+      change: '+0%',
       trend: 'up',
       icon: Heart,
       color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]',

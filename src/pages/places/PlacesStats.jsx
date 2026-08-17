@@ -18,14 +18,14 @@ export default function PlacesStats({ places }) {
     },
     { 
       label: 'Average Rating', 
-      value: '4.8', 
+      value: places.length > 0 ? (places.reduce((sum, p) => sum + (parseFloat(p.rating) || 0), 0) / places.length).toFixed(1) : '0.0', 
       icon: Star, 
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     { 
       label: 'Total Reviews', 
-      value: '1,234', 
+      value: places.reduce((sum, p) => sum + (parseInt(p.reviews_count || p.reviews) || 0), 0).toLocaleString(), 
       icon: TrendingUp, 
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
       bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'

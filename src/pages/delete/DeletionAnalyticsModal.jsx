@@ -1,41 +1,57 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { X, TrendingUp, FileText, Clock, BarChart2, Calendar, Award, ShieldCheck, UserX } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function DeletionAnalyticsModal({ isOpen, onClose, requests = [] }) {
   const [timeframe, setTimeframe] = useState('2024');
+  const [selectedDate, setSelectedDate] = useState('');
+  const dateInputRef = useRef(null);
+
+  const handleOpenDatePicker = () => {
+    if (dateInputRef.current) {
+      if (typeof dateInputRef.current.showPicker === 'function') {
+        try {
+          dateInputRef.current.showPicker();
+        } catch {
+          dateInputRef.current.focus();
+        }
+      } else {
+        dateInputRef.current.focus();
+      }
+    }
+  };
 
   if (!isOpen) return null;
 
   // Monthly deletion requests received versus resolved requests trend
   const monthlyDeletionData = [
-    { month: 'Jan', requestsReceived: 24, requestsResolved: 22 },
-    { month: 'Feb', requestsReceived: 35, requestsResolved: 31 },
-    { month: 'Mar', requestsReceived: 48, requestsResolved: 45 },
-    { month: 'Apr', requestsReceived: 56, requestsResolved: 52 },
-    { month: 'May', requestsReceived: 68, requestsResolved: 63 },
-    { month: 'Jun', requestsReceived: 82, requestsResolved: 79 },
-    { month: 'Jul', requestsReceived: 95, requestsResolved: 90 },
-    { month: 'Aug', requestsReceived: 110, requestsResolved: 104 },
-    { month: 'Sep', requestsReceived: 102, requestsResolved: 98 },
-    { month: 'Oct', requestsReceived: 125, requestsResolved: 118 },
-    { month: 'Nov', requestsReceived: 140, requestsResolved: 135 },
-    { month: 'Dec', requestsReceived: 165, requestsResolved: 158 },
+    { month: 'Jan', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Feb', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Mar', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Apr', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'May', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Jun', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Jul', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Aug', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Sep', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Oct', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Nov', requestsReceived: 0, requestsResolved: 0 },
+    { month: 'Dec', requestsReceived: 0, requestsResolved: 0 },
   ];
 
   // Distribution by request type
   const typeDistribution = [
-    { name: 'Account Deletions', count: 265, percentage: 62, color: 'bg-rose-500' },
-    { name: 'Item / Listing Removals', count: 108, percentage: 25, color: 'bg-amber-500' },
-    { name: 'Media & Photo Deletions', count: 34, percentage: 8, color: 'bg-purple-500' },
-    { name: 'Review & Comment Removals', count: 21, percentage: 5, color: 'bg-blue-500' },
+    { name: 'Account Deletions', count: 0, percentage: 0, color: 'bg-rose-500' },
+    { name: 'Item / Listing Removals', count: 0, percentage: 0, color: 'bg-amber-500' },
+    { name: 'Media & Photo Deletions', count: 0, percentage: 0, color: 'bg-purple-500' },
+    { name: 'Review & Comment Removals', count: 0, percentage: 0, color: 'bg-blue-500' },
   ];
 
   // Request Status Breakdown
-  const totalCount = requests.length || 428;
-  const approvedCount = requests.filter(r => r.status === 'approved').length || 316;
-  const pendingCount = requests.filter(r => r.status === 'pending').length || 78;
-  const rejectedCount = requests.filter(r => r.status === 'rejected').length || 34;
+  const totalCount = requests.length;
+  const approvedCount = requests.filter(r => r.status === 'approved').length;
+  const pendingCount = requests.filter(r => r.status === 'pending').length;
+  const rejectedCount = requests.filter(r => r.status === 'rejected').length;
 
   const statusBreakdown = [
     {
@@ -79,17 +95,39 @@ export default function DeletionAnalyticsModal({ isOpen, onClose, requests = [] 
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg p-1 text-xs font-medium">
-              <Calendar className="w-3.5 h-3.5 ml-2 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
-              <select
-                value={timeframe}
-                onChange={(e) => setTimeframe(e.target.value)}
-                className="bg-transparent px-2 py-1 outline-none cursor-pointer text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
-              >
-                <option value="2024">Year 2024</option>
-                <option value="6M">Last 6 Months</option>
-                <option value="30D">Last 30 Days</option>
-              </select>
+            {/* Date Picker Button */}
+            <div
+              onClick={handleOpenDatePicker}
+              className="relative flex items-center justify-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg border border-zinc-700/80 bg-[#18181b] hover:bg-zinc-800 text-gray-200 transition-all shrink-0 cursor-pointer active:scale-95 shadow-xs"
+              title="Click to select date from calendar"
+            >
+              <input
+                ref={dateInputRef}
+                type="date"
+                value={selectedDate}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  if (e.target.value) setTimeframe(e.target.value.substring(0, 4));
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+              <Calendar className="w-4 h-4 text-gray-300 shrink-0 stroke-[2.2]" />
+              <span className="font-bold text-gray-200 text-xs tracking-tight">
+                {selectedDate ? selectedDate : 'Date'}
+              </span>
+              {selectedDate && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedDate('');
+                  }}
+                  className="ml-1 text-[10px] text-gray-400 hover:text-rose-400 z-20 font-medium"
+                  title="Clear Date"
+                >
+                  Clear
+                </button>
+              )}
             </div>
 
             <button

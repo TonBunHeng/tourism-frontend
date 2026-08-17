@@ -3,18 +3,18 @@ import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 
 export default function SalesChart() {
   const salesData = [
-    { month: 'Jan', unitsSold: 60, totalTransaction: 900 },
-    { month: 'Feb', unitsSold: 140, totalTransaction: 2950 },
-    { month: 'Mar', unitsSold: 90, totalTransaction: 1200 },
-    { month: 'Apr', unitsSold: 170, totalTransaction: 7000 },
-    { month: 'May', unitsSold: 110, totalTransaction: 5050 },
-    { month: 'Jun', unitsSold: 150, totalTransaction: 7500 },
-    { month: 'Jul', unitsSold: 90, totalTransaction: 1200 },
-    { month: 'Aug', unitsSold: 170, totalTransaction: 7000 },
-    { month: 'Sep', unitsSold: 110, totalTransaction: 5050 },
-    { month: 'Oct', unitsSold: 150, totalTransaction: 7500 },
-    { month: 'Nov', unitsSold: 90, totalTransaction: 1200 },
-    { month: 'Dec', unitsSold: 170, totalTransaction: 7000 },
+    { month: 'Jan', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Feb', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Mar', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Apr', unitsSold: 0, totalTransaction: 0 },
+    { month: 'May', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Jun', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Jul', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Aug', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Sep', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Oct', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Nov', unitsSold: 0, totalTransaction: 0 },
+    { month: 'Dec', unitsSold: 0, totalTransaction: 0 },
   ];
 
   return (

@@ -69,11 +69,11 @@ export default function GalleryGrid({ media, onPreview, onEdit, onDelete }) {
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-[var(--color-text-muted-light)]" />
-                  {item.uploadDate}
+                  {item.uploadDate || (item.created_at ? item.created_at.split("T")[0] : "Recent")}
                 </span>
                 <span className="flex items-center gap-1">
                   <HardDrive className="w-3.5 h-3.5 text-[var(--color-text-muted-light)]" />
-                  {item.size}
+                  {item.size || item.file_size || "N/A"}
                 </span>
               </div>
             </div>
@@ -87,11 +87,11 @@ export default function GalleryGrid({ media, onPreview, onEdit, onDelete }) {
               <div className="flex items-center gap-2 text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
                 <span className="flex items-center gap-1">
                   <Eye className="w-3.5 h-3.5 text-[var(--color-text-muted-light)]" />
-                  {item.views}
+                  {item.views ?? item.views_count ?? 0}
                 </span>
                 <span className="flex items-center gap-1">
                   <Heart className="w-3.5 h-3.5 text-[var(--color-rose-badge-text)] fill-[var(--color-rose-badge-text)]" />
-                  {item.likes}
+                  {item.likes ?? item.likes_count ?? 0}
                 </span>
               </div>
             </div>
@@ -99,7 +99,6 @@ export default function GalleryGrid({ media, onPreview, onEdit, onDelete }) {
         ))
       ) : (
         <div className="col-span-full text-center py-12">
-          <div className="text-6xl mb-4">🖼️</div>
           <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No media found</h3>
           <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
         </div>

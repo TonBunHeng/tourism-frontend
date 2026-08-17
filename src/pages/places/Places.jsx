@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Landmark, ChevronLeft, ChevronRight } from 'lucide-react';
 import PlacesHeader from './PlacesHeader';
 import PlacesStats from './PlacesStats';
@@ -8,144 +8,122 @@ import PlacesGrid from './PlacesGrid';
 import PlacesList from './PlacesList';
 import PlaceDetailsModal from './PlaceDetailsModal';
 import PlaceModal from './PlaceModal';
+import placeService from '../../services/placeService';
+import categoryService from '../../services/categoryService';
 
 export default function Places() {
-  const [places, setPlaces] = useState([
-    {
-      id: 1,
-      name: 'Koh Ker Temple',
-      category: 'Temple',
-      address: 'Srayong Village, Srayong Commune, Srayong District, Preah Vihear Province, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.8,
-      reviews: 124
-    },
-    {
-      id: 2,
-      name: 'National Museum of Cambodia',
-      category: 'Historical Site',
-      address: 'Phnom Penh, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.9,
-      reviews: 89
-    },
-    {
-      id: 3,
-      name: 'Angkor Wat',
-      category: 'Temple',
-      address: 'Siem Reap, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.9,
-      reviews: 256
-    },
-    {
-      id: 4,
-      name: 'Royal Palace',
-      category: 'Palace',
-      address: 'Phnom Penh, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.7,
-      reviews: 98
-    },
-    {
-      id: 5,
-      name: 'Bokor National Park',
-      category: 'Nature',
-      address: 'Kampot Province, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.6,
-      reviews: 78
-    },
-    {
-      id: 6,
-      name: 'Preah Vihear Temple',
-      category: 'Temple',
-      address: 'Preah Vihear Province, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.9,
-      reviews: 142
-    },
-    {
-      id: 7,
-      name: 'Banteay Srei',
-      category: 'Temple',
-      address: 'Siem Reap Province, Cambodia',
-      status: 'Active',
-      icon: Landmark,
-      rating: 4.8,
-      reviews: 110
-    },
-    {
-      id: 8,
-      name: 'Otres Beach',
-      category: 'Nature',
-      address: 'Preah Sihanouk Province, Cambodia',
-      status: 'Pending',
-      icon: Landmark,
-      rating: 4.4,
-      reviews: 65
-    }
-  ]);
-
+  const [places, setPlaces] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState('list');
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [categoriesList, setCategoriesList] = useState(['All']);
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [viewingPlace, setViewingPlace] = useState(null);
   const [editingPlace, setEditingPlace] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
   const [formData, setFormData] = useState({
     name: '',
+    category_id: 1,
     category: 'Temple',
     address: '',
     status: 'Active'
   });
 
-  const categories = ['All', 'Temple', 'Historical Site', 'Palace', 'Museum', 'Nature'];
-  const formCategories = categories.filter(c => c !== 'All');
-  const statusOptions = ['Active', 'Inactive', 'Pending'];
+  const loadCategories = async () => {
+    try {
+      const res = await categoryService.getCategories({ all: 'true' });
+      if (res.success && res.data) {
+        const names = res.data.map(c => c.name);
+        setCategoriesList(['All', ...names]);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-  const filteredPlaces = places.filter(place => {
-    const matchesSearch = place.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      place.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || place.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const loadPlaces = async () => {
+    setIsLoading(true);
+    try {
+      const params = {
+        page: currentPage,
+        per_page: itemsPerPage,
+        search: searchTerm,
+      };
+      if (selectedCategory !== 'All') {
+        params.category = selectedCategory;
+      }
+      const res = await placeService.getPlaces(params);
+      if (res.success && res.data) {
+        const formatted = res.data.map(p => ({
+          ...p,
+          category: p.category || p.category_detail?.name || 'Uncategorized',
+          reviews: p.reviews_count || 0,
+          icon: Landmark,
+        }));
+        setPlaces(formatted);
+        if (res.meta) {
+          setTotalRecords(res.meta.total);
+          setTotalPages(res.meta.last_page);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load places from API', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    loadPlaces();
+  }, [currentPage, searchTerm, selectedCategory]);
+
+  const formCategories = categoriesList.filter(c => c !== 'All');
+  const statusOptions = ['Active', 'Inactive', 'Pending'];
 
   const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
   const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
 
-  const totalRecords = filteredPlaces.length;
-  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
-  const paginatedPlaces = filteredPlaces.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleView = (id) => {
-    const placeToView = places.find(place => place.id === id);
-    if (placeToView) {
-      setViewingPlace(placeToView);
+  const handleView = async (id) => {
+    try {
+      const res = await placeService.getPlaceById(id);
+      if (res.success && res.data) {
+        setViewingPlace({
+          ...res.data,
+          category: res.data.category || res.data.category_detail?.name || 'Uncategorized',
+          reviews: res.data.reviews_count || 0,
+        });
+      }
+    } catch (e) {
+      const placeToView = places.find(place => place.id === id);
+      if (placeToView) setViewingPlace(placeToView);
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this place?')) {
-      setPlaces(places.filter(place => place.id !== id));
+      try {
+        await placeService.deletePlace(id);
+        loadPlaces();
+      } catch (e) {
+        alert(e.message || 'Failed to delete place.');
+      }
     }
   };
 
   const openAddModal = () => {
     setEditingPlace(null);
-    setFormData({ name: '', category: 'Temple', address: '', status: 'Active' });
+    setFormData({ name: '', category_id: 1, category: formCategories[0] || 'Temple', address: '', status: 'Active' });
     setIsAddModalOpen(true);
   };
 
@@ -153,6 +131,7 @@ export default function Places() {
     setEditingPlace(place);
     setFormData({
       name: place.name,
+      category_id: place.category_id || 1,
       category: place.category,
       address: place.address,
       status: place.status
@@ -169,27 +148,34 @@ export default function Places() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name.trim() || !formData.address.trim()) return;
 
-    if (editingPlace) {
-      setPlaces(places.map(p =>
-        p.id === editingPlace.id
-          ? { ...p, ...formData }
-          : p
-      ));
-    } else {
-      const newPlace = {
-        id: places.length > 0 ? Math.max(...places.map(p => p.id)) + 1 : 1,
-        ...formData,
-        icon: Landmark,
-        rating: 0,
-        reviews: 0
-      };
-      setPlaces([newPlace, ...places]);
+    try {
+      if (editingPlace) {
+        await placeService.updatePlace(editingPlace.id, {
+          name: formData.name,
+          category_id: formData.category_id || 1,
+          address: formData.address,
+          status: formData.status,
+        });
+      } else {
+        await placeService.createPlace({
+          name: formData.name,
+          category_id: formData.category_id || 1,
+          address: formData.address,
+          status: formData.status,
+        });
+      }
+      closeModal();
+      loadPlaces();
+    } catch (e) {
+      alert(e.message || 'Failed to save place.');
     }
-    closeModal();
   };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + places.length, totalRecords);
 
   return (
     <div className="flex flex-col">
@@ -211,12 +197,16 @@ export default function Places() {
           onSearchChange={handleSearchChange}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
-          categories={categories}
+          categories={categoriesList}
         />
 
-        {viewMode === 'list' ? (
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
+            Loading places from API...
+          </div>
+        ) : viewMode === 'list' ? (
           <PlacesList
-            places={paginatedPlaces}
+            places={places}
             onViewPlace={handleView}
             onEditPlace={openEditModal}
             onDeletePlace={handleDelete}
@@ -224,7 +214,7 @@ export default function Places() {
           />
         ) : (
           <PlacesGrid
-            places={paginatedPlaces}
+            places={places}
             onViewPlace={handleView}
             onEditPlace={openEditModal}
             onDeletePlace={handleDelete}

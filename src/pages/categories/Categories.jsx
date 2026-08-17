@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FolderTree,
   Landmark,
@@ -17,79 +17,23 @@ import CategoriesGrid from "./CategoriesGrid";
 import CategoriesList from "./CategoriesList";
 import CategoryModal from "./CategoryModal";
 import CategoryDetailsModal from "./CategoryDetailsModal";
+import categoryService from "../../services/categoryService";
 
 export default function Categories() {
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      name: "Temple",
-      description: "Ancient religious structures and sacred sites",
-      icon: Landmark,
-      placeCount: 45,
-      status: "Active",
-      createdAt: "2024-01-15",
-      color: "#8B5CF6"
-    },
-    {
-      id: 2,
-      name: "Historical Site",
-      description: "Heritage locations with historical significance",
-      icon: Scroll,
-      placeCount: 28,
-      status: "Active",
-      createdAt: "2024-01-20",
-      color: "#EC4899"
-    },
-    {
-      id: 3,
-      name: "Museum",
-      description: "Cultural and historical exhibition centers",
-      icon: Palette,
-      placeCount: 15,
-      status: "Active",
-      createdAt: "2024-02-01",
-      color: "#3B82F6"
-    },
-    {
-      id: 4,
-      name: "Palace",
-      description: "Royal residences and administrative buildings",
-      icon: Crown,
-      placeCount: 8,
-      status: "Inactive",
-      createdAt: "2024-02-10",
-      color: "#F59E0B"
-    },
-    {
-      id: 5,
-      name: "Nature Reserve",
-      description: "Protected natural areas and wildlife sanctuaries",
-      icon: Leaf,
-      placeCount: 12,
-      status: "Active",
-      createdAt: "2024-03-01",
-      color: "#10B981"
-    },
-    {
-      id: 6,
-      name: "Cultural Center",
-      description: "Community spaces for cultural activities",
-      icon: Theater,
-      placeCount: 7,
-      status: "Active",
-      createdAt: "2024-03-15",
-      color: "#EF4444"
-    }
-  ]);
-
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState("list");
   const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewingCategory, setViewingCategory] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [viewMode, setViewMode] = useState("list"); // Default to list view
+  const [viewingCategory, setViewingCategory] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 8;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -98,107 +42,146 @@ export default function Categories() {
     color: "#8B5CF6"
   });
 
-  const filteredCategories = categories.filter(cat => 
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    cat.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleSearchChange = (value) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
+  const loadCategories = async () => {
+    setIsLoading(true);
+    try {
+      const params = {
+        page: currentPage,
+        per_page: itemsPerPage,
+        search: searchTerm,
+      };
+      if (statusFilter !== "All") {
+        params.status = statusFilter;
+      }
+      const res = await categoryService.getCategories(params);
+      if (res.success && res.data) {
+        const formatted = res.data.map(c => ({
+          ...c,
+          placeCount: c.places_count || 0,
+          icon: Landmark,
+          createdAt: c.created_at ? c.created_at.split('T')[0] : '2024-01-01',
+        }));
+        setCategories(formatted);
+        if (res.meta) {
+          setTotalRecords(res.meta.total);
+          setTotalPages(res.meta.last_page);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load categories from API", e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const totalRecords = filteredCategories.length;
-  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
-  const paginatedCategories = filteredCategories.slice(startIndex, startIndex + itemsPerPage);
+  useEffect(() => {
+    loadCategories();
+  }, [currentPage, searchTerm, statusFilter]);
+
+  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
+  const handleStatusChange = (val) => { setStatusFilter(val); setCurrentPage(1); };
+
+  const handleView = (category) => {
+    setViewingCategory(category);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this category?")) {
+      try {
+        await categoryService.deleteCategory(id);
+        loadCategories();
+      } catch (e) {
+        alert(e.message || "Failed to delete category.");
+      }
+    }
+  };
 
   const openAddModal = () => {
     setEditingCategory(null);
     setFormData({ name: "", description: "", status: "Active", color: "#8B5CF6" });
-    setIsModalOpen(true);
+    setIsAddModalOpen(true);
   };
 
   const openEditModal = (category) => {
     setEditingCategory(category);
     setFormData({
       name: category.name,
-      description: category.description,
+      description: category.description || "",
       status: category.status,
-      color: category.color
+      color: category.color || "#8B5CF6"
     });
-    setIsModalOpen(true);
+    setIsAddModalOpen(true);
   };
 
-  const handleView = (id) => {
-    const catToView = categories.find(cat => cat.id === id);
-    if (catToView) {
-      setViewingCategory(catToView);
-    }
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      setCategories(categories.filter(cat => cat.id !== id));
-    }
-  };
-
-  const handleSubmit = (e) => {
-    if (e) e.preventDefault();
-    if (!formData.name.trim() || !formData.description.trim()) return;
-
-    if (editingCategory) {
-      setCategories(categories.map(cat => 
-        cat.id === editingCategory.id ? { ...cat, ...formData } : cat
-      ));
-    } else {
-      const newCategory = {
-        id: categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1,
-        ...formData,
-        icon: FolderTree,
-        placeCount: 0,
-        createdAt: new Date().toISOString().split("T")[0]
-      };
-      setCategories([newCategory, ...categories]);
-    }
-    setIsModalOpen(false);
+  const closeModal = () => {
+    setIsAddModalOpen(false);
     setEditingCategory(null);
   };
+
+  const handleFormChange = (fieldOrData, value) => {
+    if (typeof fieldOrData === 'object' && fieldOrData !== null) {
+      setFormData(fieldOrData);
+    } else {
+      setFormData(prev => ({ ...prev, [fieldOrData]: value }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name.trim()) return;
+
+    try {
+      if (editingCategory) {
+        await categoryService.updateCategory(editingCategory.id, formData);
+      } else {
+        await categoryService.createCategory(formData);
+      }
+      closeModal();
+      loadCategories();
+    } catch (e) {
+      alert(e.message || "Failed to save category.");
+    }
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + categories.length, totalRecords);
 
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <CategoriesHeader onAddClick={openAddModal} />
+      <CategoriesHeader onOpenAddModal={openAddModal} />
 
       {/* Stats Cards */}
       <CategoriesStats categories={categories} />
 
-      {/* Main Content */}
+      {/* Main Categories Section */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
-        {/* Toolbar */}
         <CategoriesToolbar
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          statusFilter={statusFilter}
+          onStatusChange={handleStatusChange}
         />
 
-        {/* Grid or List View */}
-        {viewMode === "grid" ? (
-          <CategoriesGrid
-            categories={paginatedCategories}
-            onView={handleView}
-            onEdit={openEditModal}
-            onDelete={handleDelete}
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
+            Loading categories from API...
+          </div>
+        ) : viewMode === "list" ? (
+          <CategoriesList
+            categories={categories}
+            onViewCategory={handleView}
+            onEditCategory={openEditModal}
+            onDeleteCategory={handleDelete}
+            startIndex={startIndex}
           />
         ) : (
-          <CategoriesList
-            categories={paginatedCategories}
-            onView={handleView}
-            onEdit={openEditModal}
-            onDelete={handleDelete}
-            startIndex={startIndex}
+          <CategoriesGrid
+            categories={categories}
+            onViewCategory={handleView}
+            onEditCategory={openEditModal}
+            onDeleteCategory={handleDelete}
           />
         )}
 
@@ -206,8 +189,8 @@ export default function Categories() {
         {totalRecords > 0 && (
           <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
             <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
-              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{' '}
-              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{' '}
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{" "}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{" "}
               <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> categories
             </div>
 
@@ -232,8 +215,8 @@ export default function Categories() {
                     onClick={() => setCurrentPage(pageNum)}
                     className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[var(--color-primary)] text-white shadow-sm font-bold'
-                        : 'border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                        ? "bg-[var(--color-primary)] text-white shadow-sm font-bold"
+                        : "border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                   >
                     {pageNum}
@@ -255,25 +238,29 @@ export default function Categories() {
         )}
       </div>
 
-      {/* View Details Modal */}
-      <CategoryDetailsModal
-        isOpen={!!viewingCategory}
-        category={viewingCategory}
-        onClose={() => setViewingCategory(null)}
-        onEdit={openEditModal}
-      />
-
-      {/* Add / Edit Category Modal */}
+      {/* Modals */}
       <CategoryModal
-        isOpen={isModalOpen}
+        isOpen={isAddModalOpen}
+        onClose={closeModal}
         editingCategory={editingCategory}
         formData={formData}
-        onFormDataChange={setFormData}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingCategory(null);
-        }}
+        onFormChange={handleFormChange}
+        onFormDataChange={handleFormChange}
         onSubmit={handleSubmit}
+      />
+
+      <CategoryDetailsModal
+        isOpen={Boolean(viewingCategory)}
+        category={viewingCategory}
+        onClose={() => setViewingCategory(null)}
+        onEdit={(cat) => {
+          setViewingCategory(null);
+          openEditModal(cat);
+        }}
+        onEditCategory={(cat) => {
+          setViewingCategory(null);
+          openEditModal(cat);
+        }}
       />
     </div>
   );

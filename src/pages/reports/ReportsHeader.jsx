@@ -61,7 +61,7 @@ export default function ReportsHeader({
             {/* Styled Date Picker Button */}
             <div
               onClick={handleOpenPicker}
-              className="relative flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-100 dark:hover:bg-gray-800 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] transition-all shrink-0 cursor-pointer active:scale-95 shadow-sm"
+              className="relative flex items-center justify-center gap-2 px-3.5 py-2 text-sm font-bold rounded-lg border border-zinc-700/80 bg-[#18181b] hover:bg-zinc-800 text-gray-200 transition-all shrink-0 cursor-pointer active:scale-95 shadow-sm"
             >
               <input
                 ref={dateInputRef}
@@ -71,8 +71,8 @@ export default function ReportsHeader({
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 title={selectedDay ? `Selected Date: ${selectedDay}` : 'Select Date Filter'}
               />
-              <Calendar className={`w-4 h-4 shrink-0 ${selectedDay ? 'text-[var(--color-primary)] dark:text-sky-400 font-bold' : ' text-[var(--color-text-primary-light)] dark:text-[var(--color-text-secondary-dark)]'}`} />
-              <span className={selectedDay ? 'font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]' : ' text-[var(--color-text-primary-light)] dark:text-[var(--color-text-secondary-dark)]'}>
+              <Calendar className="w-4.5 h-4.5 text-gray-300 shrink-0 stroke-[2.2]" />
+              <span className="font-bold text-gray-200 text-sm tracking-tight">
                 {selectedDay || 'Date'}
               </span>
             </div>

@@ -1,12 +1,15 @@
 import { X, Clock, Calendar, Star, Users, MapPin, Edit } from 'lucide-react';
 
 export default function EventDetailsModal({
-  isOpen,
+  isOpen = true,
   event,
   onClose,
-  onEdit
+  onEdit,
+  onEditEvent
 }) {
-  if (!isOpen || !event) return null;
+  if (!event) return null;
+  if (isOpen === false) return null;
+  const handleEditClick = onEdit || onEditEvent || (() => {});
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -101,7 +104,7 @@ export default function EventDetailsModal({
             onClick={() => {
               const ev = event;
               onClose();
-              onEdit(ev);
+              handleEditClick(ev);
             }}
             className="py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
           >

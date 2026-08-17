@@ -2,17 +2,26 @@ import { Eye, Edit, Trash2, MapPin, Users, Star, Clock } from 'lucide-react';
 import { getEventStatusColor as getStatusColor, getCategoryColor } from '../../utils/StatusUtils';
 
 export default function EventsList({
-  events,
+  events = [],
   onViewDetails,
   onEdit,
   onDelete,
+  onViewEvent,
+  onEditEvent,
+  onDeleteEvent,
   startIndex = 0
 }) {
+  const handleView = onViewDetails || onViewEvent || (() => {});
+  const handleEdit = onEdit || onEditEvent || (() => {});
+  const handleDeleteItem = onDelete || onDeleteEvent || (() => {});
+
+  const safeEvents = events || [];
+
   return (
     <>
       {/* Mobile Card List View */}
       <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
-        {events.length > 0 ? (
+        {safeEvents.length > 0 ? (
           events.map((event) => {
             return (
               <div key={event.id} className="p-4 flex flex-col sm:flex-row gap-3">
@@ -37,16 +46,16 @@ export default function EventsList({
                     <span className="truncate">{event.location}</span>
                     <span className="mx-1">·</span>
                     <Users className="w-3 h-3 shrink-0" />
-                    <span>{event.attendees.toLocaleString()}</span>
+                    <span>{(event.attendees || event.attendees_count || 0).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-1 mt-2">
-                    <button type="button" onClick={() => onViewDetails(event)} className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer" title="View Details">
+                    <button type="button" onClick={() => handleView(event)} className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer" title="View Details">
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button type="button" onClick={() => onEdit(event)} className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer" title="Edit">
+                    <button type="button" onClick={() => handleEdit(event)} className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer" title="Edit">
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button type="button" onClick={() => onDelete(event.id)} className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer" title="Delete">
+                    <button type="button" onClick={() => handleDeleteItem(event.id)} className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer" title="Delete">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -56,7 +65,6 @@ export default function EventsList({
           })
         ) : (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">📅</div>
             <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No events found</h3>
             <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
           </div>
@@ -68,7 +76,7 @@ export default function EventsList({
         <table className="min-w-full divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
           <thead className="bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">#</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">ID</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Event</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Date</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">Location</th>
@@ -78,12 +86,12 @@ export default function EventsList({
             </tr>
           </thead>
           <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
-            {events.length > 0 ? (
-              events.map((event, index) => {
+            {safeEvents.length > 0 ? (
+              safeEvents.map((event, index) => {
                 return (
                   <tr key={event.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
-                      {String(startIndex + index + 1).padStart(2, '0')}
+                      {startIndex + index + 1}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -98,7 +106,7 @@ export default function EventsList({
                             </span>
                             {event.featured && (
                               <span className="text-xs px-2 py-0.5 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] rounded-full border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] flex items-center gap-1">
-                                <Star className="w-3 h-3 fill-[var(--color-amber-star)] text-[var(--color-amber-star)]" /> Featured
+                                Featured
                               </span>
                             )}
                           </div>
@@ -106,22 +114,14 @@ export default function EventsList({
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                      <div className="flex flex-col">
-                        <span>{event.date}</span>
-                        <span className="text-xs">{event.time}</span>
-                      </div>
+                      <div>{event.date}</div>
+                      <div className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">{event.time}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span className="truncate max-w-xs">{event.location}</span>
-                      </div>
+                      {event.location}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                      <div className="flex items-center gap-1">
-                        <Users className="w-3.5 h-3.5" />
-                        <span>{event.attendees.toLocaleString()}</span>
-                      </div>
+                      {(event.attendees || event.attendees_count || 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(event.status)}`}>
@@ -133,7 +133,7 @@ export default function EventsList({
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => onViewDetails(event)}
+                          onClick={() => handleView(event)}
                           className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                           title="View Details"
                         >
@@ -141,7 +141,7 @@ export default function EventsList({
                         </button>
                         <button
                           type="button"
-                          onClick={() => onEdit(event)}
+                          onClick={() => handleEdit(event)}
                           className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
                           title="Edit"
                         >
@@ -149,7 +149,7 @@ export default function EventsList({
                         </button>
                         <button
                           type="button"
-                          onClick={() => onDelete(event.id)}
+                          onClick={() => handleDeleteItem(event.id)}
                           className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
                           title="Delete"
                         >
@@ -163,7 +163,6 @@ export default function EventsList({
             ) : (
               <tr>
                 <td colSpan="7" className="text-center py-12">
-                  <div className="text-6xl mb-4">📅</div>
                   <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No events found</h3>
                   <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
                 </td>

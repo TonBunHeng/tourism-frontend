@@ -5,40 +5,9 @@ import historicalImg from '../../assets/places_img/HistoricalSites.jpeg';
 import museumImg from '../../assets/places_img/images.jpeg';
 
 export default function FeaturedPlaces() {
-  const featuredPlaces = [
-    {
-      name: 'Siem Reap Angkor',
-      location: 'Siem Reap | Temple | Heritage Site',
-      rating: 5.0,
-      reviews: 35,
-      icon: Landmark,
-      image: siemReapImg,
-    },
-    {
-      name: 'Pursat Mountains',
-      location: 'Pursat | Mountains | Nature Reserve',
-      rating: 5.0,
-      reviews: 6,
-      icon: Mountain,
-      image: pursatImg,
-    },
-    {
-      name: 'Historical Sites',
-      location: 'Multiple National Sites',
-      rating: 5.0,
-      reviews: 35,
-      icon: Building2,
-      image: historicalImg,
-    },
-    {
-      name: 'Cultural Museum',
-      location: 'Cultural Heritage Museum',
-      rating: 5.0,
-      reviews: 35,
-      icon: Palette,
-      image: museumImg,
-    }
-  ];
+  const featuredPlaces = [];
+
+  if (featuredPlaces.length === 0) return null;
 
   return (
     <div className="mb-6 md:mb-8">

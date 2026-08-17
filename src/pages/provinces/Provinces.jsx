@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Home,
   Landmark,
@@ -17,234 +17,192 @@ import ProvincesGrid from './ProvincesGrid';
 import ProvincesList from './ProvincesList';
 import ProvinceDetailsModal from './ProvinceDetailsModal';
 import ProvinceModal from './ProvinceModal';
+import provinceService from '../../services/provinceService';
 
 export default function Provinces() {
-  const [provinces, setProvinces] = useState([
-    {
-      id: 1,
-      name: 'Phnom Penh',
-      type: 'Capital City',
-      population: '2,129,371',
-      area: '678.46 km²',
-      districts: 14,
-      communes: 109,
-      status: 'Active',
-      icon: Home,
-      description: 'Capital and largest city of Cambodia',
-      rating: 4.9,
-      places: 156
-    },
-    {
-      id: 2,
-      name: 'Siem Reap',
-      type: 'Province',
-      population: '1,014,234',
-      area: '10,299 km²',
-      districts: 12,
-      communes: 100,
-      status: 'Active',
-      icon: Landmark,
-      description: 'Home to the famous Angkor Wat temple complex',
-      rating: 4.9,
-      places: 89
-    },
-    {
-      id: 3,
-      name: 'Preah Sihanouk',
-      type: 'Province',
-      population: '310,072',
-      area: '2,536.68 km²',
-      districts: 4,
-      communes: 26,
-      status: 'Active',
-      icon: Waves,
-      description: 'Coastal province with beautiful beaches',
-      rating: 4.7,
-      places: 45
-    },
-    {
-      id: 4,
-      name: 'Battambang',
-      type: 'Province',
-      population: '997,169',
-      area: '11,702 km²',
-      districts: 13,
-      communes: 93,
-      status: 'Active',
-      icon: Sprout,
-      description: 'Known as the rice bowl of Cambodia',
-      rating: 4.5,
-      places: 34
-    },
-    {
-      id: 5,
-      name: 'Kampong Cham',
-      type: 'Province',
-      population: '895,763',
-      area: '4,549 km²',
-      districts: 10,
-      communes: 86,
-      status: 'Inactive',
-      icon: Church,
-      description: 'Located along the Mekong River',
-      rating: 4.3,
-      places: 28
-    },
-    {
-      id: 6,
-      name: 'Pursat',
-      type: 'Province',
-      population: '411,759',
-      area: '12,692 km²',
-      districts: 6,
-      communes: 46,
-      status: 'Active',
-      icon: Mountain,
-      description: 'Known for its mountain ranges and forests',
-      rating: 4.4,
-      places: 22
-    },
-    {
-      id: 7,
-      name: 'Kampot',
-      type: 'Province',
-      population: '627,884',
-      area: '4,873 km²',
-      districts: 8,
-      communes: 93,
-      status: 'Active',
-      icon: Mountain,
-      description: 'Famous for Kampot Pepper and Bokor Mountain',
-      rating: 4.8,
-      places: 41
-    },
-    {
-      id: 8,
-      name: 'Kandal',
-      type: 'Province',
-      population: '1,201,581',
-      area: '3,211 km²',
-      districts: 11,
-      communes: 127,
-      status: 'Active',
-      icon: Building,
-      description: 'Surrounds the national capital Phnom Penh',
-      rating: 4.6,
-      places: 52
-    }
-  ]);
-
+  const [provinces, setProvinces] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
-  const [viewMode, setViewMode] = useState('list');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('All');
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [viewingProvince, setViewingProvince] = useState(null);
   const [editingProvince, setEditingProvince] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 8;
 
-  const provinceTypes = ['All', 'Capital City', 'Province', 'Municipality'];
-
-  const filteredProvinces = provinces.filter(prov => {
-    const matchesSearch = prov.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         prov.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'All' || prov.type === selectedType;
-    return matchesSearch && matchesType;
+  const [formData, setFormData] = useState({
+    name: '',
+    type: 'Province',
+    population: '',
+    area: '',
+    districts_count: 0,
+    communes_count: 0,
+    status: 'Active',
+    description: ''
   });
+
+  const loadProvinces = async () => {
+    setIsLoading(true);
+    try {
+      const params = {
+        page: currentPage,
+        per_page: itemsPerPage,
+        search: searchTerm,
+      };
+      if (selectedType !== 'All') params.type = selectedType;
+      if (selectedStatus !== 'All') params.status = selectedStatus;
+
+      const res = await provinceService.getProvinces(params);
+      if (res.success && res.data) {
+        const formatted = res.data.map(p => ({
+          ...p,
+          districts: p.districts_count,
+          communes: p.communes_count,
+          places: p.places_count || 0,
+          icon: Landmark,
+        }));
+        setProvinces(formatted);
+        if (res.meta) {
+          setTotalRecords(res.meta.total);
+          setTotalPages(res.meta.last_page);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load provinces from API', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProvinces();
+  }, [currentPage, searchTerm, selectedType, selectedStatus]);
 
   const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
   const handleTypeChange = (val) => { setSelectedType(val); setCurrentPage(1); };
-
-  const totalRecords = filteredProvinces.length;
-  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
-  const paginatedProvinces = filteredProvinces.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleEdit = (id) => {
-    const province = provinces.find(p => p.id === id);
-    setEditingProvince(province);
-    setIsModalOpen(true);
-  };
+  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
 
   const handleView = (id) => {
-    const provinceToView = provinces.find(prov => prov.id === id);
-    if (provinceToView) {
-      setViewingProvince(provinceToView);
+    const provToView = provinces.find(prov => prov.id === id);
+    if (provToView) {
+      setViewingProvince(provToView);
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this province?')) {
-      setProvinces(provinces.filter(prov => prov.id !== id));
+      try {
+        await provinceService.deleteProvince(id);
+        loadProvinces();
+      } catch (e) {
+        alert(e.message || 'Failed to delete province.');
+      }
     }
-  };
-
-  const handleSave = (provinceData) => {
-    if (editingProvince) {
-      setProvinces(provinces.map(p => 
-        p.id === editingProvince.id ? { ...p, ...provinceData } : p
-      ));
-    } else {
-      const newProvince = {
-        id: provinces.length + 1,
-        ...provinceData,
-        status: 'Active',
-        rating: 4.0,
-        places: 0,
-        icon: Building
-      };
-      setProvinces([...provinces, newProvince]);
-    }
-    setIsModalOpen(false);
-    setEditingProvince(null);
   };
 
   const openAddModal = () => {
     setEditingProvince(null);
-    setIsModalOpen(true);
+    setFormData({
+      name: '',
+      type: 'Province',
+      population: '',
+      area: '',
+      districts_count: 0,
+      communes_count: 0,
+      status: 'Active',
+      description: ''
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const openEditModal = (province) => {
+    setEditingProvince(province);
+    setFormData({
+      name: province.name,
+      type: province.type,
+      population: province.population || '',
+      area: province.area || '',
+      districts_count: province.districts || 0,
+      communes_count: province.communes || 0,
+      status: province.status,
+      description: province.description || ''
+    });
+    setIsAddModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsAddModalOpen(false);
     setEditingProvince(null);
   };
 
+  const handleFormChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name.trim()) return;
+
+    try {
+      if (editingProvince) {
+        await provinceService.updateProvince(editingProvince.id, formData);
+      } else {
+        await provinceService.createProvince(formData);
+      }
+      closeModal();
+      loadProvinces();
+    } catch (e) {
+      alert(e.message || 'Failed to save province.');
+    }
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + provinces.length, totalRecords);
+
   return (
     <div className="flex flex-col">
-      {/* Header */}
+      {/* Header Section */}
       <ProvincesHeader onOpenAddModal={openAddModal} />
 
       {/* Stats Cards */}
       <ProvincesStats provinces={provinces} />
 
-      {/* Main Content */}
+      {/* Main Content Card */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         <ProvincesToolbar
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           selectedType={selectedType}
           onTypeChange={handleTypeChange}
-          provinceTypes={provinceTypes}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          selectedStatus={selectedStatus}
+          onStatusChange={handleStatusChange}
         />
 
-        {viewMode === 'grid' ? (
-          <ProvincesGrid
-            provinces={paginatedProvinces}
-            onViewProvince={handleView}
-            onEditProvince={handleEdit}
-            onDeleteProvince={handleDelete}
-          />
-        ) : (
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
+            Loading provinces from API...
+          </div>
+        ) : viewMode === 'list' ? (
           <ProvincesList
-            provinces={paginatedProvinces}
+            provinces={provinces}
             onViewProvince={handleView}
-            onEditProvince={handleEdit}
+            onEditProvince={openEditModal}
             onDeleteProvince={handleDelete}
             startIndex={startIndex}
+          />
+        ) : (
+          <ProvincesGrid
+            provinces={provinces}
+            onViewProvince={handleView}
+            onEditProvince={openEditModal}
+            onDeleteProvince={handleDelete}
           />
         )}
 
@@ -305,19 +263,17 @@ export default function Provinces() {
       <ProvinceDetailsModal
         province={viewingProvince}
         onClose={() => setViewingProvince(null)}
-        onEditProvince={(id) => {
-          setViewingProvince(null);
-          handleEdit(id);
-        }}
+        onEditProvince={openEditModal}
       />
 
       {/* Add / Edit Province Modal */}
       <ProvinceModal
-        isOpen={isModalOpen}
+        isOpen={isAddModalOpen}
         onClose={closeModal}
         editingProvince={editingProvince}
-        onSave={handleSave}
-        provinceTypes={provinceTypes}
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleSubmit}
       />
     </div>
   );

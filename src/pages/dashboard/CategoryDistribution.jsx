@@ -2,19 +2,19 @@ import { UserCheck, UserX, AlertCircle, UserPlus } from 'lucide-react';
 
 export default function CategoryDistribution() {
   const categoryDistribution = [
-    { name: 'Temples', count: 45, color: 'bg-blue-500' },
-    { name: 'Historical Sites', count: 32, color: 'bg-purple-500' },
-    { name: 'Beaches', count: 18, color: 'bg-cyan-500' },
-    { name: 'Nature Parks', count: 15, color: 'bg-green-500' },
-    { name: 'Markets', count: 12, color: 'bg-amber-500' },
-    { name: 'Palaces', count: 8, color: 'bg-rose-500' }
+    { name: 'Temples', count: 0, color: 'bg-blue-500' },
+    { name: 'Historical Sites', count: 0, color: 'bg-purple-500' },
+    { name: 'Beaches', count: 0, color: 'bg-cyan-500' },
+    { name: 'Nature Parks', count: 0, color: 'bg-green-500' },
+    { name: 'Markets', count: 0, color: 'bg-amber-500' },
+    { name: 'Palaces', count: 0, color: 'bg-rose-500' }
   ];
 
   const statusCounts = [
-    { label: 'Active Users', value: 7854, icon: UserCheck, color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]' },
-    { label: 'Inactive Users', value: 892, icon: UserX, color: 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]', bg: 'bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)]' },
-    { label: 'Suspended Users', value: 196, icon: AlertCircle, color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]', bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]' },
-    { label: 'New This Week', value: 234, icon: UserPlus, color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' }
+    { label: 'Active Users', value: 0, icon: UserCheck, color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]' },
+    { label: 'Inactive Users', value: 0, icon: UserX, color: 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]', bg: 'bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)]' },
+    { label: 'Suspended Users', value: 0, icon: AlertCircle, color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]', bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]' },
+    { label: 'New This Week', value: 0, icon: UserPlus, color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' }
   ];
 
   const totalCategoryCount = categoryDistribution.reduce((sum, c) => sum + c.count, 0);

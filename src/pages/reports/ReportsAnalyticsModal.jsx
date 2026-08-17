@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import {
   X,
   TrendingUp,
@@ -19,6 +19,23 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
   const [timeframe, setTimeframe] = useState('2024');
   const [selectedDataset, setSelectedDataset] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [isCleared, setIsCleared] = useState(true);
+  const [selectedDate, setSelectedDate] = useState('');
+  const dateInputRef = useRef(null);
+
+  const handleOpenDatePicker = () => {
+    if (dateInputRef.current) {
+      if (typeof dateInputRef.current.showPicker === 'function') {
+        try {
+          dateInputRef.current.showPicker();
+        } catch {
+          dateInputRef.current.focus();
+        }
+      } else {
+        dateInputRef.current.focus();
+      }
+    }
+  };
 
   // Compute analytics dynamically based on all selected filter options
   const analyticsData = useMemo(() => {
@@ -250,6 +267,31 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
       ];
     }
 
+    if (isCleared) {
+      const defaultMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return {
+        monthlyData: defaultMonths.map(m => ({ month: m, recordsIngested: 0, exportActivity: 0 })),
+        ingestedTotal: 0,
+        exportsTotal: 0,
+        activePct: 0,
+        qualityIdx: 0,
+        growthText: '0.0% volume growth',
+        exportRateText: '0.0% export rate',
+        distribution: [
+          { name: 'Places Dataset', count: 0, percentage: 0, color: 'bg-blue-500' },
+          { name: 'Events Dataset', count: 0, percentage: 0, color: 'bg-purple-500' },
+          { name: 'Users Dataset', count: 0, percentage: 0, color: 'bg-emerald-500' },
+          { name: 'Reviews Dataset', count: 0, percentage: 0, color: 'bg-amber-500' },
+          { name: 'Categories Dataset', count: 0, percentage: 0, color: 'bg-cyan-500' }
+        ],
+        statusBreakdownData: [
+          { label: 'Active / Published Data', count: 0, percentage: 0, color: 'bg-emerald-500' },
+          { label: 'Pending Review Data', count: 0, percentage: 0, color: 'bg-amber-500' },
+          { label: 'Archived / Inactive Data', count: 0, percentage: 0, color: 'bg-rose-500' }
+        ]
+      };
+    }
+
     return {
       monthlyData: filteredMonthly,
       ingestedTotal: finalIngested,
@@ -261,7 +303,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
       distribution,
       statusBreakdownData
     };
-  }, [timeframe, selectedDataset, statusFilter]);
+  }, [timeframe, selectedDataset, statusFilter, isCleared]);
 
   if (!isOpen) return null;
 
@@ -287,7 +329,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
+
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-input-dark-bg)]/50">
           <div className="flex items-center gap-3">
@@ -321,23 +363,39 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
           </div>
 
           <div className="flex items-center flex-wrap gap-2.5">
-            {/* Timeframe Select Option */}
-            <div className="flex items-center bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-2 py-1 text-xs font-medium">
-              <Calendar className="w-3.5 h-3.5 mr-1.5 text-[var(--color-primary)] shrink-0" />
-              <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mr-1 hidden sm:inline">Timeframe:</span>
-              <select
-                value={timeframe}
-                onChange={(e) => setTimeframe(e.target.value)}
-                className="bg-transparent outline-none cursor-pointer text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] font-semibold"
-              >
-                <option value="2026">Year 2026</option>
-                <option value="2025">Year 2025</option>
-                <option value="2024">Year 2024</option>
-                <option value="6M">Last 6 Months</option>
-                <option value="30D">Last 30 Days</option>
-                <option value="7D">Last 7 Days</option>
-                <option value="ALL">All Time</option>
-              </select>
+            {/* Date Picker Button */}
+            <div
+              onClick={handleOpenDatePicker}
+              className="relative flex items-center justify-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg border border-zinc-700/80 bg-[#18181b] hover:bg-zinc-800 text-gray-200 transition-all shrink-0 cursor-pointer active:scale-95 shadow-xs"
+              title="Click to select date from calendar"
+            >
+              <input
+                ref={dateInputRef}
+                type="date"
+                value={selectedDate}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  if (e.target.value) setTimeframe(e.target.value.substring(0, 4));
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+              <Calendar className="w-4 h-4 text-gray-300 shrink-0 stroke-[2.2]" />
+              <span className="font-bold text-gray-200 text-xs tracking-tight">
+                {selectedDate ? selectedDate : 'Date'}
+              </span>
+              {selectedDate && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedDate('');
+                  }}
+                  className="ml-1 text-[10px] text-gray-400 hover:text-rose-400 z-20 font-medium"
+                  title="Clear Date"
+                >
+                  Clear
+                </button>
+              )}
             </div>
 
             {/* Dataset Category Select Option */}
@@ -390,7 +448,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
 
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 scrollbar-hide">
-          
+
           {/* Key Metric Summary Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs">
@@ -499,7 +557,7 @@ export default function ReportsAnalyticsModal({ isOpen, onClose }) {
 
           {/* Breakdown Section: Category & Status */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
+
             {/* Category Breakdown */}
             <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-xs border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5">
               <h3 className="font-semibold text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">

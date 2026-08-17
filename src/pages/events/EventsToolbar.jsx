@@ -1,16 +1,16 @@
 import { Search, ChevronDown } from 'lucide-react';
 
 export default function EventsToolbar({
-  searchTerm,
-  onSearchChange,
-  selectedCategory,
-  onCategoryChange,
-  categories,
-  selectedStatus,
-  onStatusChange,
-  statuses,
-  viewMode,
-  onViewModeChange
+  searchTerm = '',
+  onSearchChange = () => {},
+  selectedCategory = 'All',
+  onCategoryChange = () => {},
+  categories = ['All', 'Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition'],
+  selectedStatus = 'All',
+  onStatusChange = () => {},
+  statuses = ['All', 'Upcoming', 'Ongoing', 'Completed', 'Cancelled', 'Scheduled'],
+  viewMode = 'grid',
+  onViewModeChange = () => {}
 }) {
   return (
     <div className="px-4 sm:px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">

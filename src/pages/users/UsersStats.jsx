@@ -1,34 +1,39 @@
-import { Users as UsersIcon, UserCheck, Award, MessageSquare } from 'lucide-react';
+import { Users as UsersIcon, UserCheck, ShieldCheck, Clock } from "lucide-react";
 
-export default function UsersStats({ users }) {
+export default function UsersStats({ users = [] }) {
+  const total = users.length;
+  const activeCount = users.filter(u => u.status === "Active" || u.onlineStatus === "Online").length;
+  const offlineCount = users.filter(u => u.status !== "Active" && u.onlineStatus !== "Online").length;
+  const adminCount = users.filter(u => u.role === "Super Admin" || u.role === "Admin").length;
+
   const stats = [
     {
-      label: 'Total Users',
-      value: users.length,
+      label: "Total Registered Users",
+      value: total,
       icon: UsersIcon,
-      color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
-      bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'
+      color: "text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]",
+      bg: "bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]"
     },
     {
-      label: 'Active Users',
-      value: users.filter(u => u.status === 'Active').length,
+      label: "Active / Online Users",
+      value: activeCount,
       icon: UserCheck,
-      color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
-      bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
+      color: "text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]",
+      bg: "bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]"
     },
     {
-      label: 'Premium Users',
-      value: users.filter(u => u.subscription === 'Premium').length,
-      icon: Award,
-      color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
-      bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
+      label: "Offline / Inactive Users",
+      value: offlineCount,
+      icon: Clock,
+      color: "text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]",
+      bg: "bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]"
     },
     {
-      label: 'Avg. Reviews',
-      value: users.length > 0 ? (users.reduce((sum, u) => sum + u.reviews, 0) / users.length).toFixed(1) : '0.0',
-      icon: MessageSquare,
-      color: 'text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)]',
-      bg: 'bg-[var(--color-purple-bg)] dark:bg-[var(--color-purple-dark-bg)]'
+      label: "Administrators",
+      value: adminCount,
+      icon: ShieldCheck,
+      color: "text-[var(--color-purple-text)] dark:text-[var(--color-purple-dark-text)]",
+      bg: "bg-[var(--color-purple-bg)] dark:bg-[var(--color-purple-dark-bg)]"
     }
   ];
 

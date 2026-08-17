@@ -121,6 +121,7 @@ CREATE TABLE `places` (
   `rating` DECIMAL(3, 2) NOT NULL DEFAULT 0.00,
   `reviews_count` INT UNSIGNED NOT NULL DEFAULT 0,
   `visitors_count` INT UNSIGNED NOT NULL DEFAULT 0,
+  `image_url` VARCHAR(255) NULL,
   `is_featured` BOOLEAN NOT NULL DEFAULT FALSE,
   `status` ENUM('Active', 'Inactive', 'Pending') NOT NULL DEFAULT 'Active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

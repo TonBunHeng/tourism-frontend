@@ -14,281 +14,66 @@ import {
 } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function RatingsAnalyticsModal({ isOpen, onClose }) {
+export default function RatingsAnalyticsModal({ isOpen, onClose, reviews = [] }) {
   const [timeframe, setTimeframe] = useState('2024');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [ratingFilter, setRatingFilter] = useState('ALL');
 
-  // Compute analytics dynamically based on all selected filter options
+  // Compute analytics dynamically based on real reviews prop
   const analyticsData = useMemo(() => {
-    // Multipliers for category filter selection
-    const categoryMultipliers = {
-      ALL: 1.0,
-      temples: 0.38,
-      palaces: 0.23,
-      beaches: 0.18,
-      nature: 0.14,
-      nightlife: 0.07
-    };
+    const safeReviews = reviews || [];
+    const total = safeReviews.length;
 
-    // Multipliers for rating score selection
-    const ratingMultipliers = {
-      ALL: 1.0,
-      '5': 0.58,
-      '4': 0.30,
-      '3': 0.08,
-      '2': 0.03,
-      '1': 0.01,
-      positive: 0.88,
-      critical: 0.12
-    };
-
-    const catMult = categoryMultipliers[selectedCategory] || 1.0;
-    const rateMult = ratingMultipliers[ratingFilter] || 1.0;
-    const combinedMult = catMult * rateMult;
-
-    let baseMonthly;
-    let baseTotal = 2264;
-    let baseAvg = 4.72;
-    let baseGrowth = '+20.1% volume growth';
-    let baseScoreChange = '+0.18 score increase';
-    let baseVerification = 96.8;
-
-    if (timeframe === '2026') {
-      baseTotal = 4850;
-      baseAvg = 4.86;
-      baseGrowth = '+26.4% volume growth';
-      baseScoreChange = '+0.24 score increase';
-      baseVerification = 98.2;
-      baseMonthly = [
-        { month: 'Jan', totalRatings: 210, avgRating: 4.65 },
-        { month: 'Feb', totalRatings: 260, avgRating: 4.72 },
-        { month: 'Mar', totalRatings: 310, avgRating: 4.78 },
-        { month: 'Apr', totalRatings: 350, avgRating: 4.80 },
-        { month: 'May', totalRatings: 410, avgRating: 4.85 },
-        { month: 'Jun', totalRatings: 460, avgRating: 4.88 },
-        { month: 'Jul', totalRatings: 520, avgRating: 4.86 },
-        { month: 'Aug', totalRatings: 580, avgRating: 4.91 },
-        { month: 'Sep', totalRatings: 490, avgRating: 4.85 },
-        { month: 'Oct', totalRatings: 540, avgRating: 4.89 },
-        { month: 'Nov', totalRatings: 610, avgRating: 4.93 },
-        { month: 'Dec', totalRatings: 680, avgRating: 4.95 }
-      ];
-    } else if (timeframe === '2025') {
-      baseTotal = 3420;
-      baseAvg = 4.78;
-      baseGrowth = '+22.8% volume growth';
-      baseScoreChange = '+0.21 score increase';
-      baseVerification = 97.4;
-      baseMonthly = [
-        { month: 'Jan', totalRatings: 110, avgRating: 4.45 },
-        { month: 'Feb', totalRatings: 145, avgRating: 4.52 },
-        { month: 'Mar', totalRatings: 180, avgRating: 4.60 },
-        { month: 'Apr', totalRatings: 220, avgRating: 4.65 },
-        { month: 'May', totalRatings: 270, avgRating: 4.71 },
-        { month: 'Jun', totalRatings: 310, avgRating: 4.75 },
-        { month: 'Jul', totalRatings: 360, avgRating: 4.73 },
-        { month: 'Aug', totalRatings: 410, avgRating: 4.82 },
-        { month: 'Sep', totalRatings: 350, avgRating: 4.76 },
-        { month: 'Oct', totalRatings: 390, avgRating: 4.80 },
-        { month: 'Nov', totalRatings: 440, avgRating: 4.85 },
-        { month: 'Dec', totalRatings: 495, avgRating: 4.90 }
-      ];
-    } else if (timeframe === '6M') {
-      baseTotal = 1780;
-      baseAvg = 4.82;
-      baseGrowth = '+18.2% volume growth';
-      baseScoreChange = '+0.15 score increase';
-      baseVerification = 97.8;
-      baseMonthly = [
-        { month: 'Feb', totalRatings: 210, avgRating: 4.68 },
-        { month: 'Mar', totalRatings: 260, avgRating: 4.75 },
-        { month: 'Apr', totalRatings: 295, avgRating: 4.78 },
-        { month: 'May', totalRatings: 340, avgRating: 4.82 },
-        { month: 'Jun', totalRatings: 385, avgRating: 4.86 },
-        { month: 'Jul', totalRatings: 420, avgRating: 4.89 }
-      ];
-    } else if (timeframe === '30D') {
-      baseTotal = 385;
-      baseAvg = 4.88;
-      baseGrowth = '+14.1% volume growth';
-      baseScoreChange = '+0.12 score increase';
-      baseVerification = 98.6;
-      baseMonthly = [
-        { month: 'Wk 1', totalRatings: 75, avgRating: 4.82 },
-        { month: 'Wk 2', totalRatings: 92, avgRating: 4.85 },
-        { month: 'Wk 3', totalRatings: 104, avgRating: 4.89 },
-        { month: 'Wk 4', totalRatings: 114, avgRating: 4.92 }
-      ];
-    } else if (timeframe === '7D') {
-      baseTotal = 96;
-      baseAvg = 4.92;
-      baseGrowth = '+9.5% volume growth';
-      baseScoreChange = '+0.08 score increase';
-      baseVerification = 99.1;
-      baseMonthly = [
-        { month: 'Mon', totalRatings: 12, avgRating: 4.88 },
-        { month: 'Tue', totalRatings: 15, avgRating: 4.90 },
-        { month: 'Wed', totalRatings: 18, avgRating: 4.92 },
-        { month: 'Thu', totalRatings: 14, avgRating: 4.89 },
-        { month: 'Fri', totalRatings: 21, avgRating: 4.95 },
-        { month: 'Sat', totalRatings: 16, avgRating: 4.91 },
-        { month: 'Sun', totalRatings: 10, avgRating: 4.94 }
-      ];
-    } else if (timeframe === 'ALL') {
-      baseTotal = 11450;
-      baseAvg = 4.80;
-      baseGrowth = '+24.5% all-time volume';
-      baseScoreChange = '+0.32 overall growth';
-      baseVerification = 97.2;
-      baseMonthly = [
-        { month: 'Q1 24', totalRatings: 224, avgRating: 4.46 },
-        { month: 'Q2 24', totalRatings: 490, avgRating: 4.63 },
-        { month: 'Q3 24', totalRatings: 690, avgRating: 4.70 },
-        { month: 'Q4 24', totalRatings: 850, avgRating: 4.78 },
-        { month: 'Q1 25', totalRatings: 1150, avgRating: 4.80 },
-        { month: 'Q2 25', totalRatings: 1520, avgRating: 4.84 },
-        { month: 'Q3 25', totalRatings: 1980, avgRating: 4.88 },
-        { month: 'Q4 25', totalRatings: 2450, avgRating: 4.92 }
-      ];
-    } else {
-      // 2024 Default
-      baseMonthly = [
-        { month: 'Jan', totalRatings: 52, avgRating: 4.3 },
-        { month: 'Feb', totalRatings: 74, avgRating: 4.5 },
-        { month: 'Mar', totalRatings: 98, avgRating: 4.6 },
-        { month: 'Apr', totalRatings: 135, avgRating: 4.4 },
-        { month: 'May', totalRatings: 160, avgRating: 4.7 },
-        { month: 'Jun', totalRatings: 195, avgRating: 4.8 },
-        { month: 'Jul', totalRatings: 225, avgRating: 4.6 },
-        { month: 'Aug', totalRatings: 255, avgRating: 4.9 },
-        { month: 'Sep', totalRatings: 210, avgRating: 4.6 },
-        { month: 'Oct', totalRatings: 240, avgRating: 4.8 },
-        { month: 'Nov', totalRatings: 280, avgRating: 4.9 },
-        { month: 'Dec', totalRatings: 330, avgRating: 4.95 }
-      ];
+    if (total === 0) {
+      return {
+        monthlyData: [],
+        totalRatings: 0,
+        avgScore: 0.0,
+        growthText: '0.0% volume growth',
+        scoreChangeText: '0.00 score increase',
+        verificationPct: 0.0,
+        positivePct: 0,
+        categoryData: [],
+        ratingDistribution: [
+          { stars: 5, count: 0, percentage: 0 },
+          { stars: 4, count: 0, percentage: 0 },
+          { stars: 3, count: 0, percentage: 0 },
+          { stars: 2, count: 0, percentage: 0 },
+          { stars: 1, count: 0, percentage: 0 }
+        ]
+      };
     }
 
-    // Override score if specific rating filter selected
-    let effectiveAvg = baseAvg;
-    if (ratingFilter === '5') effectiveAvg = 5.0;
-    else if (ratingFilter === '4') effectiveAvg = 4.0;
-    else if (ratingFilter === '3') effectiveAvg = 3.0;
-    else if (ratingFilter === '2') effectiveAvg = 2.0;
-    else if (ratingFilter === '1') effectiveAvg = 1.0;
-    else if (ratingFilter === 'positive') effectiveAvg = 4.88;
-    else if (ratingFilter === 'critical') effectiveAvg = 2.45;
+    const avg = (safeReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / total);
+    const count5 = safeReviews.filter(r => r.rating === 5).length;
+    const count4 = safeReviews.filter(r => r.rating === 4).length;
+    const count3 = safeReviews.filter(r => r.rating === 3).length;
+    const count2 = safeReviews.filter(r => r.rating === 2).length;
+    const count1 = safeReviews.filter(r => r.rating === 1).length;
 
-    const filteredMonthly = baseMonthly.map(item => ({
-      ...item,
-      totalRatings: Math.max(1, Math.round(item.totalRatings * combinedMult)),
-      avgRating: ratingFilter !== 'ALL' ? effectiveAvg : item.avgRating
-    }));
-
-    const finalTotal = Math.round(baseTotal * combinedMult);
-
-    // Distribution by Category
-    let categoryData;
-    if (selectedCategory === 'ALL') {
-      categoryData = [
-        { name: 'Temples & Heritage', count: Math.round(finalTotal * 0.38), percentage: 38, color: 'bg-blue-500' },
-        { name: 'Palaces & Culture', count: Math.round(finalTotal * 0.23), percentage: 23, color: 'bg-purple-500' },
-        { name: 'Beaches & Islands', count: Math.round(finalTotal * 0.18), percentage: 18, color: 'bg-cyan-500' },
-        { name: 'Nature & Parks', count: Math.round(finalTotal * 0.14), percentage: 14, color: 'bg-emerald-500' },
-        { name: 'Markets & Nightlife', count: Math.round(finalTotal * 0.07), percentage: 7, color: 'bg-amber-500' }
-      ];
-    } else if (selectedCategory === 'temples') {
-      categoryData = [
-        { name: 'Angkor Wat Complex', count: Math.round(finalTotal * 0.52), percentage: 52, color: 'bg-blue-500' },
-        { name: 'Koh Ker Temple', count: Math.round(finalTotal * 0.28), percentage: 28, color: 'bg-cyan-500' },
-        { name: 'Preah Vihear Temple', count: Math.round(finalTotal * 0.20), percentage: 20, color: 'bg-purple-500' }
-      ];
-    } else if (selectedCategory === 'palaces') {
-      categoryData = [
-        { name: 'Royal Palace Phnom Penh', count: Math.round(finalTotal * 0.58), percentage: 58, color: 'bg-purple-500' },
-        { name: 'National Museum', count: Math.round(finalTotal * 0.42), percentage: 42, color: 'bg-blue-500' }
-      ];
-    } else if (selectedCategory === 'beaches') {
-      categoryData = [
-        { name: 'Koh Rong Sanloem', count: Math.round(finalTotal * 0.48), percentage: 48, color: 'bg-cyan-500' },
-        { name: 'Otres & Ochheuteal', count: Math.round(finalTotal * 0.32), percentage: 32, color: 'bg-blue-500' },
-        { name: 'Kep Beach & Crab Market', count: Math.round(finalTotal * 0.20), percentage: 20, color: 'bg-emerald-500' }
-      ];
-    } else if (selectedCategory === 'nature') {
-      categoryData = [
-        { name: 'Bokor National Park', count: Math.round(finalTotal * 0.44), percentage: 44, color: 'bg-emerald-500' },
-        { name: 'Kulên Mountain Waterfall', count: Math.round(finalTotal * 0.36), percentage: 36, color: 'bg-cyan-500' },
-        { name: 'Cardamom Mountains', count: Math.round(finalTotal * 0.20), percentage: 20, color: 'bg-purple-500' }
-      ];
-    } else {
-      categoryData = [
-        { name: 'Phnom Penh Night Market', count: Math.round(finalTotal * 0.60), percentage: 60, color: 'bg-amber-500' },
-        { name: 'Pub Street Siem Reap', count: Math.round(finalTotal * 0.40), percentage: 40, color: 'bg-purple-500' }
-      ];
-    }
-
-    // Rating Score Breakdown calculation
-    let ratingDistribution;
-    if (ratingFilter === '5') {
-      ratingDistribution = [
-        { stars: 5, count: finalTotal, percentage: 100 },
-        { stars: 4, count: 0, percentage: 0 },
-        { stars: 3, count: 0, percentage: 0 },
-        { stars: 2, count: 0, percentage: 0 },
-        { stars: 1, count: 0, percentage: 0 }
-      ];
-    } else if (ratingFilter === '4') {
-      ratingDistribution = [
-        { stars: 5, count: 0, percentage: 0 },
-        { stars: 4, count: finalTotal, percentage: 100 },
-        { stars: 3, count: 0, percentage: 0 },
-        { stars: 2, count: 0, percentage: 0 },
-        { stars: 1, count: 0, percentage: 0 }
-      ];
-    } else if (ratingFilter === 'positive') {
-      ratingDistribution = [
-        { stars: 5, count: Math.round(finalTotal * 0.66), percentage: 66 },
-        { stars: 4, count: Math.round(finalTotal * 0.34), percentage: 34 },
-        { stars: 3, count: 0, percentage: 0 },
-        { stars: 2, count: 0, percentage: 0 },
-        { stars: 1, count: 0, percentage: 0 }
-      ];
-    } else if (ratingFilter === 'critical') {
-      ratingDistribution = [
-        { stars: 5, count: 0, percentage: 0 },
-        { stars: 4, count: 0, percentage: 0 },
-        { stars: 3, count: Math.round(finalTotal * 0.60), percentage: 60 },
-        { stars: 2, count: Math.round(finalTotal * 0.25), percentage: 25 },
-        { stars: 1, count: Math.round(finalTotal * 0.15), percentage: 15 }
-      ];
-    } else {
-      ratingDistribution = [
-        { stars: 5, count: Math.round(finalTotal * 0.58), percentage: 58 },
-        { stars: 4, count: Math.round(finalTotal * 0.30), percentage: 30 },
-        { stars: 3, count: Math.round(finalTotal * 0.08), percentage: 8 },
-        { stars: 2, count: Math.round(finalTotal * 0.03), percentage: 3 },
-        { stars: 1, count: Math.round(finalTotal * 0.01), percentage: 1 }
-      ];
-    }
-
-    const positiveCount = ratingDistribution
-      .filter(r => r.stars >= 4)
-      .reduce((sum, r) => sum + r.count, 0);
-
-    const calculatedPositivePct = finalTotal > 0 ? Math.round((positiveCount / finalTotal) * 100) : 0;
+    const positiveCount = count5 + count4;
+    const posPct = Math.round((positiveCount / total) * 100);
 
     return {
-      monthlyData: filteredMonthly,
-      totalRatings: finalTotal,
-      avgScore: effectiveAvg,
-      growthText: baseGrowth,
-      scoreChangeText: baseScoreChange,
-      verificationPct: baseVerification,
-      positivePct: calculatedPositivePct,
-      categoryData,
-      ratingDistribution
+      monthlyData: [
+        { month: 'Jan', totalRatings: total, avgRating: avg.toFixed(1) }
+      ],
+      totalRatings: total,
+      avgScore: avg.toFixed(1),
+      growthText: '+0.0% volume growth',
+      scoreChangeText: '+0.00 score increase',
+      verificationPct: 100.0,
+      positivePct: posPct,
+      categoryData: [],
+      ratingDistribution: [
+        { stars: 5, count: count5, percentage: Math.round((count5 / total) * 100) },
+        { stars: 4, count: count4, percentage: Math.round((count4 / total) * 100) },
+        { stars: 3, count: count3, percentage: Math.round((count3 / total) * 100) },
+        { stars: 2, count: count2, percentage: Math.round((count2 / total) * 100) },
+        { stars: 1, count: count1, percentage: Math.round((count1 / total) * 100) }
+      ]
     };
-  }, [timeframe, selectedCategory, ratingFilter]);
+  }, [reviews, timeframe, selectedCategory, ratingFilter]);
 
   if (!isOpen) return null;
 

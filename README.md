@@ -50,4 +50,9 @@ Welcome to the **AngkorVerse WebAdmin Panel** repository. This administrative da
 - **@types/react-dom** (Type definitions for React DOM)
 
 ### IF can't run the project fix and barch this cmd
-- `npm install recharts` (Install recharts library) 
+- `npm install recharts` 
+- `npm install jspdf`
+- `npm install jspdf-autotable`
+- `npm install xlsx`
+### Or 
+- `npm install recharts jspdf jspdf-autotable xlsx`

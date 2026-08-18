@@ -55,4 +55,4 @@ Welcome to the **AngkorVerse WebAdmin Panel** repository. This administrative da
 - `npm install jspdf-autotable`
 - `npm install xlsx`
 ### Or 
-- `npm install recharts jspdf jspdf-autotable xlsx`
+- `npm install recharts jspdf jspdf-autotable xlsx`# tourism-frontend

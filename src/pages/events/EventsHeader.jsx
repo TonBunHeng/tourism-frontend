@@ -1,7 +1,8 @@
 import { Plus } from 'lucide-react';
 
-export default function EventsHeader({ onCreateClick, onOpenAddModal }) {
-  const handleClick = onCreateClick || onOpenAddModal;
+export default function EventsHeader({ onCreateClick, onOpenAddModal, onAddClick }) {
+  const handleClick = onOpenAddModal || onCreateClick || onAddClick || (() => {});
+
   return (
     <div className="mb-6 sm:mb-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -14,6 +15,7 @@ export default function EventsHeader({ onCreateClick, onOpenAddModal }) {
           </p>
         </div>
         <button
+          type="button"
           onClick={handleClick}
           className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 w-full sm:w-auto cursor-pointer active:scale-95"
         >

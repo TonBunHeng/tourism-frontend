@@ -1,11 +1,17 @@
 import { FolderTree, Check, Layers, TrendingUp } from 'lucide-react';
 
-export default function CategoriesStats({ categories }) {
+export default function CategoriesStats({ categories = [] }) {
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  const totalCategories = safeCategories.length;
+  const activeCategories = safeCategories.filter(c => c.status === "Active").length;
+  const totalPlaces = safeCategories.reduce((sum, c) => sum + (Number(c.placeCount || c.places_count) || 0), 0);
+  const avgPlaces = totalCategories > 0 ? Math.round(totalPlaces / totalCategories) : 0;
+
   const stats = [
-    { label: "Total Categories", value: categories.length, icon: FolderTree, color: "text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]", bg: "bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]" },
-    { label: "Active Categories", value: categories.filter(c => c.status === "Active").length, icon: Check, color: "text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]", bg: "bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]" },
-    { label: "Total Places", value: categories.reduce((sum, c) => sum + c.placeCount, 0), icon: Layers, color: "text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]", bg: "bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]" },
-    { label: "Average Places/Category", value: categories.length > 0 ? Math.round(categories.reduce((sum, c) => sum + c.placeCount, 0) / categories.length) : 0, icon: TrendingUp, color: "text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]", bg: "bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]" }
+    { label: "Total Categories", value: totalCategories, icon: FolderTree, color: "text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]", bg: "bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]" },
+    { label: "Active Categories", value: activeCategories, icon: Check, color: "text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]", bg: "bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]" },
+    { label: "Total Places", value: totalPlaces, icon: Layers, color: "text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]", bg: "bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]" },
+    { label: "Average Places/Category", value: avgPlaces, icon: TrendingUp, color: "text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]", bg: "bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]" }
   ];
 
   return (

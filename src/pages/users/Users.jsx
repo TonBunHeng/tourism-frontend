@@ -7,6 +7,7 @@ import UsersList from "./UsersList";
 import UserModal from "./UserModal";
 import UserDetailsModal from "./UserDetailsModal";
 import userService from "../../services/userService";
+import deletionRequestService from "../../services/deletionRequestService";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -36,7 +37,8 @@ export default function Users() {
     role: "User",
     status: "Active",
     location: "",
-    subscription: "Free"
+    subscription: "Free",
+    avatar: ""
   });
 
   const loadUsers = async () => {
@@ -105,12 +107,24 @@ export default function Users() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    const user = users.find(u => u.id === id);
+    const userName = user?.name || `User #${id}`;
+    if (window.confirm(`Submit deletion request for user account "${userName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
       try {
-        await userService.deleteUser(id);
-        loadUsers();
+        await deletionRequestService.createRequest({
+          request_type: 'account',
+          reason: `Request to delete user account: ${userName}`,
+          urgency: 'high',
+          items: [{
+            item_type: 'user',
+            item_id: id,
+            item_name: userName,
+            category: user?.role || 'User'
+          }]
+        });
+        alert(`Deletion request for user "${userName}" has been submitted to Deletion Requests.`);
       } catch (e) {
-        alert(e.message || "Failed to delete user.");
+        alert(e.message || "Failed to submit deletion request.");
       }
     }
   };
@@ -125,7 +139,8 @@ export default function Users() {
       role: "User",
       status: "Active",
       location: "",
-      subscription: "Free"
+      subscription: "Free",
+      avatar: ""
     });
     setIsAddModalOpen(true);
   };
@@ -140,7 +155,8 @@ export default function Users() {
       role: user.role,
       status: user.status,
       location: user.location || "",
-      subscription: user.subscription || "Free"
+      subscription: user.subscription || "Free",
+      avatar: user.avatar || ""
     });
     setIsAddModalOpen(true);
   };
@@ -182,23 +198,22 @@ export default function Users() {
       {/* Stats Cards */}
       <UsersStats users={users} />
 
-      {/* Main Table/Grid */}
+      {/* Main Users Table Section */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         <UsersToolbar
-          totalCount={totalRecords}
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           selectedRole={selectedRole}
           onRoleChange={handleRoleChange}
-          roles={roles}
           selectedStatus={selectedStatus}
           onStatusChange={handleStatusChange}
+          roles={roles}
           statuses={statuses}
         />
 
         {isLoading ? (
           <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
-            Loading users from API...
+            Loading users from database...
           </div>
         ) : (
           <UsersList
@@ -222,7 +237,7 @@ export default function Users() {
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
                 className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 title="Previous Page"
@@ -251,7 +266,7 @@ export default function Users() {
 
               <button
                 type="button"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
                 className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 title="Next Page"
@@ -263,9 +278,8 @@ export default function Users() {
         )}
       </div>
 
-      {/* View Details Modal */}
+      {/* View User Details Modal */}
       <UserDetailsModal
-        isOpen={Boolean(viewingUser)}
         user={viewingUser}
         onClose={() => setViewingUser(null)}
         onEditUser={openEditModal}

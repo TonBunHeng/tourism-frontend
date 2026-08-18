@@ -5,6 +5,10 @@ export const reviewService = {
     return await api.get('/reviews', { params });
   },
 
+  async getAnalytics(params = {}) {
+    return await api.get('/reviews/analytics', { params });
+  },
+
   async getReviewById(id) {
     return await api.get(`/reviews/${id}`);
   },

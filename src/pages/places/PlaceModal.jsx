@@ -1,18 +1,39 @@
-import { useState, useEffect } from 'react';
-import { X, ChevronDown, MapPin, ExternalLink, MousePointerClick, Map as MapIcon } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, ChevronDown, MapPin, ExternalLink, MousePointerClick, Map as MapIcon, Image as ImageIcon, Upload, Trash2 } from 'lucide-react';
+import uploadService from '../../services/uploadService';
 
 export default function PlaceModal({
   isOpen,
   onClose,
   editingPlace,
-  formData,
+  formData = {},
+  onFormDataChange,
   onFormChange,
   onSubmit,
-  formCategories,
-  statusOptions
+  formCategories = [],
+  categories = [],
+  statusOptions = []
 }) {
   const [mapMode, setMapMode] = useState('interactive'); // 'interactive' or 'google'
   const [pickedCoords, setPickedCoords] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const safeFormData = formData || {};
+  const safeCategories = (formCategories && formCategories.length > 0)
+    ? formCategories
+    : ((categories && categories.length > 0) ? categories.filter(c => c !== 'All') : ['Temple', 'Palace', 'Beach', 'Nature', 'Market', 'Farm']);
+  const safeStatuses = (statusOptions && statusOptions.length > 0)
+    ? statusOptions
+    : ['Active', 'Inactive', 'Closed', 'Under Renovation'];
+
+  const updateField = (field, value) => {
+    if (onFormChange) {
+      onFormChange(field, value);
+    } else if (onFormDataChange) {
+      onFormDataChange({ ...safeFormData, [field]: value });
+    }
+  };
 
   useEffect(() => {
     const handleMessage = (event) => {
@@ -25,110 +46,198 @@ export default function PlaceModal({
           .then((res) => res.json())
           .then((data) => {
             if (data && data.display_name) {
-              onFormChange('address', data.display_name);
+              updateField('address', data.display_name);
             } else {
-              onFormChange('address', `Location: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+              updateField('address', `Location: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
             }
           })
           .catch(() => {
-            onFormChange('address', `Location: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+            updateField('address', `Location: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
           });
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [onFormChange]);
+  }, [onFormChange, onFormDataChange]);
+
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      // 1. Instant preview via FileReader
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        updateField('image_url', event.target.result);
+      };
+      reader.readAsDataURL(file);
+
+      // 2. Upload to backend storage
+      const res = await uploadService.uploadFile(file, 'places');
+      if (res.success && res.data?.url) {
+        updateField('image_url', res.data.url);
+      }
+    } catch (err) {
+      console.warn('Place image backend upload fallback to data URI:', err);
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (onSubmit) onSubmit(e);
+  };
 
   if (!isOpen) return null;
 
+  // Interactive OpenStreetMap HTML Doc
   const interactiveMapSrcDoc = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <style>
-    html, body, #map { width: 100%; height: 100%; margin: 0; padding: 0; background: #0f172a; cursor: crosshair; }
-    .leaflet-control-attribution { font-size: 9px; opacity: 0.7; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    var map = L.map('map').setView([12.5657, 104.9910], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(map);
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <style>
+          html, body, #map { height: 100%; width: 100%; margin: 0; padding: 0; background: #0f172a; }
+          .leaflet-popup-content-wrapper { border-radius: 8px; font-family: sans-serif; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div id="map"></div>
+        <script>
+          const map = L.map('map').setView([12.5657, 104.9910], 7);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+          }).addTo(map);
 
-    var marker = null;
+          let currentMarker = null;
 
-    function sendLocation(lat, lng) {
-      window.parent.postMessage({ type: 'PICKED_LOCATION', lat: lat, lng: lng }, '*');
-    }
+          map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            if (currentMarker) {
+              map.removeLayer(currentMarker);
+            }
+            currentMarker = L.marker([lat, lng]).addTo(map);
+            currentMarker.bindPopup("<b>Selected Pin</b><br>" + lat.toFixed(4) + ", " + lng.toFixed(4)).openPopup();
 
-    map.on('click', function(e) {
-      var lat = e.latlng.lat;
-      var lng = e.latlng.lng;
-      if (marker) {
-        marker.setLatLng(e.latlng);
-      } else {
-        marker = L.marker(e.latlng, { draggable: true }).addTo(map);
-        marker.on('dragend', function(ev) {
-          var pos = marker.getLatLng();
-          sendLocation(pos.lat, pos.lng);
-        });
-      }
-      sendLocation(lat, lng);
-    });
-  </script>
-</body>
-</html>
+            window.parent.postMessage({
+              type: 'PICKED_LOCATION',
+              lat: lat,
+              lng: lng
+            }, '*');
+          });
+        </script>
+      </body>
+    </html>
   `;
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-2xl w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
           <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">
-            {editingPlace ? 'Edit Place' : 'Add New Place'}
+            {editingPlace ? 'Edit Place Details' : 'Add New Place'}
           </h3>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors"
+            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Modal Form */}
-        <form onSubmit={(e) => e.preventDefault()}>
+        {/* Modal Form Body */}
+        <form onSubmit={handleFormSubmit}>
           <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+            {/* Place Name */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Place Name</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Place Name *</label>
               <input
                 type="text"
-                value={formData.name}
-                onChange={(e) => onFormChange('name', e.target.value)}
-                placeholder="Enter place name"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-secondary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
+                value={safeFormData.name || ''}
+                onChange={(e) => updateField('name', e.target.value)}
+                placeholder="e.g. Angkor Wat, Royal Palace, Bokor Mountain"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
                 required
               />
             </div>
 
+            {/* Place Image Upload */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                Place Picture / Photo
+              </label>
+
+              {safeFormData.image_url ? (
+                <div className="relative w-full h-36 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] group mb-2">
+                  <img src={safeFormData.image_url} alt="Place Preview" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-medium shadow-md transition-colors cursor-pointer"
+                    >
+                      Change Photo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => updateField('image_url', '')}
+                      className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs flex items-center gap-1 font-medium shadow-md transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg p-4 text-center hover:border-[var(--color-primary)] transition-colors cursor-pointer mb-2"
+                >
+                  <Upload className="w-6 h-6 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mx-auto mb-1" />
+                  <p className="text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] font-medium text-xs">
+                    {isUploadingImage ? 'Uploading picture to backend...' : 'Click to upload picture'}
+                  </p>
+                  <p className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">PNG, JPG, WEBP</p>
+                </div>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageFileChange}
+              />
+
+              <input
+                type="text"
+                value={safeFormData.image_url || ''}
+                onChange={(e) => updateField('image_url', e.target.value)}
+                placeholder="Or paste image URL (https://...)"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-3 py-2 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              />
+            </div>
+
+            {/* Category & Status */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category</label>
-              <div className="relative">
-                <select
-                  value={formData.category}
-                  onChange={(e) => onFormChange('category', e.target.value)}
-                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent cursor-pointer"
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category</label>
+                <div className="relative">
+                  <select
+                    value={safeFormData.category || safeCategories[0] || 'Temple'}
+                    onChange={(e) => updateField('category', e.target.value)}
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
                   >
-                    {formCategories.map(cat => (
+                    {safeCategories.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
@@ -136,14 +245,14 @@ export default function PlaceModal({
                 </div>
               </div>
               <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Status</label>
-              <div className="relative">
-                <select
-                  value={formData.status}
-                  onChange={(e) => onFormChange('status', e.target.value)}
-                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent cursor-pointer"
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Status</label>
+                <div className="relative">
+                  <select
+                    value={safeFormData.status || 'Active'}
+                    onChange={(e) => updateField('status', e.target.value)}
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
                   >
-                    {statusOptions.map(s => (
+                    {safeStatuses.map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
@@ -152,16 +261,79 @@ export default function PlaceModal({
               </div>
             </div>
 
+            {/* Address */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Address</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Address *</label>
               <textarea
-                value={formData.address}
-                onChange={(e) => onFormChange('address', e.target.value)}
-                placeholder="Enter full address or click location on map below"
-                rows="2"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-secondary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none transition-all"
+                value={safeFormData.address || ''}
+                onChange={(e) => updateField('address', e.target.value)}
+                placeholder="Enter full address or select location preset below"
+                rows={2}
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
                 required
               />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Description</label>
+              <textarea
+                value={safeFormData.description || ''}
+                onChange={(e) => updateField('description', e.target.value)}
+                placeholder="Enter attraction history, highlights, and tourist details..."
+                rows={3}
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
+              />
+            </div>
+
+            {/* Best Time & Duration */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Best Time to Visit</label>
+                <input
+                  type="text"
+                  value={safeFormData.best_time || ''}
+                  onChange={(e) => updateField('best_time', e.target.value)}
+                  placeholder="e.g. Sunrise (5:30 AM - 7:00 AM)"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Suggested Duration</label>
+                <input
+                  type="text"
+                  value={safeFormData.duration || ''}
+                  onChange={(e) => updateField('duration', e.target.value)}
+                  placeholder="e.g. 2 - 3 Hours"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Price & Rating */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Ticket Price / Entry Fee</label>
+                <input
+                  type="text"
+                  value={safeFormData.price || ''}
+                  onChange={(e) => updateField('price', e.target.value)}
+                  placeholder="e.g. Free, $37 USD, $5 USD"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Initial Rating Score</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="1"
+                  max="5"
+                  value={safeFormData.rating || 5.0}
+                  onChange={(e) => updateField('rating', parseFloat(e.target.value) || 5.0)}
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                />
+              </div>
             </div>
 
             {/* Map Picker & Location Section */}
@@ -175,7 +347,7 @@ export default function PlaceModal({
                   <button
                     type="button"
                     onClick={() => setMapMode('interactive')}
-                    className={`px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1 ${mapMode === 'interactive' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
+                    className={`px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${mapMode === 'interactive' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
                   >
                     <MousePointerClick className="w-3 h-3" />
                     Interactive Pick
@@ -183,7 +355,7 @@ export default function PlaceModal({
                   <button
                     type="button"
                     onClick={() => setMapMode('google')}
-                    className={`px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1 ${mapMode === 'google' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
+                    className={`px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${mapMode === 'google' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
                   >
                     <MapIcon className="w-3 h-3" />
                     Google View
@@ -196,20 +368,20 @@ export default function PlaceModal({
                 <span className="text-[11px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block mb-1">Quick Presets:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {[
-                    { label: 'Angkor Wat', address: 'Angkor Wat, Siem Reap, Cambodia' },
-                    { label: 'Phnom Penh Palace', address: 'Royal Palace, Phnom Penh, Cambodia' },
-                    { label: 'Siem Reap', address: 'Siem Reap City Center, Siem Reap, Cambodia' },
-                    { label: 'Battambang', address: 'Battambang City, Cambodia' },
-                    { label: 'Kampot', address: 'Kampot Riverfront, Kampot, Cambodia' },
-                    { label: 'Koh Rong', address: 'Koh Rong Island, Sihanoukville, Cambodia' }
+                    { label: 'Angkor Wat', address: 'Angkor Archaeological Park, Siem Reap, Cambodia' },
+                    { label: 'Phnom Penh Palace', address: 'Royal Palace & Silver Pagoda, Phnom Penh, Cambodia' },
+                    { label: 'Siem Reap City', address: 'Siem Reap City Center, Siem Reap, Cambodia' },
+                    { label: 'Battambang', address: 'Battambang City, Battambang, Cambodia' },
+                    { label: 'Kampot Riverfront', address: 'Kampot Riverfront, Kampot, Cambodia' },
+                    { label: 'Koh Rong', address: 'Koh Rong Island, Preah Sihanouk, Cambodia' }
                   ].map((loc, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => {
-                        onFormChange('address', loc.address);
-                        if (!formData.name) {
-                          onFormChange('name', loc.label);
+                        updateField('address', loc.address);
+                        if (!safeFormData.name) {
+                          updateField('name', loc.label);
                         }
                       }}
                       className="text-xs px-2.5 py-1 rounded-lg bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-primary)] hover:text-white dark:hover:bg-[var(--color-primary)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] transition-colors cursor-pointer"
@@ -251,7 +423,7 @@ export default function PlaceModal({
                     style={{ border: 0 }}
                     loading="lazy"
                     allowFullScreen
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(formData.address || formData.name || 'Cambodia')}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(safeFormData.address || safeFormData.name || 'Cambodia')}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                   ></iframe>
                 </div>
               )}
@@ -261,7 +433,7 @@ export default function PlaceModal({
                   Move map and click any point to set address
                 </span>
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.address || formData.name || 'Cambodia')}`}
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(safeFormData.address || safeFormData.name || 'Cambodia')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[11px] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:underline flex items-center gap-0.5"
@@ -278,15 +450,14 @@ export default function PlaceModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center"
+              className="flex-1 py-3 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
             >
               Cancel
             </button>
             <button
-              type="button"
-              onClick={onSubmit}
-              disabled={!formData.name.trim() || !formData.address.trim()}
-              className="flex-1 py-3 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg shadow-[var(--color-primary)]/25 disabled:opacity-50 disabled:cursor-not-allowed text-center"
+              type="submit"
+              disabled={!safeFormData?.name?.trim() || !safeFormData?.address?.trim() || isUploadingImage}
+              className="flex-1 py-3 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg shadow-[var(--color-primary)]/25 disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer"
             >
               {editingPlace ? 'Update Place' : 'Add Place'}
             </button>

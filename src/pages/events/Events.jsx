@@ -1,74 +1,50 @@
 import { useState, useEffect } from 'react';
-import {
-  Activity,
-  PartyPopper,
-  Clapperboard,
-  Ship,
-  Utensils,
-  Music,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import EventsHeader from './EventsHeader';
 import EventsStats from './EventsStats';
 import EventsToolbar from './EventsToolbar';
-import EventsGrid from './EventsGrid';
 import EventsList from './EventsList';
-import EventModal from './EventModal';
+import EventsGrid from './EventsGrid';
+import EventModal, { calculateAutoStatus } from './EventModal';
 import EventDetailsModal from './EventDetailsModal';
 import eventService from '../../services/eventService';
-import categoryService from '../../services/categoryService';
-
-import siemReapImg from '../../assets/places_img/SiemReapAngkor.jpg';
+import deletionRequestService from '../../services/deletionRequestService';
 
 export default function Events() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('list');
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [categoriesList, setCategoriesList] = useState(['All']);
-
-  const loadCategories = async () => {
-    try {
-      const res = await categoryService.getCategories({ all: 'true' });
-      if (res.success && res.data && res.data.length > 0) {
-        const names = res.data.map(c => c.name);
-        setCategoriesList(['All', ...names]);
-      } else {
-        setCategoriesList(['All', 'Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition']);
-      }
-    } catch (e) {
-      console.error(e);
-      setCategoriesList(['All', 'Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition']);
-    }
-  };
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-  const [viewingEvent, setViewingEvent] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 8;
 
+  // Modal States
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [viewingEvent, setViewingEvent] = useState(null);
+
+  // Form State
   const [formData, setFormData] = useState({
     title: '',
     category: 'Cultural',
     description: '',
     location: '',
-    start_date: '',
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: '',
     start_time: '08:00 AM',
     price: 'Free',
-    status: 'Upcoming',
-    organizer: ''
+    status: 'Auto',
+    organizer: '',
+    imageUrl: ''
   });
+
+  const categoriesList = ['All', 'Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition'];
 
   const loadEvents = async () => {
     setIsLoading(true);
@@ -76,28 +52,46 @@ export default function Events() {
       const params = {
         page: currentPage,
         per_page: itemsPerPage,
-        search: searchTerm,
       };
+      if (searchTerm) params.search = searchTerm;
+      if (selectedCategory !== 'All') params.category = selectedCategory;
       if (selectedStatus !== 'All') params.status = selectedStatus;
 
       const res = await eventService.getEvents(params);
       if (res.success && res.data) {
-        const formatted = res.data.map(e => ({
-          ...e,
-          date: e.start_date,
-          time: e.start_time || '08:00 AM',
-          attendees: e.attendees_count || 0,
-          image: Activity,
-          imageUrl: e.image_url || siemReapImg,
-        }));
-        setEvents(formatted);
-        if (res.meta) {
-          setTotalRecords(res.meta.total);
-          setTotalPages(res.meta.last_page);
-        }
+        const mapped = res.data.map(e => {
+          const startDate = e.start_date || e.date;
+          const endDate = e.end_date || null;
+          const computedStatus = e.status || calculateAutoStatus(startDate, endDate, e.raw_status);
+
+          return {
+            id: e.id,
+            title: e.title,
+            category: e.category || 'Cultural',
+            description: e.description || '',
+            location: e.location || 'Phnom Penh, Cambodia',
+            date: startDate,
+            start_date: startDate,
+            end_date: endDate,
+            time: e.start_time || e.time || '08:00 AM',
+            start_time: e.start_time || e.time || '08:00 AM',
+            price: e.price || 'Free',
+            status: computedStatus,
+            organizer: e.organizer || 'Ministry of Tourism',
+            attendees: Number(e.attendees_count || 0),
+            rating: Number(e.rating || 5.0),
+            image_url: e.image_url || e.imageUrl || '',
+            imageUrl: e.image_url || e.imageUrl || '',
+            featured: Boolean(e.featured)
+          };
+        });
+
+        setEvents(mapped);
+        setTotalRecords(res.meta?.total || mapped.length);
+        setTotalPages(res.meta?.last_page || Math.ceil((res.meta?.total || mapped.length) / itemsPerPage) || 1);
       }
     } catch (e) {
-      console.error('Failed to load events from API', e);
+      console.error('Failed to load events from API:', e);
     } finally {
       setIsLoading(false);
     }
@@ -105,43 +99,66 @@ export default function Events() {
 
   useEffect(() => {
     loadEvents();
-  }, [currentPage, searchTerm, selectedStatus]);
+  }, [currentPage, searchTerm, selectedCategory, selectedStatus]);
 
-  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
-  const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
-  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
-
-  const handleView = (idOrEvent) => {
-    const eventToView = typeof idOrEvent === 'object'
-      ? idOrEvent
-      : events.find(event => event.id === idOrEvent);
-    if (eventToView) {
-      setViewingEvent(eventToView);
-    }
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    setCurrentPage(1);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
+  const handleCategoryChange = (val) => {
+    setSelectedCategory(val);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (val) => {
+    setSelectedStatus(val);
+    setCurrentPage(1);
+  };
+
+  const handleView = (idOrEvent) => {
+    const event = typeof idOrEvent === 'object'
+      ? idOrEvent
+      : events.find(e => e.id === idOrEvent);
+    if (event) setViewingEvent(event);
+  };
+
+  const handleDelete = async (eventId) => {
+    const event = events.find(e => e.id === eventId);
+    const eventTitle = event?.title || `Event #${eventId}`;
+    if (window.confirm(`Submit deletion request for "${eventTitle}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
       try {
-        await eventService.deleteEvent(id);
-        loadEvents();
+        await deletionRequestService.createRequest({
+          request_type: 'item',
+          reason: `Request to delete event: ${eventTitle}`,
+          urgency: 'medium',
+          items: [{
+            item_type: 'event',
+            item_id: eventId,
+            item_name: eventTitle,
+            category: event?.category || 'Event'
+          }]
+        });
+        alert(`Deletion request for "${eventTitle}" has been submitted to Deletion Requests.`);
       } catch (e) {
-        alert(e.message || 'Failed to delete event.');
+        alert(e.message || 'Failed to submit deletion request.');
       }
     }
   };
 
   const openAddModal = () => {
+    const today = new Date().toISOString().split('T')[0];
     setEditingEvent(null);
     setFormData({
       title: '',
       category: 'Cultural',
       description: '',
       location: '',
-      start_date: new Date().toISOString().split('T')[0],
+      start_date: today,
+      end_date: '',
       start_time: '08:00 AM',
       price: 'Free',
-      status: 'Upcoming',
+      status: 'Ongoing',
       organizer: '',
       imageUrl: ''
     });
@@ -159,9 +176,10 @@ export default function Events() {
       description: event.description || '',
       location: event.location || '',
       start_date: event.start_date || event.date || '',
+      end_date: event.end_date || '',
       start_time: event.start_time || event.time || '08:00 AM',
       price: event.price || 'Free',
-      status: event.status || 'Upcoming',
+      status: event.status || 'Ongoing',
       organizer: event.organizer || '',
       imageUrl: event.imageUrl || event.image_url || ''
     });
@@ -181,14 +199,29 @@ export default function Events() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!formData.title.trim() || !formData.location.trim()) return;
+  const handleSubmit = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!formData.title?.trim() || !formData.location?.trim()) return;
 
     try {
+      const payload = {
+        title: formData.title.trim(),
+        category: formData.category,
+        description: formData.description || '',
+        location: formData.location.trim(),
+        start_date: formData.start_date || formData.date,
+        end_date: formData.end_date || null,
+        start_time: formData.start_time || formData.time || '08:00 AM',
+        price: formData.price || 'Free',
+        status: formData.status || 'Auto',
+        organizer: formData.organizer || 'Ministry of Tourism',
+        image_url: formData.imageUrl || formData.image_url || ''
+      };
+
       if (editingEvent) {
-        await eventService.updateEvent(editingEvent.id, formData);
+        await eventService.updateEvent(editingEvent.id, payload);
       } else {
-        await eventService.createEvent(formData);
+        await eventService.createEvent(payload);
       }
       closeModal();
       loadEvents();

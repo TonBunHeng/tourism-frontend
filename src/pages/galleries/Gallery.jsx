@@ -10,6 +10,7 @@ import GalleryEditModal from "./GalleryEditModal";
 import GalleryPreviewModal from "./GalleryPreviewModal";
 import categoryService from "../../services/categoryService";
 import galleryService from "../../services/galleryService";
+import deletionRequestService from "../../services/deletionRequestService";
 
 export default function Gallery() {
   const [mediaItems, setMediaItems] = useState([]);
@@ -28,20 +29,20 @@ export default function Gallery() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 8;
 
-  const [categoriesList, setCategoriesList] = useState(["All", "Temple", "City", "Nature", "Culture", "Beach", "Historical"]);
-  const types = ["All", "image", "video"];
+  const [categoriesList, setCategoriesList] = useState(["All", "Temple", "Nature", "Culture", "City", "Festival", "Food"]);
+  const types = ["All", "Image", "Video"];
 
   const loadCategories = async () => {
     try {
-      const res = await categoryService.getCategories({ all: "true" });
+      const res = await categoryService.getCategories({ per_page: 100 });
       if (res.success && res.data && res.data.length > 0) {
-        const names = res.data.map(c => c.name);
-        setCategoriesList(["All", ...names]);
+        const catNames = res.data.map(c => c.name);
+        setCategoriesList(["All", ...catNames]);
       }
     } catch (e) {
-      console.error(e);
+      console.warn("Could not load categories:", e);
     }
   };
 
@@ -53,33 +54,39 @@ export default function Gallery() {
         per_page: itemsPerPage,
       };
       if (searchTerm) params.search = searchTerm;
-      if (selectedType !== "All") params.type = selectedType;
+      if (selectedCategory !== "All") params.category = selectedCategory;
+      if (selectedType !== "All") params.type = selectedType.toLowerCase();
 
-      const res = await galleryService.getGalleries(params);
+      const res = await galleryService.getMedia(params);
       if (res.success && res.data) {
-        let items = res.data.map(item => ({
-          ...item,
-          category: item.category || item.category_name || item.category_detail?.name || "General",
-          place: item.place || item.place_name || item.place_detail?.name || "General",
-          uploader: typeof item.uploader === "object" ? item.uploader?.name : (item.uploader_name || item.uploader || "Admin"),
-          url: item.url || item.image_url || "",
+        const formatted = res.data.map(item => ({
+          id: item.id,
+          title: item.title,
+          type: item.type || "image",
+          url: item.url,
+          category: item.category || item.category_name || "General",
           size: item.size || item.file_size || "2.4 MB",
-          views: item.views !== undefined ? item.views : (item.views_count !== undefined ? item.views_count : 0),
-          likes: item.likes !== undefined ? item.likes : (item.likes_count !== undefined ? item.likes_count : 0),
-          uploadDate: item.uploadDate || (item.created_at ? item.created_at.split("T")[0] : "2026-08-17"),
-          tags: Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []),
+          dimensions: item.dimensions || "1920x1080",
+          uploadedBy: item.uploader_name || item.user?.name || "Admin",
+          uploadDate: item.uploadDate || (item.created_at ? item.created_at.split("T")[0] : "2026-08-18"),
+          views: Number(item.views_count ?? item.views ?? 0),
+          likes: Number(item.likes_count ?? item.likes ?? 0),
+          status: item.status || "Published",
+          tags: Array.isArray(item.tags)
+            ? item.tags.map(t => (typeof t === "string" ? t : t.name || "tag"))
+            : [item.category?.toLowerCase() || "tourism"]
         }));
-
-        if (selectedCategory !== "All") {
-          items = items.filter(i => i.category === selectedCategory);
+        setMediaItems(formatted);
+        if (res.meta) {
+          setTotalRecords(res.meta.total || formatted.length);
+          setTotalPages(res.meta.last_page || Math.ceil((res.meta.total || formatted.length) / itemsPerPage) || 1);
+        } else {
+          setTotalRecords(formatted.length);
+          setTotalPages(1);
         }
-
-        setMediaItems(items);
-        setTotalRecords(res.meta?.total || items.length);
-        setTotalPages(res.meta?.last_page || Math.ceil((res.meta?.total || items.length) / itemsPerPage) || 1);
       }
     } catch (e) {
-      console.error("Failed to load gallery items:", e);
+      console.error("Failed to load gallery media from API:", e);
     } finally {
       setIsLoading(false);
     }
@@ -101,12 +108,24 @@ export default function Gallery() {
   const endIndex = Math.min(startIndex + mediaItems.length, totalRecords);
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this media?")) {
+    const item = mediaItems.find(m => m.id === id);
+    const mediaTitle = item?.title || `Media #${id}`;
+    if (window.confirm(`Submit deletion request for "${mediaTitle}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
       try {
-        await galleryService.deleteMedia(id);
-        loadMedia();
+        await deletionRequestService.createRequest({
+          request_type: 'item',
+          reason: `Request to delete media item: ${mediaTitle}`,
+          urgency: 'low',
+          items: [{
+            item_type: 'gallery',
+            item_id: id,
+            item_name: mediaTitle,
+            category: item?.category || 'Gallery'
+          }]
+        });
+        alert(`Deletion request for "${mediaTitle}" has been submitted to Deletion Requests.`);
       } catch (e) {
-        alert(e.message || "Failed to delete media item.");
+        alert(e.message || 'Failed to submit deletion request.');
       }
     }
   };
@@ -122,47 +141,50 @@ export default function Gallery() {
   };
 
   const handleUpdateSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!editingMedia) return;
     try {
       await galleryService.updateMedia(editingMedia.id, {
         title: editingMedia.title,
         type: editingMedia.type || "image",
-        url: editingMedia.url || editingMedia.image_url,
-        status: editingMedia.status || "Published",
+        category: editingMedia.category,
+        url: editingMedia.url
       });
       setIsEditOpen(false);
       setEditingMedia(null);
       loadMedia();
     } catch (err) {
-      alert(err.message || "Failed to update media.");
+      alert(err.message || "Failed to update media item.");
     }
   };
 
   const handleAddMedia = async (newMedia) => {
     try {
-      await galleryService.uploadMedia({
-        title: newMedia.title || "Untitled Media",
+      await galleryService.createMedia({
+        title: newMedia.title,
         type: newMedia.type || "image",
-        url: newMedia.url || newMedia.imageUrl || "",
-        status: "Published",
+        url: newMedia.url,
+        category: newMedia.category,
+        file_size: newMedia.size || "2.4 MB",
+        dimensions: newMedia.dimensions || "1920x1080",
+        status: newMedia.status || "Published"
       });
       setIsUploadModalOpen(false);
       loadMedia();
     } catch (err) {
-      alert(err.message || "Failed to upload media.");
+      alert(err.message || "Failed to create media item.");
     }
   };
 
   return (
     <div className="flex flex-col">
-      {/* Header */}
-      <GalleryHeader onUploadClick={() => setIsUploadModalOpen(true)} />
+      {/* Header Section */}
+      <GalleryHeader onOpenUploadModal={() => setIsUploadModalOpen(true)} />
 
       {/* Stats Cards */}
-      <GalleryStats mediaItems={mediaItems} />
+      <GalleryStats mediaItems={mediaItems} media={mediaItems} />
 
-      {/* Main Content */}
+      {/* Main Content Section */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         {/* Toolbar */}
         <GalleryToolbar
@@ -178,25 +200,27 @@ export default function Gallery() {
           types={types}
         />
 
-        {/* Grid or List View */}
+        {/* Content View */}
         {isLoading ? (
           <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
-            Loading gallery media from API...
+            Loading gallery media from database...
           </div>
-        ) : viewMode === "grid" ? (
-          <GalleryGrid
-            media={mediaItems}
-            onPreview={handlePreview}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ) : (
+        ) : viewMode === "list" ? (
           <GalleryList
             media={mediaItems}
+            mediaItems={mediaItems}
             onPreview={handlePreview}
             onEdit={handleEdit}
             onDelete={handleDelete}
             startIndex={startIndex}
+          />
+        ) : (
+          <GalleryGrid
+            media={mediaItems}
+            mediaItems={mediaItems}
+            onPreview={handlePreview}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         )}
 
@@ -261,12 +285,15 @@ export default function Gallery() {
         onAddMedia={handleAddMedia}
       />
 
-      {/* Edit Media Modal */}
+      {/* Edit Modal */}
       <GalleryEditModal
         isOpen={isEditOpen}
         editingMedia={editingMedia}
         onEditingMediaChange={setEditingMedia}
-        onClose={() => setIsEditOpen(false)}
+        onClose={() => {
+          setIsEditOpen(false);
+          setEditingMedia(null);
+        }}
         onSubmit={handleUpdateSubmit}
         categories={categoriesList}
       />
@@ -275,8 +302,10 @@ export default function Gallery() {
       <GalleryPreviewModal
         isOpen={isPreviewOpen}
         media={selectedMedia}
-        onClose={() => setIsPreviewOpen(false)}
-        onEdit={handleEdit}
+        onClose={() => {
+          setIsPreviewOpen(false);
+          setSelectedMedia(null);
+        }}
       />
     </div>
   );

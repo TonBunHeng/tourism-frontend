@@ -1,31 +1,33 @@
 import { Image, Video, Eye } from 'lucide-react';
 
-export default function GalleryStats({ mediaItems }) {
+export default function GalleryStats({ mediaItems, media }) {
+  const items = Array.isArray(mediaItems) ? mediaItems : (Array.isArray(media) ? media : []);
+
   const stats = [
     {
       label: 'Total Media',
-      value: mediaItems.length,
+      value: items.length,
       icon: Image,
       color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
       bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'
     },
     {
       label: 'Images',
-      value: mediaItems.filter(m => m.type === 'image').length,
+      value: items.filter(m => m.type === 'image').length,
       icon: Image,
       color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
       bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
     },
     {
       label: 'Videos',
-      value: mediaItems.filter(m => m.type === 'video').length,
+      value: items.filter(m => m.type === 'video').length,
       icon: Video,
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
       bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'
     },
     {
       label: 'Total Views',
-      value: mediaItems.reduce((sum, m) => sum + m.views, 0).toLocaleString(),
+      value: items.reduce((sum, m) => sum + (Number(m.views) || 0), 0).toLocaleString(),
       icon: Eye,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'

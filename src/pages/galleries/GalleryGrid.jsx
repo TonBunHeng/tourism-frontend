@@ -6,93 +6,109 @@ const getStatusColor = (status) => {
     : 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-border-subtle-light)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-border-dark)]';
 };
 
-export default function GalleryGrid({ media, onPreview, onEdit, onDelete }) {
+export default function GalleryGrid({ media, mediaItems, onPreview, onEdit, onDelete }) {
+  const items = Array.isArray(media) ? media : (Array.isArray(mediaItems) ? mediaItems : []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
-      {media.length > 0 ? (
-        media.map((item) => (
+      {items.length > 0 ? (
+        items.map((item) => (
           <div
             key={item.id}
             className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02]"
           >
             {/* Top Media Picture Banner */}
             <div className="relative w-full h-40 mb-3 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
-              <img
-                src={item.url}
-                alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              {item.type === 'video' && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <div className="w-10 h-10 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow-lg">
-                    <Video className="w-5 h-5 text-[var(--color-info-text)] ml-0.5" />
+              {item.type === 'video' ? (
+                <div className="w-full h-full bg-black/60 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow-lg">
+                    <Video className="w-6 h-6 text-[var(--color-info-text)] ml-0.5" />
                   </div>
                 </div>
+              ) : (
+                <img
+                  src={item.url}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               )}
+
+              {/* Status Badge */}
+              <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-semibold rounded-full border shadow-sm backdrop-blur-md ${getStatusColor(item.status)}`}>
+                {item.status}
+              </span>
             </div>
 
-            {/* Header: Title, Category & Action Buttons */}
-            <div className="flex items-start justify-between mb-3 gap-2">
-              <div className="min-w-0">
-                <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm line-clamp-1">{item.title}</h3>
-                <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full border bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
+            {/* Media Information */}
+            <div className="space-y-2 mb-3">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm line-clamp-1">
+                  {item.title}
+                </h3>
+                <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full border bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] shrink-0">
                   {item.category}
                 </span>
               </div>
-              <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1">
+                {item.tags?.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[10px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 px-1.5 py-0.5 rounded"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Technical Details */}
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] pt-1">
+                <div className="flex items-center gap-1">
+                  <HardDrive className="w-3 h-3 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]" />
+                  <span className="truncate">{item.size} • {item.dimensions}</span>
+                </div>
+                <div className="flex items-center gap-1 justify-end">
+                  <Calendar className="w-3 h-3 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]" />
+                  <span>{item.uploadDate}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card Footer: Views & Action Buttons */}
+            <div className="flex items-center justify-between pt-2.5 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+              <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+                <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                  {(item.views || 0).toLocaleString()} views
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1">
                 <button
+                  type="button"
                   onClick={() => onPreview(item)}
-                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
                   title="View Details"
                 >
                   <Eye className="w-3.5 h-3.5" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => onEdit(item)}
-                  className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors"
-                  title="Edit"
+                  className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-colors cursor-pointer"
+                  title="Edit Media"
                 >
                   <Edit className="w-3.5 h-3.5" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => onDelete(item.id)}
-                  className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                  title="Delete"
+                  className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
+                  title="Delete Media"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
-              </div>
-            </div>
-
-            {/* Media Metadata Info */}
-            <div className="space-y-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-3">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-[var(--color-text-muted-light)]" />
-                  {item.uploadDate || (item.created_at ? item.created_at.split("T")[0] : "Recent")}
-                </span>
-                <span className="flex items-center gap-1">
-                  <HardDrive className="w-3.5 h-3.5 text-[var(--color-text-muted-light)]" />
-                  {item.size || item.file_size || "N/A"}
-                </span>
-              </div>
-            </div>
-
-            {/* Card Footer: Status Badge & Views/Likes */}
-            <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border ${getStatusColor(item.status)}`}>
-                <Clock className="w-3 h-3" />
-                {item.status}
-              </span>
-              <div className="flex items-center gap-2 text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5 text-[var(--color-text-muted-light)]" />
-                  {item.views ?? item.views_count ?? 0}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Heart className="w-3.5 h-3.5 text-[var(--color-rose-badge-text)] fill-[var(--color-rose-badge-text)]" />
-                  {item.likes ?? item.likes_count ?? 0}
-                </span>
               </div>
             </div>
           </div>

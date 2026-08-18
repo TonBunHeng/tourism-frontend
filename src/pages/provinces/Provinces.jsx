@@ -1,15 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Home,
-  Landmark,
-  Waves,
-  Sprout,
-  Church,
-  Mountain,
-  Building,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
+import { Landmark, ChevronLeft, ChevronRight } from 'lucide-react';
 import ProvincesHeader from './ProvincesHeader';
 import ProvincesStats from './ProvincesStats';
 import ProvincesToolbar from './ProvincesToolbar';
@@ -18,23 +8,25 @@ import ProvincesList from './ProvincesList';
 import ProvinceDetailsModal from './ProvinceDetailsModal';
 import ProvinceModal from './ProvinceModal';
 import provinceService from '../../services/provinceService';
+import deletionRequestService from '../../services/deletionRequestService';
 
 export default function Provinces() {
   const [provinces, setProvinces] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('grid');
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [viewMode, setViewMode] = useState('list');
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [viewingProvince, setViewingProvince] = useState(null);
   const [editingProvince, setEditingProvince] = useState(null);
+  const [viewingProvince, setViewingProvince] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 6;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -53,8 +45,8 @@ export default function Provinces() {
       const params = {
         page: currentPage,
         per_page: itemsPerPage,
-        search: searchTerm,
       };
+      if (searchTerm) params.search = searchTerm;
       if (selectedType !== 'All') params.type = selectedType;
       if (selectedStatus !== 'All') params.status = selectedStatus;
 
@@ -96,12 +88,24 @@ export default function Provinces() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this province?')) {
+    const province = provinces.find(p => p.id === id);
+    const provName = province?.name || `Province #${id}`;
+    if (window.confirm(`Submit deletion request for province "${provName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
       try {
-        await provinceService.deleteProvince(id);
-        loadProvinces();
+        await deletionRequestService.createRequest({
+          request_type: 'item',
+          reason: `Request to delete province: ${provName}`,
+          urgency: 'high',
+          items: [{
+            item_type: 'province',
+            item_id: id,
+            item_name: provName,
+            category: 'Province'
+          }]
+        });
+        alert(`Deletion request for "${provName}" has been submitted to Deletion Requests.`);
       } catch (e) {
-        alert(e.message || 'Failed to delete province.');
+        alert(e.message || 'Failed to submit deletion request.');
       }
     }
   };

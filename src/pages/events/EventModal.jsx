@@ -1,4 +1,23 @@
-import { X, ChevronDown, Upload, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, ChevronDown, Upload, Trash2, Calendar, Sparkles } from 'lucide-react';
+import uploadService from '../../services/uploadService';
+
+export const calculateAutoStatus = (startDate, endDate, manualStatus) => {
+  if (manualStatus === 'Cancelled') return 'Cancelled';
+  if (!startDate) return 'Upcoming';
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const start = String(startDate).slice(0, 10);
+  const end = endDate ? String(endDate).slice(0, 10) : start;
+
+  if (todayStr < start) {
+    return 'Upcoming';
+  } else if (todayStr > end) {
+    return 'Completed';
+  } else {
+    return 'Ongoing';
+  }
+};
 
 export default function EventModal({
   isOpen,
@@ -10,40 +29,93 @@ export default function EventModal({
   onSubmit,
   categories = ['Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition']
 }) {
-  if (!isOpen) return null;
+  const [isUploading, setIsUploading] = useState(false);
+  const [autoStatusMode, setAutoStatusMode] = useState(true);
 
-  const updateForm = (data) => {
+  const safeFormData = formData || {};
+  const safeCategories = Array.isArray(categories) && categories.length > 0
+    ? categories
+    : ['Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition'];
+
+  const updateForm = (newData) => {
     if (onFormDataChange) {
-      onFormDataChange(data);
+      onFormDataChange(newData);
     } else if (onFormChange) {
-      onFormChange(data);
+      onFormChange(newData);
     }
   };
 
-  const safeCategories = Array.isArray(categories) ? categories : ['Cultural', 'Festival', 'Sports', 'Food', 'Music', 'Exhibition'];
+  const handleStartDateChange = (val) => {
+    const nextData = { ...safeFormData, start_date: val, date: val };
+    if (autoStatusMode) {
+      nextData.status = calculateAutoStatus(val, nextData.end_date, null);
+    }
+    updateForm(nextData);
+  };
 
-  const timeSlots = [
-    '06:00 AM', '06:30 AM', '07:00 AM', '07:30 AM',
-    '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM',
-    '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-    '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
-    '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM',
-    '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM',
-    '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM',
-    '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM',
-    '10:00 PM', '10:30 PM', '11:00 PM'
-  ];
+  const handleEndDateChange = (val) => {
+    const nextData = { ...safeFormData, end_date: val };
+    if (autoStatusMode) {
+      nextData.status = calculateAutoStatus(nextData.start_date, val, null);
+    }
+    updateForm(nextData);
+  };
+
+  const handleStatusChange = (val) => {
+    if (val === 'Auto') {
+      setAutoStatusMode(true);
+      const computed = calculateAutoStatus(safeFormData.start_date, safeFormData.end_date, null);
+      updateForm({ ...safeFormData, status: computed });
+    } else {
+      setAutoStatusMode(false);
+      updateForm({ ...safeFormData, status: val });
+    }
+  };
+
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Instant local preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      updateForm({ ...safeFormData, imageUrl: reader.result, image_url: reader.result });
+    };
+    reader.readAsDataURL(file);
+
+    setIsUploading(true);
+    try {
+      const res = await uploadService.uploadFile(file, 'events');
+      if (res.success && res.data?.url) {
+        updateForm({ ...safeFormData, imageUrl: res.data.url, image_url: res.data.url });
+      }
+    } catch (err) {
+      console.warn('Backend event image upload fallback to preview:', err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  const currentComputedStatus = calculateAutoStatus(safeFormData.start_date, safeFormData.end_date, safeFormData.status);
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-          <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">
-            {editingEvent ? 'Edit Event' : 'Create New Event'}
-          </h3>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)]">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">
+              {editingEvent ? 'Edit Event' : 'Create New Event'}
+            </h3>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors"
+            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -51,52 +123,94 @@ export default function EventModal({
 
         <form onSubmit={onSubmit}>
           <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+            {/* Category & Status */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category</label>
+                <div className="relative">
+                  <select
+                    value={safeFormData.category || safeCategories[0]}
+                    onChange={(e) => updateForm({ ...safeFormData, category: e.target.value })}
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
+                  >
+                    {safeCategories.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+                    Status
+                  </label>
+                  {autoStatusMode && (
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
+                      <Sparkles className="w-3 h-3" /> Auto Active
+                    </span>
+                  )}
+                </div>
+                <div className="relative">
+                  <select
+                    value={autoStatusMode ? 'Auto' : (safeFormData.status || 'Upcoming')}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
+                  >
+                    <option value="Auto">✨ Auto ({currentComputedStatus})</option>
+                    <option value="Upcoming">Upcoming</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Event Title */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Event Title</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Event Title *</label>
               <input
                 type="text"
-                value={formData.title || ''}
-                onChange={(e) => updateForm({ ...formData, title: e.target.value })}
-                placeholder="Enter event title"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
+                value={safeFormData.title || ''}
+                onChange={(e) => updateForm({ ...safeFormData, title: e.target.value })}
+                placeholder="e.g. Bon Om Touk (Water Festival), Angkor Marathon"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
                 required
               />
             </div>
 
             {/* Event Picture Upload Field */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5 flex items-center justify-between">
-                <span>Event Picture</span>
-                <span className="text-[11px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] lowercase font-normal">(Upload file or paste image URL)</span>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                Event Banner / Picture
               </label>
 
-              {formData.imageUrl ? (
-                <div className="relative w-full h-36 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] group shadow-sm">
-                  <img src={formData.imageUrl} alt="Event Preview" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <label className="p-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-md text-xs font-medium flex items-center gap-1.5 cursor-pointer shadow-md transition-colors">
-                      <Upload className="w-4 h-4" />
-                      Change Picture
+              {safeFormData.imageUrl || safeFormData.image_url ? (
+                <div className="relative w-full h-32 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] group mb-2">
+                  <img
+                    src={safeFormData.imageUrl || safeFormData.image_url}
+                    alt="Event Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <label className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-medium shadow-md transition-colors cursor-pointer">
+                      Change Image
                       <input
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              updateForm({ ...formData, imageUrl: reader.result });
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
+                        onChange={handleImageFileChange}
                       />
                     </label>
                     <button
                       type="button"
-                      onClick={() => updateForm({ ...formData, imageUrl: '' })}
-                      className="p-2.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium flex items-center gap-1 cursor-pointer shadow-md transition-colors"
+                      onClick={() => updateForm({ ...safeFormData, imageUrl: '', image_url: '' })}
+                      className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs flex items-center gap-1 font-medium shadow-md transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                       Remove
@@ -104,96 +218,87 @@ export default function EventModal({
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2">
-                  <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary)] rounded-lg cursor-pointer bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)]/50 transition-colors">
-                    <div className="flex flex-col items-center justify-center pt-2 pb-2">
-                      <Upload className="w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1" />
-                      <p className="text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">Click to upload event picture</p>
-                      <p className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">PNG, JPG, WEBP or GIF</p>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            updateForm({ ...formData, imageUrl: reader.result });
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                    />
-                  </label>
-                  <div>
-                    <input
-                      type="url"
-                      value={formData.imageUrl || ''}
-                      onChange={(e) => updateForm({ ...formData, imageUrl: e.target.value })}
-                      placeholder="Or enter image URL (https://...)"
-                      className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-2.5 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
-                    />
-                  </div>
-                </div>
+                <label className="border-2 border-dashed border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg p-4 text-center hover:border-[var(--color-primary)] transition-colors cursor-pointer block mb-2">
+                  <Upload className="w-6 h-6 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mx-auto mb-1" />
+                  <p className="text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] font-medium text-xs">
+                    {isUploading ? 'Uploading banner to server...' : 'Click to upload event banner'}
+                  </p>
+                  <p className="text-[10px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">PNG, JPG, WEBP</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageFileChange}
+                  />
+                </label>
               )}
+
+              <input
+                type="text"
+                value={safeFormData.imageUrl || safeFormData.image_url || ''}
+                onChange={(e) => updateForm({ ...safeFormData, imageUrl: e.target.value, image_url: e.target.value })}
+                placeholder="Or paste banner image URL (https://...)"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-3 py-2 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+              />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category</label>
-              <div className="relative">
-                <select
-                  value={formData.category || 'Cultural'}
-                  onChange={(e) => updateForm({ ...formData, category: e.target.value })}
-                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent cursor-pointer"
-                  required
-                >
-                  {safeCategories.filter(c => c !== 'All').map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
-              </div>
-            </div>
+            {/* Description */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Description</label>
               <textarea
-                value={formData.description || ''}
-                onChange={(e) => updateForm({ ...formData, description: e.target.value })}
-                placeholder="Enter event description"
+                value={safeFormData.description || ''}
+                onChange={(e) => updateForm({ ...safeFormData, description: e.target.value })}
+                placeholder="Describe festival activities, schedule, and cultural importance..."
                 rows="2"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent resize-none transition-all"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
                 required
               />
             </div>
+
+            {/* Location */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Location</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Location *</label>
               <input
                 type="text"
-                value={formData.location || ''}
-                onChange={(e) => updateForm({ ...formData, location: e.target.value })}
-                placeholder="Enter event location"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
+                value={safeFormData.location || ''}
+                onChange={(e) => updateForm({ ...safeFormData, location: e.target.value })}
+                placeholder="e.g. Tonle Sap Riverfront, Phnom Penh"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
                 required
               />
             </div>
+
+            {/* Start Date & End Date */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Date</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Start Date *</label>
                 <input
                   type="date"
-                  value={formData.start_date || formData.date || ''}
-                  onChange={(e) => updateForm({ ...formData, start_date: e.target.value, date: e.target.value })}
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
+                  value={safeFormData.start_date || safeFormData.date || ''}
+                  onChange={(e) => handleStartDateChange(e.target.value)}
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
                   required
                 />
               </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">End Date</label>
+                <input
+                  type="date"
+                  value={safeFormData.end_date || ''}
+                  min={safeFormData.start_date || ''}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Time & Price */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Event Time</label>
                 {(() => {
-                  const rawTime = formData.start_time || formData.time || '08:00 AM';
-                  // Convert 12h to 24h for input type="time"
+                  const rawTime = safeFormData.start_time || safeFormData.time || '08:00 AM';
                   let time24 = '08:00';
                   const match = String(rawTime).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
                   if (match) {
@@ -215,7 +320,7 @@ export default function EventModal({
                     const period = h >= 12 ? 'PM' : 'AM';
                     h = h % 12 || 12;
                     const time12 = `${String(h).padStart(2, '0')}:${m} ${period}`;
-                    updateForm({ ...formData, start_time: time12, time: time12 });
+                    updateForm({ ...safeFormData, start_time: time12, time: time12 });
                   };
 
                   return (
@@ -223,36 +328,36 @@ export default function EventModal({
                       type="time"
                       value={time24}
                       onChange={(e) => handleNativeTimeChange(e.target.value)}
-                      className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all cursor-pointer"
-                      required
+                      className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all cursor-pointer"
                     />
                   );
                 })()}
               </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Price</label>
                 <input
                   type="text"
-                  value={formData.price || ''}
-                  onChange={(e) => updateForm({ ...formData, price: e.target.value })}
-                  placeholder="e.g., $45 or Free"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
+                  value={safeFormData.price || ''}
+                  onChange={(e) => updateForm({ ...safeFormData, price: e.target.value })}
+                  placeholder="e.g. Free, $45 USD"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
                   required
                 />
               </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Organizer</label>
-                <input
-                  type="text"
-                  value={formData.organizer || ''}
-                  onChange={(e) => updateForm({ ...formData, organizer: e.target.value })}
-                  placeholder="Organizer name"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent transition-all"
-                  required
-                />
-              </div>
+            </div>
+
+            {/* Organizer */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Organizer</label>
+              <input
+                type="text"
+                value={safeFormData.organizer || ''}
+                onChange={(e) => updateForm({ ...safeFormData, organizer: e.target.value })}
+                placeholder="e.g. Ministry of Tourism, National Olympic Committee"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
+                required
+              />
             </div>
           </div>
 
@@ -260,15 +365,16 @@ export default function EventModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center"
+              className="flex-1 py-3 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg shadow-[var(--color-primary)]/25 text-center"
+              disabled={isUploading || !safeFormData.title?.trim() || !safeFormData.location?.trim()}
+              className="flex-1 py-3 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg shadow-[var(--color-primary)]/25 text-center cursor-pointer disabled:opacity-50"
             >
-              {editingEvent ? 'Update Event' : 'Create Event'}
+              {isUploading ? 'Uploading Image...' : editingEvent ? 'Update Event' : 'Create Event'}
             </button>
           </div>
         </form>

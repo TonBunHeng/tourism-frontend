@@ -1,4 +1,4 @@
-import { X, CheckCircle, Star, MapPin, Edit, ExternalLink } from 'lucide-react';
+import { X, Star, MapPin, Edit, CheckCircle, ExternalLink, Image as ImageIcon } from 'lucide-react';
 
 export default function PlaceDetailsModal({ place, onClose, onEditPlace }) {
   if (!place) return null;
@@ -14,7 +14,7 @@ export default function PlaceDetailsModal({ place, onClose, onEditPlace }) {
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors"
+            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -22,6 +22,13 @@ export default function PlaceDetailsModal({ place, onClose, onEditPlace }) {
 
         {/* Modal Content */}
         <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          {/* Place Picture Banner */}
+          {(place.image_url || place.image) && (
+            <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
+              <img src={place.image_url || place.image} alt={place.name} className="w-full h-full object-cover" />
+            </div>
+          )}
+
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Place Name</span>
             <p className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{place.name}</p>
@@ -104,7 +111,7 @@ export default function PlaceDetailsModal({ place, onClose, onEditPlace }) {
               onClose();
               onEditPlace(currentPlace);
             }}
-            className="py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2"
+            className="py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer"
           >
             <Edit className="w-4 h-4" />
             Edit Place

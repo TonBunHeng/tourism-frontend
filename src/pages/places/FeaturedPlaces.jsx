@@ -1,11 +1,44 @@
-import { Landmark, Mountain, Building2, Palette, Star, ArrowRight } from 'lucide-react';
+import { Landmark, Mountain, Building2, Palette, ArrowRight } from 'lucide-react';
 import siemReapImg from '../../assets/places_img/SiemReapAngkor.jpg';
 import pursatImg from '../../assets/places_img/PursatMountains.jpeg';
 import historicalImg from '../../assets/places_img/HistoricalSites.jpeg';
 import museumImg from '../../assets/places_img/images.jpeg';
 
 export default function FeaturedPlaces() {
-  const featuredPlaces = [];
+  const featuredPlaces = [
+    {
+      name: 'Siem Reap Angkor',
+      location: 'Siem Reap | Temple | Heritage Site',
+      rating: 5.0,
+      reviews: 35,
+      icon: Landmark,
+      image: siemReapImg,
+    },
+    {
+      name: 'Pursat Mountains',
+      location: 'Pursat | Mountains | Nature Reserve',
+      rating: 5.0,
+      reviews: 6,
+      icon: Mountain,
+      image: pursatImg,
+    },
+    {
+      name: 'Historical Sites',
+      location: 'Multiple National Sites',
+      rating: 5.0,
+      reviews: 35,
+      icon: Building2,
+      image: historicalImg,
+    },
+    {
+      name: 'Cultural Museum',
+      location: 'Cultural Heritage Museum',
+      rating: 5.0,
+      reviews: 35,
+      icon: Palette,
+      image: museumImg,
+    }
+  ];
 
   if (featuredPlaces.length === 0) return null;
 
@@ -37,14 +70,7 @@ export default function FeaturedPlaces() {
             {/* Content */}
             <div className="relative z-10">
               <h3 className="text-lg font-bold mb-1 text-white drop-shadow-sm">{place.name}</h3>
-              <p className="text-sm text-white/90 mb-3 line-clamp-1">{place.location}</p>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
-                  <Star className="w-3.5 h-3.5 fill-[var(--color-warning-text)] text-[var(--color-warning-text)] mr-1" />
-                  <span className="text-sm font-bold text-white">{place.rating}</span>
-                  <span className="text-xs ml-1 text-white/80">({place.reviews})</span>
-                </div>
-              </div>
+              <p className="text-sm text-white/90 line-clamp-1">{place.location}</p>
             </div>
           </div>
         ))}

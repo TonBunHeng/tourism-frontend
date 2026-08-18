@@ -30,6 +30,11 @@ api.interceptors.response.use(
       localStorage.removeItem('auth_token');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      sessionStorage.clear();
+      window.dispatchEvent(new Event('user-profile-updated'));
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error.response ? error.response.data : error);
   }

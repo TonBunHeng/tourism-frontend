@@ -5,11 +5,19 @@ export const galleryService = {
     return await api.get('/galleries', { params });
   },
 
+  async getMedia(params = {}) {
+    return await api.get('/galleries', { params });
+  },
+
   async getMediaById(id) {
     return await api.get(`/galleries/${id}`);
   },
 
   async uploadMedia(data) {
+    return await api.post('/galleries', data);
+  },
+
+  async createMedia(data) {
     return await api.post('/galleries', data);
   },
 

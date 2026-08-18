@@ -1,31 +1,39 @@
 import { Heart, Check, Star, MapPin } from 'lucide-react';
 
-export default function FavoritesStats({ favorites }) {
+export default function FavoritesStats({ favorites = [] }) {
+  const safeFavorites = Array.isArray(favorites) ? favorites : [];
+  const total = safeFavorites.length;
+  const visited = safeFavorites.filter(f => Boolean(f.visited)).length;
+  const toVisit = total - visited;
+  const avgRating = total > 0
+    ? (safeFavorites.reduce((sum, f) => sum + (Number(f.rating) || 0), 0) / total).toFixed(1)
+    : '0.0';
+
   const stats = [
     {
       label: 'Total Favorites',
-      value: favorites.length,
+      value: total,
       icon: Heart,
       color: 'text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]',
       bg: 'bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)]'
     },
     {
       label: 'Visited Places',
-      value: favorites.filter(f => f.visited).length,
+      value: visited,
       icon: Check,
       color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
       bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
     },
     {
       label: 'Average Rating',
-      value: favorites.length > 0 ? (favorites.reduce((sum, f) => sum + f.rating, 0) / favorites.length).toFixed(1) : '0.0',
+      value: avgRating,
       icon: Star,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
       label: 'Places to Visit',
-      value: favorites.filter(f => !f.visited).length,
+      value: toVisit,
       icon: MapPin,
       color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
       bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'

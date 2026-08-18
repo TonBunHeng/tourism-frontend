@@ -51,7 +51,7 @@ export default function Dashboard() {
       {/* Charts and Quick Actions Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* User Growth Chart */}
-        <UserGrowthChart />
+        <UserGrowthChart growthData={dashboardData?.user_growth} />
 
         {/* Quick Actions Grid */}
         <QuickActions />
@@ -60,13 +60,22 @@ export default function Dashboard() {
       {/* Bottom Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <RecentActivity recentPlaces={dashboardData?.recent_places} />
+        <RecentActivity
+          activities={dashboardData?.recent_activity}
+          recentPlaces={dashboardData?.recent_places}
+        />
 
         {/* Top Places */}
-        <TopPlaces topPlaces={dashboardData?.top_places} />
+        <TopPlaces
+          places={dashboardData?.top_places}
+          topPlaces={dashboardData?.top_places}
+        />
 
         {/* Category Distribution & User Status Summary */}
-        <CategoryDistribution distribution={dashboardData?.category_distribution} />
+        <CategoryDistribution
+          distribution={dashboardData?.category_distribution}
+          userStatus={dashboardData?.user_status}
+        />
       </div>
     </div>
   );

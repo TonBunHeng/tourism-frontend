@@ -1,4 +1,4 @@
-import { Calendar, Check, Image as ImageIcon, MapPin, ThumbsUp, ThumbsDown, Clock, X, Eye, User } from 'lucide-react';
+import { Star, ThumbsUp, ThumbsDown, Check, X, Eye, Clock, Calendar, Image as ImageIcon, MapPin, User } from 'lucide-react';
 import { getStatusColor, renderStars } from '../../utils/StatusUtils';
 
 export default function RatingsTable({
@@ -24,10 +24,12 @@ export default function RatingsTable({
         <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
           {reviews.length > 0 ? (
             reviews.map((review, index) => {
-              const AvatarIcon = review.avatar || (typeof review.user === 'object' && review.user.avatar) || User;
-              const userName = typeof review.user === 'object' ? review.user.name : review.user;
-              const userVerified = typeof review.user === 'object' ? review.user.verified : review.verified;
-              const placeName = typeof review.place === 'object' ? review.place.name : review.place;
+              const avatarUrl = typeof review.avatar === 'string' && review.avatar.length > 0
+                ? review.avatar
+                : (typeof review.user === 'object' && typeof review.user?.avatar === 'string' ? review.user.avatar : null);
+              const userName = typeof review.user === 'object' ? (review.user?.name || review.user_name || 'Traveler') : (review.user_name || review.user || 'Traveler');
+              const userVerified = typeof review.user === 'object' ? review.user?.verified : review.is_verified;
+              const placeName = typeof review.place === 'object' ? (review.place?.name || review.place_name || 'Attraction') : (review.place_name || review.place || 'Attraction');
 
               return (
                 <tr key={review.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
@@ -36,8 +38,12 @@ export default function RatingsTable({
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-md bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center flex-shrink-0">
-                        <AvatarIcon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+                      <div className="w-10 h-10 rounded-md bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] overflow-hidden flex items-center justify-center flex-shrink-0 border border-gray-100 dark:border-zinc-800">
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{userName}</p>
@@ -75,7 +81,7 @@ export default function RatingsTable({
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-0.5">
                         <ThumbsUp className="w-3.5 h-3.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]" />
-                        <span>{review.likes}</span>
+                        <span>{review.likes || 0}</span>
                       </div>
                       <div className="flex items-center gap-0.5">
                         <ThumbsDown className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
@@ -134,4 +140,3 @@ export default function RatingsTable({
     </div>
   );
 }
-

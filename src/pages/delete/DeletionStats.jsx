@@ -1,31 +1,37 @@
 import { FileText, Clock, UserX, Trash2 } from 'lucide-react';
 
-export default function DeletionStats({ requests }) {
+export default function DeletionStats({ requests = [] }) {
+  const safeRequests = Array.isArray(requests) ? requests : [];
+  const total = safeRequests.length;
+  const pending = safeRequests.filter(r => r.status?.toLowerCase() === 'pending').length;
+  const accountDeletions = safeRequests.filter(r => r.type?.toLowerCase() === 'account').length;
+  const itemDeletions = safeRequests.filter(r => r.type?.toLowerCase() === 'item').length;
+
   const stats = [
     {
       label: 'Total Requests',
-      value: requests.length,
+      value: total,
       icon: FileText,
       color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
       bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'
     },
     {
-      label: 'Pending',
-      value: requests.filter(r => r.status === 'pending').length,
+      label: 'Pending Reviews',
+      value: pending,
       icon: Clock,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
       label: 'Account Deletions',
-      value: requests.filter(r => r.type === 'account').length,
+      value: accountDeletions,
       icon: UserX,
       color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]',
       bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]'
     },
     {
       label: 'Item Deletions',
-      value: requests.filter(r => r.type === 'item').length,
+      value: itemDeletions,
       icon: Trash2,
       color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]',
       bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]'

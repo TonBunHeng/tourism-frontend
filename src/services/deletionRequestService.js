@@ -5,6 +5,10 @@ export const deletionRequestService = {
     return await api.get('/deletion-requests', { params });
   },
 
+  async getAnalytics(params = {}) {
+    return await api.get('/deletion-requests/analytics', { params });
+  },
+
   async getRequestById(id) {
     return await api.get(`/deletion-requests/${id}`);
   },

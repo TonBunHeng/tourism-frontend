@@ -1,29 +1,24 @@
-// src/pages/reports/Reports.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReportsHeader from './ReportsHeader';
 import ReportsStats from './ReportsStats';
 import ReportsTable from './ReportsTable';
 import ReportsAnalyticsModal from './ReportsAnalyticsModal';
 import ExportAlertModal from './ExportAlertModal';
-import {
-  placesReportData,
-  eventsReportData,
-  usersReportData,
-  reviewsReportData,
-  categoriesReportData
-} from './reportsData';
+import placeService from '../../services/placeService';
+import eventService from '../../services/eventService';
+import userService from '../../services/userService';
+import reviewService from '../../services/reviewService';
+import categoryService from '../../services/categoryService';
 import { exportToPDF, exportToExcel } from '../../utils/exportReports';
 
 export default function Reports() {
   const [activeTab, setActiveTab] = useState('places');
   const [selectedDay, setSelectedDay] = useState('');
-
-  // Only apply date filter when user clicks Submit
   const [appliedDay, setAppliedDay] = useState('');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [totalExports, setTotalExports] = useState(14);
@@ -31,18 +26,105 @@ export default function Reports() {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
 
-  const getRawDataByTab = () => {
-    switch (activeTab) {
-      case 'places': return placesReportData;
-      case 'events': return eventsReportData;
-      case 'users': return usersReportData;
-      case 'reviews': return reviewsReportData;
-      case 'categories': return categoriesReportData;
-      default: return placesReportData;
+  // Live Datasets State
+  const [datasets, setDatasets] = useState({
+    places: [],
+    events: [],
+    users: [],
+    reviews: [],
+    categories: []
+  });
+
+  const loadAllReportsData = async () => {
+    setIsLoading(true);
+    try {
+      const [placesRes, eventsRes, usersRes, reviewsRes, categoriesRes] = await Promise.allSettled([
+        placeService.getPlaces({ per_page: 100 }),
+        eventService.getEvents({ per_page: 100 }),
+        userService.getUsers({ per_page: 100 }),
+        reviewService.getReviews({ per_page: 100 }),
+        categoryService.getCategories({ per_page: 100 })
+      ]);
+
+      const formattedPlaces = (placesRes.status === 'fulfilled' && placesRes.value?.data)
+        ? placesRes.value.data.map(p => ({
+            id: p.id,
+            name: p.name,
+            category: p.category || p.category_detail?.name || 'Attraction',
+            province: p.province || p.province_detail?.name || 'Siem Reap',
+            rating: Number(p.rating || 5.0),
+            reviews: Number(p.reviews_count || 0),
+            status: p.status || 'Active',
+            createdAt: p.created_at ? p.created_at.split('T')[0] : '2026-08-18',
+            location: p.address || 'Cambodia'
+          }))
+        : [];
+
+      const formattedEvents = (eventsRes.status === 'fulfilled' && eventsRes.value?.data)
+        ? eventsRes.value.data.map(e => ({
+            id: e.id,
+            title: e.title,
+            location: e.location || 'Phnom Penh',
+            startDate: e.start_date || '2026-08-18',
+            endDate: e.end_date || '2026-08-20',
+            attendees: Number(e.attendees_count || 500),
+            status: e.status || 'Upcoming'
+          }))
+        : [];
+
+      const formattedUsers = (usersRes.status === 'fulfilled' && usersRes.value?.data)
+        ? usersRes.value.data.map(u => ({
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            role: u.role || 'User',
+            joinedDate: u.created_at ? u.created_at.split('T')[0] : '2026-08-18',
+            reviewsCount: Number(u.reviews_count || 0),
+            status: u.status || 'Active'
+          }))
+        : [];
+
+      const formattedReviews = (reviewsRes.status === 'fulfilled' && reviewsRes.value?.data)
+        ? reviewsRes.value.data.map(r => ({
+            id: r.id,
+            userName: r.user_name || (typeof r.user === 'object' ? r.user?.name : r.user) || 'Traveler',
+            placeName: r.place_name || (typeof r.place === 'object' ? r.place?.name : r.place) || 'Attraction',
+            rating: Number(r.rating || 5),
+            comment: r.comment || '',
+            date: r.created_at ? r.created_at.split('T')[0] : '2026-08-18',
+            status: r.status || 'Approved'
+          }))
+        : [];
+
+      const formattedCategories = (categoriesRes.status === 'fulfilled' && categoriesRes.value?.data)
+        ? categoriesRes.value.data.map(c => ({
+            id: c.id,
+            name: c.name,
+            description: c.description || 'Category description',
+            totalPlaces: Number(c.places_count || 0),
+            status: c.status || 'Active'
+          }))
+        : [];
+
+      setDatasets({
+        places: formattedPlaces,
+        events: formattedEvents,
+        users: formattedUsers,
+        reviews: formattedReviews,
+        categories: formattedCategories
+      });
+    } catch (e) {
+      console.error('Failed to load reports datasets from API:', e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const currentDataset = getRawDataByTab();
+  useEffect(() => {
+    loadAllReportsData();
+  }, []);
+
+  const currentDataset = datasets[activeTab] || [];
 
   const filteredData = currentDataset.filter(item => {
     const itemDate = item.createdAt || item.startDate || item.joinedDate || item.date;
@@ -68,10 +150,6 @@ export default function Reports() {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 200);
   };
 
   const handleSubmitFilter = () => {
@@ -91,6 +169,7 @@ export default function Reports() {
     setTimeout(() => {
       setIsResetting(false);
     }, 250);
+    loadAllReportsData();
   };
 
   const handleOpenExportPDF = () => {
@@ -156,7 +235,7 @@ export default function Reports() {
     ['active', 'approved', 'completed'].includes(i.status?.toLowerCase())
   ).length;
 
-  const avgRating = filteredData.reduce((acc, curr) => acc + (curr.rating || 0), 0) / (filteredData.filter(i => i.rating).length || 1);
+  const avgRating = filteredData.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0) / (filteredData.filter(i => i.rating).length || 1);
 
   return (
     <div className="flex flex-col space-y-6">
@@ -198,11 +277,14 @@ export default function Reports() {
         data={filteredData}
         isLoading={isLoading}
       />
+
       {/* Reports Analytics Modal */}
       <ReportsAnalyticsModal
         isOpen={isAnalyticsModalOpen}
         onClose={() => setIsAnalyticsModalOpen(false)}
         activeTab={activeTab}
+        datasets={datasets}
+        totalExports={totalExports}
       />
     </div>
   );

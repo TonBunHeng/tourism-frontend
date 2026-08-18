@@ -51,23 +51,35 @@ export default function DeleteAccount() {
       if (res.success && res.data) {
         const formatted = res.data.map(req => {
           const userObj = req.user || {};
+          const itemsList = Array.isArray(req.items) ? req.items : [];
+          const itemsToDelete = itemsList.map(item => ({
+            name: item.item_name,
+            type: item.item_type,
+            category: item.category || "General",
+            id: item.item_id
+          }));
+          const targetName = req.target_name || (itemsList.length > 0 ? itemsList.map(i => i.item_name).join(", ") : (req.user_name || userObj.name || "Account"));
+
           return {
             id: req.id,
             user: {
-              name: userObj.name || "App User",
-              email: userObj.email || "user@example.com",
+              name: req.user_name || userObj.name || "App User",
+              email: req.user_email || userObj.email || "user@example.com",
+              phone: userObj.phone || "",
               avatar: userObj.avatar || null,
               role: userObj.role || "User"
             },
             type: req.request_type || "account",
-            targetName: req.target_name || userObj.name || "Account",
+            targetName: targetName,
+            itemsToDelete: itemsToDelete,
+            items: itemsList,
             reason: req.reason || "No reason provided",
             additionalInfo: req.additional_info || "",
             status: req.status || "pending",
             urgency: req.urgency || "medium",
             requestedDate: req.created_at?.split("T")[0] || new Date().toISOString().split("T")[0],
             processedDate: req.processed_at?.split("T")[0] || null,
-            processedBy: req.processed_by || null,
+            processedBy: req.processed_by_name || null,
             adminNotes: req.admin_notes || ""
           };
         });
@@ -89,6 +101,7 @@ export default function DeleteAccount() {
   const filteredRequests = requests.filter(req => {
     const matchesSearch = req.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       req.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.targetName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       req.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
       req.additionalInfo.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -152,14 +165,16 @@ export default function DeleteAccount() {
 
     const newStatus = confirmAction === "approve" ? "approved" : "rejected";
     try {
-      await deletionRequestService.updateStatus(selectedRequest.id, {
+      const res = await deletionRequestService.updateStatus(selectedRequest.id, {
         status: newStatus,
         admin_notes: adminNotes
       });
       setIsConfirmOpen(false);
+      setIsDetailsOpen(false);
       setConfirmAction(null);
       setAdminNotes("");
       setSelectedRequest(null);
+      alert(res.message || (newStatus === "approved" ? "Deletion request approved and item/account deleted." : "Deletion request rejected."));
       loadRequests();
     } catch (e) {
       alert(e.message || "Failed to update request status.");

@@ -1,15 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  FolderTree,
-  Landmark,
-  Scroll,
-  Palette,
-  Crown,
-  Leaf,
-  Theater,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react";
+import { Landmark, ChevronLeft, ChevronRight } from "lucide-react";
 import CategoriesHeader from "./CategoriesHeader";
 import CategoriesStats from "./CategoriesStats";
 import CategoriesToolbar from "./CategoriesToolbar";
@@ -18,13 +8,15 @@ import CategoriesList from "./CategoriesList";
 import CategoryModal from "./CategoryModal";
 import CategoryDetailsModal from "./CategoryDetailsModal";
 import categoryService from "../../services/categoryService";
+import deletionRequestService from "../../services/deletionRequestService";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("list");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [viewMode, setViewMode] = useState("list");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -48,7 +40,7 @@ export default function Categories() {
       const params = {
         page: currentPage,
         per_page: itemsPerPage,
-        search: searchTerm,
+        search: searchTerm || undefined,
       };
       if (statusFilter !== "All") {
         params.status = statusFilter;
@@ -57,7 +49,7 @@ export default function Categories() {
       if (res.success && res.data) {
         const formatted = res.data.map(c => ({
           ...c,
-          placeCount: c.places_count || 0,
+          placeCount: c.places_count !== undefined ? Number(c.places_count) : 0,
           icon: Landmark,
           createdAt: c.created_at ? c.created_at.split('T')[0] : '2024-01-01',
         }));
@@ -65,6 +57,9 @@ export default function Categories() {
         if (res.meta) {
           setTotalRecords(res.meta.total);
           setTotalPages(res.meta.last_page);
+        } else {
+          setTotalRecords(formatted.length);
+          setTotalPages(1);
         }
       }
     } catch (e) {
@@ -86,12 +81,24 @@ export default function Categories() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
+    const category = categories.find(c => c.id === id);
+    const categoryName = category?.name || `Category #${id}`;
+    if (window.confirm(`Submit deletion request for category "${categoryName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
       try {
-        await categoryService.deleteCategory(id);
-        loadCategories();
+        await deletionRequestService.createRequest({
+          request_type: 'item',
+          reason: `Request to delete category: ${categoryName}`,
+          urgency: 'medium',
+          items: [{
+            item_type: 'category',
+            item_id: id,
+            item_name: categoryName,
+            category: 'Category'
+          }]
+        });
+        alert(`Deletion request for "${categoryName}" has been submitted to Deletion Requests.`);
       } catch (e) {
-        alert(e.message || "Failed to delete category.");
+        alert(e.message || "Failed to submit deletion request.");
       }
     }
   };
@@ -107,7 +114,7 @@ export default function Categories() {
     setFormData({
       name: category.name,
       description: category.description || "",
-      status: category.status,
+      status: category.status || "Active",
       color: category.color || "#8B5CF6"
     });
     setIsAddModalOpen(true);
@@ -126,7 +133,8 @@ export default function Categories() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!formData.name.trim()) return;
 
     try {
@@ -166,21 +174,27 @@ export default function Categories() {
 
         {isLoading ? (
           <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
-            Loading categories from API...
+            Loading categories from database...
           </div>
         ) : viewMode === "list" ? (
           <CategoriesList
             categories={categories}
+            onView={handleView}
             onViewCategory={handleView}
+            onEdit={openEditModal}
             onEditCategory={openEditModal}
+            onDelete={handleDelete}
             onDeleteCategory={handleDelete}
             startIndex={startIndex}
           />
         ) : (
           <CategoriesGrid
             categories={categories}
+            onView={handleView}
             onViewCategory={handleView}
+            onEdit={openEditModal}
             onEditCategory={openEditModal}
+            onDelete={handleDelete}
             onDeleteCategory={handleDelete}
           />
         )}

@@ -99,8 +99,8 @@ export default function CategoriesList({
           ) : (
             <tr>
               <td colSpan="6" className="text-center py-12">
-                <h3 className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">No categories found</h3>
-                <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">Try adjusting your search</p>
+                <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No categories found</h3>
+                <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
               </td>
             </tr>
           )}

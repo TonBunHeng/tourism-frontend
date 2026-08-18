@@ -7,6 +7,7 @@ export const authService = {
       localStorage.setItem('auth_token', res.data.token);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+      window.dispatchEvent(new Event('user-profile-updated'));
     }
     return res;
   },
@@ -17,6 +18,7 @@ export const authService = {
       localStorage.setItem('auth_token', res.data.token);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+      window.dispatchEvent(new Event('user-profile-updated'));
     }
     return res;
   },
@@ -25,6 +27,7 @@ export const authService = {
     const res = await api.get('/auth/me');
     if (res.success && res.data) {
       localStorage.setItem('user', JSON.stringify(res.data));
+      window.dispatchEvent(new Event('user-profile-updated'));
     }
     return res;
   },
@@ -33,35 +36,41 @@ export const authService = {
     const res = await api.put('/auth/profile', data);
     if (res.success && res.data) {
       localStorage.setItem('user', JSON.stringify(res.data));
+      window.dispatchEvent(new Event('user-profile-updated'));
     }
     return res;
   },
 
   async updateAvatar(imageData) {
-    try {
-      let payload = imageData;
-      if (typeof imageData === 'string') {
-        payload = { avatar: imageData, image: imageData };
-      }
-      const res = await api.post('/auth/avatar', payload);
-      if (res.success && res.data) {
-        localStorage.setItem('user', JSON.stringify(res.data));
-      }
-      return res;
-    } catch (e) {
-      // Fallback to updateProfile if avatar specific endpoint returns 404
-      return this.updateProfile({ avatar: imageData, image: imageData });
+    let payload = imageData;
+    if (typeof imageData === 'string' || imageData === null) {
+      payload = { avatar: imageData, image: imageData };
     }
+    const res = await api.post('/auth/avatar', payload);
+    if (res.success && res.data) {
+      localStorage.setItem('user', JSON.stringify(res.data));
+      window.dispatchEvent(new Event('user-profile-updated'));
+    }
+    return res;
   },
 
   async logout() {
     try {
       await api.post('/auth/logout');
+    } catch (e) {
+      // Ignore API errors on logout
     } finally {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      sessionStorage.clear();
+      window.dispatchEvent(new Event('user-profile-updated'));
     }
+  },
+
+  isAuthenticated() {
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    return Boolean(token && token !== 'undefined' && token !== 'null');
   },
 
   getCurrentUser() {

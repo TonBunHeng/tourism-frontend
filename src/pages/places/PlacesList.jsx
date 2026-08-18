@@ -1,4 +1,4 @@
-import { Star, MapPin, Edit, Eye, Trash2, Clock } from 'lucide-react';
+import { Star, MapPin, Edit, Eye, Trash2, Clock, Landmark } from 'lucide-react';
 
 export default function PlacesList({ places, onViewPlace, onEditPlace, onDeletePlace, startIndex = 0 }) {
   return (
@@ -7,7 +7,14 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
       <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {places.length > 0 ? (
           places.map((place) => (
-            <div key={place.id} className="p-4 flex flex-col">
+            <div key={place.id} className="p-4 flex gap-3">
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-800 shrink-0 border border-gray-200 dark:border-zinc-700 flex items-center justify-center">
+                {place.image_url || place.image ? (
+                  <img src={place.image_url || place.image} alt={place.name} className="w-full h-full object-cover" />
+                ) : (
+                  <Landmark className="w-6 h-6 text-gray-400" />
+                )}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">{place.name}</p>
@@ -87,9 +94,18 @@ export default function PlacesList({ places, onViewPlace, onEditPlace, onDeleteP
                     {startIndex + index + 1}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{place.name}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-800 shrink-0 border border-gray-200 dark:border-zinc-700 flex items-center justify-center">
+                        {place.image_url || place.image ? (
+                          <img src={place.image_url || place.image} alt={place.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Landmark className="w-5 h-5 text-gray-400" />
+                        )}
                       </div>
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{place.name}</p>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">

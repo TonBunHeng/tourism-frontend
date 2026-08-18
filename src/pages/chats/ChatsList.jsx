@@ -144,8 +144,8 @@ export default function ChatsList({
             <div className="flex justify-center mb-4">
               <MessageSquare className="w-16 h-16 text-[var(--color-text-muted-light)]" />
             </div>
-            <h3 className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">No conversations found</h3>
-            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">Try adjusting your filters</p>
+            <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No conversations found</h3>
+            <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your filters</p>
           </div>
         )}
       </div>

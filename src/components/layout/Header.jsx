@@ -16,6 +16,24 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
   const [currentLang, setCurrentLang] = useState('EN');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [userName, setUserName] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      return u.name || u.username || 'Admin User';
+    } catch (e) {
+      return 'Admin User';
+    }
+  });
+
+  const [userEmail, setUserEmail] = useState(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      return u.email || 'admin@tourism.gov.kh';
+    } catch (e) {
+      return 'admin@tourism.gov.kh';
+    }
+  });
+
   const [userAvatar, setUserAvatar] = useState(() => {
     try {
       const u = JSON.parse(localStorage.getItem('user') || '{}');
@@ -42,6 +60,8 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
       try {
         const u = JSON.parse(localStorage.getItem('user') || '{}');
         setUserAvatar(u.image || u.avatar || u.profile_photo_url || null);
+        setUserName(u.name || u.username || 'Admin User');
+        setUserEmail(u.email || 'admin@tourism.gov.kh');
       } catch (e) {}
     };
 
@@ -238,16 +258,43 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
             <div ref={profileRef} className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                className="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                 aria-label="Profile menu"
               >
-                <div className="w-8 h-8 rounded-full bg-[#181c24] border border-[#2d3442] flex items-center justify-center text-gray-200 shadow-sm">
-                  <User size={16} />
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden">
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt={userName}
+                      className="w-full h-full object-cover"
+                      onError={() => setUserAvatar(null)}
+                    />
+                  ) : (
+                    userName ? userName.charAt(0).toUpperCase() : <User size={16} />
+                  )}
                 </div>
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
+                <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
+                  <div className="px-3.5 py-3 border-b border-gray-100 dark:border-zinc-800 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
+                      {userAvatar ? (
+                        <img
+                          src={userAvatar}
+                          alt={userName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        userName ? userName.charAt(0).toUpperCase() : <User size={16} />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-gray-900 dark:text-zinc-100 truncate">{userName}</p>
+                      <p className="text-[11px] text-gray-500 dark:text-zinc-400 truncate">{userEmail}</p>
+                    </div>
+                  </div>
+
                   <div className="p-2">
                     <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
                       <User size={18} className="text-gray-400" />

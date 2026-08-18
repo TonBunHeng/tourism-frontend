@@ -90,8 +90,12 @@ export default function Settings() {
       if (res.success && res.data && res.data.length > 0) {
         const loaded = { ...defaultSettings };
         res.data.forEach(item => {
-          if (item.key && item.value !== undefined && item.value !== null) {
-            loaded[item.key] = item.value;
+          const k = item.key || item.setting_key;
+          let v = item.value !== undefined ? item.value : item.setting_value;
+          if (k && v !== undefined && v !== null) {
+            if (v === "true") v = true;
+            if (v === "false") v = false;
+            loaded[k] = v;
           }
         });
         setSettings(loaded);
@@ -120,7 +124,7 @@ export default function Settings() {
     try {
       const settingsArray = Object.keys(settings).map(key => ({
         key,
-        value: typeof settings[key] === "object" ? JSON.stringify(settings[key]) : String(settings[key]),
+        value: typeof settings[key] === "object" && settings[key] !== null ? JSON.stringify(settings[key]) : String(settings[key] ?? ""),
         group: activeTab,
       }));
 

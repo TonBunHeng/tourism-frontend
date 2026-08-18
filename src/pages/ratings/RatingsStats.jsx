@@ -1,31 +1,39 @@
 import { MessageSquare, Star, ThumbsUp, Clock } from 'lucide-react';
 
-export default function RatingsStats({ reviews }) {
+export default function RatingsStats({ reviews = [] }) {
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const total = safeReviews.length;
+  const avgRating = total > 0
+    ? (safeReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / total).toFixed(1)
+    : '0.0';
+  const totalLikes = safeReviews.reduce((sum, r) => sum + (Number(r.likes) || 0), 0);
+  const pending = safeReviews.filter(r => r.status === 'Pending').length;
+
   const stats = [
     {
       label: 'Total Reviews',
-      value: reviews.length,
+      value: total.toLocaleString(),
       icon: MessageSquare,
       color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]',
       bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]'
     },
     {
       label: 'Average Rating',
-      value: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : '0.0',
+      value: avgRating,
       icon: Star,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'
     },
     {
       label: 'Total Likes',
-      value: reviews.reduce((sum, r) => sum + r.likes, 0).toLocaleString(),
+      value: totalLikes.toLocaleString(),
       icon: ThumbsUp,
       color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]',
       bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]'
     },
     {
       label: 'Pending Reviews',
-      value: reviews.filter(r => r.status === 'Pending').length,
+      value: pending.toLocaleString(),
       icon: Clock,
       color: 'text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]',
       bg: 'bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)]'

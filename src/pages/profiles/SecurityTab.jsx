@@ -1,15 +1,51 @@
-import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { Eye, EyeOff, Trash2, AlertTriangle } from 'lucide-react';
+import deletionRequestService from '../../services/deletionRequestService';
 
 export default function SecurityTab({
-  userData,
-  setUserData,
-  showPassword,
-  setShowPassword,
-  showNewPassword,
-  setShowNewPassword,
-  showConfirmPassword,
-  setShowConfirmPassword
+  userData = {},
+  setUserData = () => {},
+  showPassword = false,
+  setShowPassword = () => {},
+  showNewPassword = false,
+  setShowNewPassword = () => {},
+  showConfirmPassword = false,
+  setShowConfirmPassword = () => {}
 }) {
+  const [deleteReason, setDeleteReason] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleRequestAccountDeletion = async (e) => {
+    e.preventDefault();
+    if (!deleteReason.trim()) {
+      alert('Please provide a reason for the deletion request.');
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'account',
+        reason: deleteReason.trim(),
+        urgency: 'high',
+        items: [{
+          item_type: 'user',
+          item_id: userData.id || undefined,
+          item_name: userData.name || 'User Account',
+          category: userData.role || 'User'
+        }]
+      });
+      alert('Your account deletion request has been submitted to Deletion Requests for review and approval.');
+      setShowDeleteModal(false);
+      setDeleteReason('');
+    } catch (err) {
+      alert(err.message || 'Failed to submit account deletion request.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-4 md:p-5 shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
@@ -66,7 +102,7 @@ export default function SecurityTab({
               </button>
             </div>
           </div>
-          <button className="w-full sm:w-auto px-4 py-2 bg-[var(--color-primary)] text-[var(--color-white)] rounded-lg hover:bg-[var(--color-primary-hover)] transition-colors text-sm">
+          <button className="w-full sm:w-auto px-4 py-2 bg-[var(--color-primary)] text-[var(--color-white)] rounded-lg hover:bg-[var(--color-primary-hover)] transition-colors text-sm cursor-pointer">
             Update Password
           </button>
         </div>
@@ -112,10 +148,78 @@ export default function SecurityTab({
               <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Safari • Siem Reap, Cambodia</p>
               <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">Last active: 2 days ago</p>
             </div>
-            <button className="text-xs text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:text-[var(--color-danger-text)]/80 font-medium flex-shrink-0">Revoke</button>
+            <button className="text-xs text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:text-[var(--color-danger-text)]/80 font-medium flex-shrink-0 cursor-pointer">Revoke</button>
           </div>
         </div>
       </div>
+
+      {/* Danger Zone: Account Deletion Request */}
+      <div className="bg-red-50/60 dark:bg-red-950/20 rounded-md p-4 md:p-5 shadow-sm border border-red-200 dark:border-red-900/50">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <h3 className="font-semibold text-red-800 dark:text-red-300 text-sm">Danger Zone: Request Account Deletion</h3>
+            <p className="text-xs text-red-700/80 dark:text-red-400/80 mt-1">
+              Submitting an account deletion request will send a review ticket to the Deletion Requests queue. Once approved by an administrator, your account and associated data will be permanently removed.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Request Account Deletion
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Deletion Request Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-xl max-w-md w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden p-6 space-y-4">
+            <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+              <Trash2 className="w-6 h-6" />
+              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                Request Account Deletion
+              </h3>
+            </div>
+            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] leading-relaxed">
+              Are you sure you want to request deletion of your account (<strong>{userData.email || userData.name}</strong>)? This request will be sent to Deletion Requests for review.
+            </p>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                Reason for Deletion *
+              </label>
+              <textarea
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+                placeholder="Please tell us why you want to delete your account..."
+                rows="3"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-3.5 py-2.5 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all resize-none"
+                required
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleRequestAccountDeletion}
+                disabled={isDeleting || !deleteReason.trim()}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-md shadow-sm transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? 'Submitting...' : 'Submit Request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

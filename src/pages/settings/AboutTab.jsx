@@ -14,7 +14,7 @@ export default function AboutTab() {
     {
       title: 'Application Version',
       value: 'v2.4.0 (Build 2026.08)',
-      desc: 'Smart Tourism Information System',
+      desc: 'AngkorVerses Information System',
       icon: Info,
       color: 'bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400'
     },

@@ -16,7 +16,7 @@ export default function SettingsHeader({
           System Settings
         </h1>
         <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
-          Smart Tourism Information System Admin Panel Configuration
+          AngkorVerses Information System Admin Panel Configuration
         </p>
       </div>
 

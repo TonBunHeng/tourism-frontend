@@ -81,7 +81,7 @@ export default function GeneralTab({ settings, setSettings }) {
               type="text"
               value={settings.siteName || ''}
               onChange={(e) => handleChange('siteName', e.target.value)}
-              placeholder="e.g. Smart Tourism Admin System"
+              placeholder="e.g. AngkorVerses Admin System"
               className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
             />
           </div>

@@ -30,9 +30,9 @@ export default function Settings() {
   // Comprehensive System Settings State
   const defaultSettings = {
     // General
-    siteName: "Smart Tourism Information System",
+    siteName: "AngkorVerses Information System",
     organizationName: "Ministry of Tourism & Culture Cambodia",
-    siteDescription: "Official Smart Tourism Administration & Cultural Heritage Management Portal",
+    siteDescription: "Official AngkorVerses Administration & Cultural Heritage Management Portal",
     contactEmail: "admin@tourism.gov.kh",
     contactPhone: "+855 23 888 999",
     defaultLanguage: "English",

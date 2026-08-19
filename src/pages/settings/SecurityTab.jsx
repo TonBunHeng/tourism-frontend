@@ -332,7 +332,7 @@ export default function SecurityTab({ settings, setSettings }) {
 
             <div className="w-40 h-40 mx-auto bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-3 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center">
               <img
-                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/SmartTourismAdmin:admin@tourism.gov.kh?secret=JBSWY3DPEHPK3PXP"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/AngkorVersesAdmin:admin@tourism.gov.kh?secret=JBSWY3DPEHPK3PXP"
                 alt="2FA QR Code"
                 className="w-full h-full object-contain"
               />

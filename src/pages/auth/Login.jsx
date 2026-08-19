@@ -81,12 +81,12 @@ export default function Login() {
             <div className="w-24 h-24 mb-4 drop-shadow-lg">
               <img
                 src={logo}
-                alt="Smart Tourism Logo"
+                alt="AngkorVerses Logo"
                 className="w-full h-full object-contain drop-shadow-md"
               />
             </div>
             <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-white text-center">
-              Smart Tourism
+              AngkorVerses
             </h1>
             <p className="text-blue-200/80 text-sm font-medium mt-1 text-center">
               Admin & Management Portal
@@ -107,7 +107,7 @@ export default function Login() {
 
           {/* Footer Copyright */}
           <div className="relative z-10 text-xs text-blue-200/60 font-light">
-            © {new Date().getFullYear()} Smart Tourism. All rights reserved.
+            © {new Date().getFullYear()} AngkorVerses. All rights reserved.
           </div>
         </div>
 

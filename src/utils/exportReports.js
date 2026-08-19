@@ -79,7 +79,7 @@ export const exportToPDF = ({ title, subtitle, headers, rows, filename }) => {
           { align: 'right' }
         );
         doc.text(
-          'Smart Tourism Management System - Confidential Report',
+          'AngkorVerses Management System - Confidential Report',
           14,
           200
         );

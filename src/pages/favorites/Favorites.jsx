@@ -18,9 +18,11 @@ import FavoriteModal from "./FavoriteModal";
 import FavoriteDetailsModal from "./FavoriteDetailsModal";
 import favoriteService from "../../services/favoriteService";
 import placeService from "../../services/placeService";
+import categoryService from "../../services/categoryService";
 
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
+  const [categories, setCategories] = useState(["All"]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,8 +50,22 @@ export default function Favorites() {
     price: "Free"
   });
 
-  const categories = ["All", "Temple", "Palace", "Beach", "Nature", "Market", "Farm"];
   const statuses = ["All", "Visited", "Wishlist"];
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryService.getCategories();
+        if (res.success && res.data) {
+          const names = ["All", ...res.data.map(c => c.name)];
+          setCategories(names);
+        }
+      } catch (e) {
+        console.error("Failed to fetch categories from API", e);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const loadFavorites = async () => {
     setIsLoading(true);
@@ -73,26 +89,23 @@ export default function Favorites() {
             place_id: fav.place_id,
             name: place.name || "Favorite Place",
             category: catName,
-            location: place.address || place.location || "Cambodia",
-            rating: place.rating || 4.5,
-            reviews: place.reviews_count || 0,
             icon: iconMap[catName] || Landmark,
-            description: place.description || "No description provided.",
-            savedDate: fav.saved_date || fav.created_at?.split("T")[0] || new Date().toISOString().split("T")[0],
-            visited: Boolean(fav.visited),
-            tags: [catName.toLowerCase()],
-            visitors: place.visitors_count || 100,
+            location: place.address || place.province || "Cambodia",
+            rating: place.rating || 5.0,
+            reviewsCount: place.reviews_count || 0,
+            image: place.image_url || place.image || "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&q=80&w=600",
+            status: fav.visited ? "Visited" : "Wishlist",
+            dateAdded: fav.created_at ? new Date(fav.created_at).toISOString().split('T')[0] : "Recently",
             bestTime: place.best_time || "Morning",
-            duration: place.duration || "2 hours",
             price: place.price || "Free",
-            coordinates: place.coordinates || "11.5500° N, 104.9167° E",
-            image_url: place.image_url || ""
+            description: place.description || ""
           };
         });
+
         setFavorites(formatted);
       }
     } catch (e) {
-      console.error("Failed to load favorites:", e);
+      console.error("Failed to load favorites from API", e);
     } finally {
       setIsLoading(false);
     }
@@ -102,83 +115,32 @@ export default function Favorites() {
     loadFavorites();
   }, []);
 
-  const filteredFavorites = favorites.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
-    const matchesStatus = selectedStatus === "All" ||
-                         (selectedStatus === "Visited" && item.visited) ||
-                         (selectedStatus === "Wishlist" && !item.visited);
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
-
-  const totalRecords = filteredFavorites.length;
-  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
-  const paginatedFavorites = filteredFavorites.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
-  const handleCategoryChange = (val) => { setSelectedCategory(val); setCurrentPage(1); };
-  const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
-  const handleSortChange = (val) => { setSortBy(val); setCurrentPage(1); };
-
-  const handleToggleVisited = async (id) => {
+  const handleToggleStatus = async (favId) => {
     try {
-      await favoriteService.toggleVisited(id);
+      await favoriteService.toggleVisited(favId);
       loadFavorites();
     } catch (e) {
-      alert(e.message || "Failed to update visited status.");
+      console.error("Failed to toggle visited status", e);
     }
   };
 
-  const handleDelete = async (idOrPlaceId) => {
-    if (window.confirm("Are you sure you want to remove this favorite?")) {
-      try {
-        await favoriteService.removeFavorite(idOrPlaceId);
-        loadFavorites();
-      } catch (e) {
-        alert(e.message || "Failed to remove favorite.");
-      }
-    }
-  };
-
-  const handleViewDetails = (favorite) => {
-    setSelectedFavorite(favorite);
-    setIsDetailsOpen(true);
-  };
-
-  const handleToggleSelect = (id) => {
-    setSelectedFavorites(prev =>
-      prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]
-    );
-  };
-
-  const handleSelectAll = () => {
-    if (selectedFavorites.length === filteredFavorites.length) {
-      setSelectedFavorites([]);
-    } else {
-      setSelectedFavorites(filteredFavorites.map(f => f.id));
-    }
-  };
-
-  const handleAddSubmit = async (e) => {
-    e.preventDefault();
-    if (!newPlace.name || !newPlace.location) {
-      alert("Please fill in required fields");
-      return;
-    }
+  const handleDeleteFavorite = async (placeId) => {
+    if (!window.confirm("Are you sure you want to remove this favorite?")) return;
     try {
-      // Find or create place first
-      const placeRes = await placeService.createPlace({
-        name: newPlace.name,
-        address: newPlace.location,
-        description: newPlace.description,
-        status: "Active"
-      });
-      if (placeRes.success && placeRes.data) {
-        await favoriteService.addFavorite(placeRes.data.id);
+      await favoriteService.removeFavorite(placeId);
+      loadFavorites();
+    } catch (e) {
+      console.error("Failed to delete favorite", e);
+    }
+  };
+
+  const handleCreatePlace = async (e) => {
+    e.preventDefault();
+    if (!newPlace.name) return;
+    try {
+      const res = await placeService.createPlace(newPlace);
+      if (res.success && res.data) {
+        await favoriteService.addFavorite({ place_id: res.data.id, visited: false });
         setIsAddOpen(false);
         setNewPlace({
           name: "",
@@ -190,175 +152,116 @@ export default function Favorites() {
         });
         loadFavorites();
       }
-    } catch (err) {
-      alert(err.message || "Failed to add favorite place.");
+    } catch (e) {
+      console.error("Failed to create place / add favorite", e);
     }
   };
 
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory("All");
-    setSelectedStatus("All");
-    setSortBy("recent");
-    setCurrentPage(1);
-  };
+  // Filter and Sort
+  const filteredFavorites = favorites.filter((fav) => {
+    const matchesSearch =
+      fav.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      fav.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || fav.category === selectedCategory;
+    const matchesStatus =
+      selectedStatus === "All" || fav.status === selectedStatus;
+    return matchesSearch && matchesCategory && matchesStatus;
+  }).sort((a, b) => {
+    if (sortBy === "rating") return b.rating - a.rating;
+    if (sortBy === "name") return a.name.localeCompare(b.name);
+    return new Date(b.dateAdded) - new Date(a.dateAdded);
+  });
 
-  const handleReset = () => {
-    loadFavorites();
-  };
-
-  const handleBulkDelete = async () => {
-    if (!selectedFavorites.length) return;
-    if (window.confirm(`Remove ${selectedFavorites.length} item(s) from favorites?`)) {
-      for (const id of selectedFavorites) {
-        try { await favoriteService.removeFavorite(id); } catch (e) {}
-      }
-      setSelectedFavorites([]);
-      loadFavorites();
-    }
-  };
-
-  const handleBulkMarkVisited = async () => {
-    if (!selectedFavorites.length) return;
-    for (const id of selectedFavorites) {
-      try { await favoriteService.toggleVisited(id); } catch (e) {}
-    }
-    setSelectedFavorites([]);
-    loadFavorites();
-  };
+  const totalPages = Math.ceil(filteredFavorites.length / itemsPerPage) || 1;
+  const paginatedFavorites = filteredFavorites.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
-    <div className="flex flex-col">
-      {/* Header */}
+    <div className="flex flex-col gap-6">
       <FavoritesHeader
-        onReset={handleReset}
-        onAddNew={() => setIsAddOpen(true)}
+        totalCount={favorites.length}
+        onAddClick={() => setIsAddOpen(true)}
       />
 
-      {/* Stats Cards */}
       <FavoritesStats favorites={favorites} />
 
-      {/* Main Content */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
-        {/* Toolbar */}
-        <FavoritesToolbar
-          totalCount={filteredFavorites.length}
-          selectedCount={selectedFavorites.length}
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-          categories={categories}
-          selectedStatus={selectedStatus}
-          onStatusChange={handleStatusChange}
-          statuses={statuses}
-          sortBy={sortBy}
-          onSortChange={handleSortChange}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          onClearFilters={handleClearFilters}
-          onBulkDelete={handleBulkDelete}
-          onBulkMarkVisited={handleBulkMarkVisited}
-          onDeselectAll={() => setSelectedFavorites([])}
-        />
-
-        {/* Grid or List View */}
-        {isLoading ? (
-          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
-            Loading favorites from API...
-          </div>
-        ) : viewMode === "grid" ? (
-          <FavoritesGrid
-            favorites={paginatedFavorites}
-            selectedFavorites={selectedFavorites}
-            onToggleSelect={handleToggleSelect}
-            onToggleVisited={handleToggleVisited}
-            onViewDetails={handleViewDetails}
-            onDelete={handleDelete}
-          />
-        ) : (
-          <FavoritesList
-            favorites={paginatedFavorites}
-            selectedFavorites={selectedFavorites}
-            onToggleSelect={handleToggleSelect}
-            onSelectAll={handleSelectAll}
-            isAllSelected={selectedFavorites.length === filteredFavorites.length && filteredFavorites.length > 0}
-            onToggleVisited={handleToggleVisited}
-            onViewDetails={handleViewDetails}
-            onDelete={handleDelete}
-            startIndex={startIndex}
-          />
-        )}
-
-        {/* Pagination Footer */}
-        {totalRecords > 0 && (
-          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
-            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
-              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{" "}
-              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{" "}
-              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> favorites
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                title="Previous Page"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              {[...Array(totalPages)].map((_, idx) => {
-                const pageNum = idx + 1;
-                const isActive = pageNum === currentPage;
-                return (
-                  <button
-                    key={pageNum}
-                    type="button"
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? "bg-[var(--color-primary)] text-white shadow-sm font-bold"
-                        : "border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                title="Next Page"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Add New Place Modal */}
-      <FavoriteModal
-        isOpen={isAddOpen}
-        newPlace={newPlace}
-        onNewPlaceChange={setNewPlace}
-        onClose={() => setIsAddOpen(false)}
-        onSubmit={handleAddSubmit}
+      <FavoritesToolbar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        categories={categories}
+        statuses={statuses}
       />
 
-      {/* Details Modal */}
+      {viewMode === "grid" ? (
+        <FavoritesGrid
+          favorites={paginatedFavorites}
+          selectedFavorites={selectedFavorites}
+          setSelectedFavorites={setSelectedFavorites}
+          onToggleStatus={handleToggleStatus}
+          onDelete={handleDeleteFavorite}
+          onView={(fav) => { setSelectedFavorite(fav); setIsDetailsOpen(true); }}
+        />
+      ) : (
+        <FavoritesList
+          favorites={paginatedFavorites}
+          selectedFavorites={selectedFavorites}
+          setSelectedFavorites={setSelectedFavorites}
+          onToggleStatus={handleToggleStatus}
+          onDelete={handleDeleteFavorite}
+          onView={(fav) => { setSelectedFavorite(fav); setIsDetailsOpen(true); }}
+        />
+      )}
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 rounded-lg border">
+        <p className="text-xs text-gray-700">
+          Showing <span className="font-medium">{paginatedFavorites.length}</span> of{" "}
+          <span className="font-medium">{filteredFavorites.length}</span> items
+        </p>
+        <div className="flex gap-2">
+          <button
+            disabled={currentPage <= 1}
+            onClick={() => setCurrentPage(p => p - 1)}
+            className="flex items-center gap-1 px-3 py-1 text-xs border rounded-md disabled:opacity-40 hover:bg-gray-50"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" /> Previous
+          </button>
+          <button
+            disabled={currentPage >= totalPages}
+            onClick={() => setCurrentPage(p => p + 1)}
+            className="flex items-center gap-1 px-3 py-1 text-xs border rounded-md disabled:opacity-40 hover:bg-gray-50"
+          >
+            Next <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Modals */}
+      <FavoriteModal
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        newPlace={newPlace}
+        setNewPlace={setNewPlace}
+        categories={categories}
+        onSubmit={handleCreatePlace}
+      />
+
       <FavoriteDetailsModal
         isOpen={isDetailsOpen}
-        favorite={selectedFavorite}
         onClose={() => setIsDetailsOpen(false)}
-        onDelete={handleDelete}
-        onToggleVisited={handleToggleVisited}
+        favorite={selectedFavorite}
+        onToggleStatus={handleToggleStatus}
       />
     </div>
   );

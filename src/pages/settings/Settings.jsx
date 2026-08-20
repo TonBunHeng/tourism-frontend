@@ -20,8 +20,10 @@ import IntegrationTab from "./IntegrationTab";
 import BackupTab from "./BackupTab";
 import AboutTab from "./AboutTab";
 import settingService from "../../services/settingService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Settings() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [activeTab, setActiveTab] = useState("general");
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -131,16 +133,24 @@ export default function Settings() {
       await settingService.updateSettings(settingsArray);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
+      showSuccess("Your system settings have been saved and applied successfully.", "Settings Saved");
     } catch (e) {
-      alert(e.message || "Failed to save settings to backend.");
+      showError(e.message || "Failed to save settings to backend.", "Save Failed");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleReset = () => {
-    if (window.confirm("Are you sure you want to reset all settings to system defaults?")) {
+  const handleReset = async () => {
+    const confirmed = await showConfirm({
+      title: "Reset Settings",
+      message: "Are you sure you want to reset all settings in this section to system defaults? Any unsaved modifications will be reverted.",
+      confirmText: "Reset to Default",
+      type: "warning"
+    });
+    if (confirmed) {
       setSettings(defaultSettings);
+      showSuccess("Settings have been restored to system defaults.", "Settings Reset");
     }
   };
 

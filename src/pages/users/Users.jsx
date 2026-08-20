@@ -8,8 +8,10 @@ import UserModal from "./UserModal";
 import UserDetailsModal from "./UserDetailsModal";
 import userService from "../../services/userService";
 import deletionRequestService from "../../services/deletionRequestService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Users() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -109,23 +111,30 @@ export default function Users() {
   const handleDelete = async (id) => {
     const user = users.find(u => u.id === id);
     const userName = user?.name || `User #${id}`;
-    if (window.confirm(`Submit deletion request for user account "${userName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
-      try {
-        await deletionRequestService.createRequest({
-          request_type: 'account',
-          reason: `Request to delete user account: ${userName}`,
-          urgency: 'high',
-          items: [{
-            item_type: 'user',
-            item_id: id,
-            item_name: userName,
-            category: user?.role || 'User'
-          }]
-        });
-        alert(`Deletion request for user "${userName}" has been submitted to Deletion Requests.`);
-      } catch (e) {
-        alert(e.message || "Failed to submit deletion request.");
-      }
+    const confirmed = await showConfirm({
+      title: 'Submit Deletion Request',
+      message: `Are you sure you want to submit a deletion request for user account "${userName}"?\n\nThis will be sent to Deletion Requests for review and approval.`,
+      confirmText: 'Submit Deletion',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'account',
+        reason: `Request to delete user account: ${userName}`,
+        urgency: 'high',
+        items: [{
+          item_type: 'user',
+          item_id: id,
+          item_name: userName,
+          category: user?.role || 'User'
+        }]
+      });
+      showSuccess(`Deletion request for user "${userName}" has been submitted to Deletion Requests.`, 'Request Submitted');
+    } catch (e) {
+      showError(e.message || "Failed to submit deletion request.", 'Submission Failed');
     }
   };
 
@@ -177,13 +186,15 @@ export default function Users() {
     try {
       if (editingUser) {
         await userService.updateUser(editingUser.id, formData);
+        showSuccess(`User account "${formData.name}" has been updated successfully.`, 'User Updated');
       } else {
         await userService.createUser(formData);
+        showSuccess(`User account "${formData.name}" has been created successfully.`, 'User Created');
       }
       closeModal();
       loadUsers();
     } catch (e) {
-      alert(e.message || "Failed to save user.");
+      showError(e.message || "Failed to save user.", 'Save Failed');
     }
   };
 

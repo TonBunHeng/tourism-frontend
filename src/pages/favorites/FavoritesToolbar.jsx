@@ -1,161 +1,230 @@
-import { Search, ChevronDown, X, Trash2, Check } from 'lucide-react';
+import React from 'react';
+import { Search, ChevronDown, X, Trash2, CheckCircle2, LayoutGrid, List, RotateCcw } from 'lucide-react';
 
 export default function FavoritesToolbar({
-  totalCount,
-  selectedCount,
-  searchTerm,
+  totalCount = 0,
+  selectedCount = 0,
+  searchTerm = '',
   onSearchChange,
-  selectedCategory,
+  setSearchTerm,
+  selectedCategory = 'All',
   onCategoryChange,
-  categories,
-  selectedStatus,
+  setSelectedCategory,
+  categories = ['All'],
+  selectedStatus = 'All',
   onStatusChange,
-  statuses,
-  sortBy,
+  setSelectedStatus,
+  statuses = ['All', 'Visited', 'To Visit'],
+  sortBy = 'recent',
   onSortChange,
-  viewMode,
+  setSortBy,
+  viewMode = 'grid',
   onViewModeChange,
+  setViewMode,
   onClearFilters,
   onBulkDelete,
   onBulkMarkVisited,
   onDeselectAll
 }) {
-  const hasActiveFilters = searchTerm || selectedCategory !== 'All' || selectedStatus !== 'All';
+  const handleSearch = onSearchChange || setSearchTerm || (() => {});
+  const handleCategory = onCategoryChange || setSelectedCategory || (() => {});
+  const handleStatus = onStatusChange || setSelectedStatus || (() => {});
+  const handleSort = onSortChange || setSortBy || (() => {});
+  const handleViewMode = onViewModeChange || setViewMode || (() => {});
+
+  const hasActiveFilters = Boolean(
+    (searchTerm && searchTerm.trim() !== '') ||
+    (selectedCategory && selectedCategory !== 'All') ||
+    (selectedStatus && selectedStatus !== 'All') ||
+    (sortBy && sortBy !== 'recent')
+  );
+
+  const handleReset = () => {
+    if (onClearFilters) {
+      onClearFilters();
+    } else {
+      handleSearch('');
+      handleCategory('All');
+      handleStatus('All');
+      handleSort('recent');
+    }
+  };
 
   return (
-    <div className="px-4 md:px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h2 className="text-lg md:text-xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">All Favorites</h2>
-          <span className="text-sm text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] px-2.5 py-0.5 rounded-full">
-            {totalCount}
+    <div className="px-4 md:px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        {/* Left: Section title & counters */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <h2 className="text-base md:text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+            Saved Destinations
+          </h2>
+          <span className="text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-neutral-badge-dark-bg)] px-2.5 py-0.5 rounded-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            {totalCount} {totalCount === 1 ? 'place' : 'places'}
           </span>
           {selectedCount > 0 && (
-            <span className="text-sm text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)] bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] px-2.5 py-0.5 rounded-full">
+            <span className="text-xs font-semibold text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)] bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] border border-[var(--color-rose-badge-border)] dark:border-[var(--color-rose-badge-dark-border)] px-2.5 py-0.5 rounded-full animate-in fade-in">
               {selectedCount} selected
             </span>
           )}
         </div>
-        
-        <div className="flex flex-wrap gap-2">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[140px] sm:flex-none">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]" />
+
+        {/* Right: Controls & Filters */}
+        <div className="flex items-center flex-wrap gap-2.5">
+          {/* Search Bar */}
+          <div className="relative flex-1 sm:flex-none sm:w-52 min-w-[160px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
             <input
               type="text"
               placeholder="Search favorites..."
               value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent sm:w-40 text-sm bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]"
+              onChange={(e) => handleSearch(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 text-xs md:text-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 focus:border-[var(--color-primary)] transition-all"
             />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => handleSearch('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted-light)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] p-0.5 rounded-full"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Category Filter */}
           <div className="relative">
             <select
               value={selectedCategory}
-              onChange={(e) => onCategoryChange(e.target.value)}
-              className="appearance-none pl-4 pr-10 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              onChange={(e) => handleCategory(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-xs md:text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40"
             >
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat === 'All' ? 'All Categories' : cat}
+                </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
           </div>
 
           {/* Status Filter */}
           <div className="relative">
             <select
               value={selectedStatus}
-              onChange={(e) => onStatusChange(e.target.value)}
-              className="appearance-none pl-4 pr-10 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              onChange={(e) => handleStatus(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-xs md:text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40"
             >
-              {statuses.map(status => (
-                <option key={status} value={status}>{status}</option>
+              {statuses.map((st) => (
+                <option key={st} value={st}>
+                  {st === 'All' ? 'All Statuses' : st}
+                </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
           </div>
 
-          {/* Sort By */}
+          {/* Sort Dropdown */}
           <div className="relative">
             <select
               value={sortBy}
-              onChange={(e) => onSortChange(e.target.value)}
-              className="appearance-none pl-4 pr-10 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+              onChange={(e) => handleSort(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-xs md:text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40"
             >
               <option value="recent">Most Recent</option>
-              <option value="oldest">Oldest</option>
-              <option value="highest">Highest Rated</option>
-              <option value="lowest">Lowest Rated</option>
+              <option value="oldest">Oldest Added</option>
+              <option value="highest">Highest Rating</option>
+              <option value="lowest">Lowest Rating</option>
+              <option value="name">Name (A - Z)</option>
               <option value="most_reviews">Most Reviews</option>
-              <option value="most_visitors">Most Visitors</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
           </div>
 
-          {/* View Toggle */}
-          <div className="flex bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] rounded-md p-1 self-start sm:self-auto">
+          {/* View Toggle (Grid / List) */}
+          <div className="flex bg-[var(--color-border-light)] dark:bg-[var(--color-surface-hover-dark)] p-0.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             <button
-              onClick={() => onViewModeChange('grid')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] shadow-sm' : 'hover:bg-[var(--color-border-subtle-light)] dark:hover:bg-[var(--color-border-dark)]'}`}
+              type="button"
+              onClick={() => handleViewMode('grid')}
+              className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-primary)] shadow-sm font-semibold'
+                  : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)]'
+              }`}
               title="Grid View"
             >
-              <svg className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
+              <LayoutGrid className="w-4 h-4" />
             </button>
             <button
-              onClick={() => onViewModeChange('list')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] shadow-sm' : 'hover:bg-[var(--color-border-subtle-light)] dark:hover:bg-[var(--color-border-dark)]'}`}
+              type="button"
+              onClick={() => handleViewMode('list')}
+              className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-primary)] shadow-sm font-semibold'
+                  : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)]'
+              }`}
               title="List View"
             >
-              <svg className="w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <List className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Clear Filters */}
+          {/* Reset Filters */}
           {hasActiveFilters && (
             <button
-              onClick={onClearFilters}
-              className="px-3 py-2 text-sm text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)] hover:bg-[var(--color-rose-badge-bg)] dark:hover:bg-[var(--color-rose-badge-dark-bg)] rounded-md transition-colors flex items-center gap-1"
+              type="button"
+              onClick={handleReset}
+              className="flex items-center gap-1 px-3 py-2 text-xs md:text-sm font-medium text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+              title="Reset all filters"
             >
-              <X className="w-4 h-4" />
-              Clear
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Bulk Actions */}
+      {/* Bulk Action Bar (Visible when items are selected) */}
       {selectedCount > 0 && (
-        <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-wrap">
-          <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-            {selectedCount} place(s) selected
-          </span>
-          <button
-            onClick={onBulkDelete}
-            className="px-3 py-1.5 text-sm text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors flex items-center gap-1"
-          >
-            <Trash2 className="w-4 h-4" />
-            Remove
-          </button>
-          <button
-            onClick={onBulkMarkVisited}
-            className="px-3 py-1.5 text-sm text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors flex items-center gap-1"
-          >
-            <Check className="w-4 h-4" />
-            Mark as Visited
-          </button>
-          <button
-            onClick={onDeselectAll}
-            className="px-3 py-1.5 text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
-          >
-            Deselect All
-          </button>
+        <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex-wrap animate-in fade-in slide-in-from-top-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+              Action on {selectedCount} selected:
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {onBulkMarkVisited && (
+              <button
+                type="button"
+                onClick={onBulkMarkVisited}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)] hover:opacity-90 transition-all cursor-pointer"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Mark as Visited</span>
+              </button>
+            )}
+
+            {onBulkDelete && (
+              <button
+                type="button"
+                onClick={onBulkDelete}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] border border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] hover:opacity-90 transition-all cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Remove</span>
+              </button>
+            )}
+
+            {onDeselectAll && (
+              <button
+                type="button"
+                onClick={onDeselectAll}
+                className="px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors cursor-pointer border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
+              >
+                Deselect All
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

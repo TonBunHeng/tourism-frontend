@@ -1,12 +1,19 @@
 import api from './api';
 
 export const favoriteService = {
-  async getFavorites() {
-    return await api.get('/favorites');
+  async getFavorites(params = {}) {
+    return await api.get('/favorites', { params });
   },
 
-  async addFavorite(placeId, visited = false) {
-    return await api.post('/favorites', { place_id: placeId, visited });
+  async getAnalytics(params = {}) {
+    return await api.get('/favorites/analytics', { params });
+  },
+
+  async addFavorite(placeIdOrData, visited = false) {
+    const payload = typeof placeIdOrData === 'object' && placeIdOrData !== null
+      ? placeIdOrData
+      : { place_id: placeIdOrData, visited };
+    return await api.post('/favorites', payload);
   },
 
   async removeFavorite(placeId) {

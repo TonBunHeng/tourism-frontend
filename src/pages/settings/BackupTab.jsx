@@ -12,8 +12,10 @@ import {
   FileSpreadsheet,
   X
 } from 'lucide-react';
+import { useAlert } from '../../context/AlertContext';
 
 export default function BackupTab({ settings, setSettings }) {
+  const { showConfirm, showSuccess, showInfo } = useAlert();
   const [backups, setBackups] = useState([
     {
       id: '1',
@@ -75,11 +77,18 @@ export default function BackupTab({ settings, setSettings }) {
     }, 2000);
   };
 
-  const handleDeleteBackup = (id) => {
-    if (window.confirm('Are you sure you want to delete this backup file?')) {
+  const handleDeleteBackup = async (id) => {
+    const backup = backups.find(b => b.id === id);
+    const backupName = backup?.name || 'this backup file';
+    const confirmed = await showConfirm({
+      title: 'Delete Backup File',
+      message: `Are you sure you want to permanently delete "${backupName}" from system storage?`,
+      confirmText: 'Delete File',
+      type: 'danger'
+    });
+    if (confirmed) {
       setBackups((prev) => prev.filter((b) => b.id !== id));
-      setNotification({ type: 'info', message: 'Backup file removed from storage.' });
-      setTimeout(() => setNotification(null), 3000);
+      showSuccess(`Backup file "${backupName}" has been removed from storage.`, 'Backup Deleted');
     }
   };
 
@@ -252,8 +261,8 @@ export default function BackupTab({ settings, setSettings }) {
                     <div className="flex items-center justify-end space-x-2">
                       <button
                         type="button"
-                        onClick={() => alert(`Downloading ${b.name}...`)}
-                        className="p-1 text-[var(--color-text-muted-light)] hover:text-[var(--color-primary)]"
+                        onClick={() => showInfo(`Preparing download for backup archive "${b.name}" (${b.size}).`, 'Download Started')}
+                        className="p-1 text-[var(--color-text-muted-light)] hover:text-[var(--color-primary)] cursor-pointer"
                         title="Download Backup"
                       >
                         <Download className="w-4 h-4" />

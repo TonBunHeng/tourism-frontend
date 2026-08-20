@@ -22,8 +22,10 @@ import PlaceDetailsModal from './PlaceDetailsModal';
 import placeService from '../../services/placeService';
 import categoryService from '../../services/categoryService';
 import deletionRequestService from '../../services/deletionRequestService';
+import { useAlert } from '../../context/AlertContext';
 
 export default function Places() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [places, setPlaces] = useState([]);
   const [categoriesList, setCategoriesList] = useState(['All', 'Temple', 'Palace', 'Beach', 'Nature', 'Market', 'Farm']);
   const [isLoading, setIsLoading] = useState(true);
@@ -173,23 +175,30 @@ export default function Places() {
   const handleDelete = async (id) => {
     const place = places.find(p => p.id === id);
     const placeName = place?.name || `Place #${id}`;
-    if (window.confirm(`Submit deletion request for "${placeName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
-      try {
-        await deletionRequestService.createRequest({
-          request_type: 'item',
-          reason: `Request to delete destination: ${placeName}`,
-          urgency: 'medium',
-          items: [{
-            item_type: 'place',
-            item_id: id,
-            item_name: placeName,
-            category: place?.category || 'Place',
-          }]
-        });
-        alert(`Deletion request for "${placeName}" has been submitted to Deletion Requests.`);
-      } catch (e) {
-        alert(e.message || 'Failed to submit deletion request.');
-      }
+    const confirmed = await showConfirm({
+      title: 'Submit Deletion Request',
+      message: `Are you sure you want to submit a deletion request for "${placeName}"?\n\nThis destination deletion will be submitted to Deletion Requests for review and approval.`,
+      confirmText: 'Submit Deletion',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'item',
+        reason: `Request to delete destination: ${placeName}`,
+        urgency: 'medium',
+        items: [{
+          item_type: 'place',
+          item_id: id,
+          item_name: placeName,
+          category: place?.category || 'Place',
+        }]
+      });
+      showSuccess(`Deletion request for "${placeName}" has been submitted to Deletion Requests.`, 'Request Submitted');
+    } catch (e) {
+      showError(e.message || 'Failed to submit deletion request.', 'Submission Failed');
     }
   };
 
@@ -256,13 +265,15 @@ export default function Places() {
 
       if (editingPlace) {
         await placeService.updatePlace(editingPlace.id, payload);
+        showSuccess(`Place "${formData.name}" has been updated successfully.`, 'Place Updated');
       } else {
         await placeService.createPlace(payload);
+        showSuccess(`Place "${formData.name}" has been created successfully.`, 'Place Created');
       }
       closeModal();
       loadPlaces();
     } catch (e) {
-      alert(e.message || 'Failed to save place.');
+      showError(e.message || 'Failed to save place.', 'Save Failed');
     }
   };
 

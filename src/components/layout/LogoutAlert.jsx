@@ -61,8 +61,8 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
 
         {/* Icon */}
         <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
-            <LogOut size={32} className="text-red-500 dark:text-red-400" />
+          <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center animate-pulse-glow-danger">
+            <LogOut size={32} className="text-red-500 dark:text-red-400 animate-alert-shake" />
           </div>
         </div>
 

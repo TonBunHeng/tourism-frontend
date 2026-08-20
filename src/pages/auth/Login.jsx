@@ -4,8 +4,10 @@ import { Mail, Lock, Eye, EyeOff, Sun, Moon, ShieldCheck, ArrowRight } from "luc
 import logo from "../../assets/images/tourism_logo.png";
 import { getInitialTheme, applyTheme, isDarkTheme, THEME_CHANGE_EVENT } from "../../utils/Theme";
 import authService from "../../services/authService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Login() {
+  const { showInfo } = useAlert();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "admin@tourism.gov.kh",
@@ -173,8 +175,11 @@ export default function Login() {
                 </label>
                 <a
                   href="#forgot"
-                  onClick={(e) => { e.preventDefault(); alert("Please contact the super administrator to reset your password."); }}
-                  className="text-xs text-[#003E83] dark:text-[#22b7ab] hover:underline font-medium"
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    showInfo("Please contact the Super Administrator (admin@tourism.gov.kh) to securely reset your credentials.", "Password Reset Request"); 
+                  }}
+                  className="text-xs text-[#003E83] dark:text-[#22b7ab] hover:underline font-medium cursor-pointer"
                 >
                   Forgot password?
                 </a>

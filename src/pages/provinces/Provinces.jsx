@@ -9,8 +9,10 @@ import ProvinceDetailsModal from './ProvinceDetailsModal';
 import ProvinceModal from './ProvinceModal';
 import provinceService from '../../services/provinceService';
 import deletionRequestService from '../../services/deletionRequestService';
+import { useAlert } from '../../context/AlertContext';
 
 export default function Provinces() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [provinces, setProvinces] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -90,23 +92,30 @@ export default function Provinces() {
   const handleDelete = async (id) => {
     const province = provinces.find(p => p.id === id);
     const provName = province?.name || `Province #${id}`;
-    if (window.confirm(`Submit deletion request for province "${provName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
-      try {
-        await deletionRequestService.createRequest({
-          request_type: 'item',
-          reason: `Request to delete province: ${provName}`,
-          urgency: 'high',
-          items: [{
-            item_type: 'province',
-            item_id: id,
-            item_name: provName,
-            category: 'Province'
-          }]
-        });
-        alert(`Deletion request for "${provName}" has been submitted to Deletion Requests.`);
-      } catch (e) {
-        alert(e.message || 'Failed to submit deletion request.');
-      }
+    const confirmed = await showConfirm({
+      title: 'Submit Deletion Request',
+      message: `Are you sure you want to submit a deletion request for province "${provName}"?\n\nThis will be sent to Deletion Requests for review and approval.`,
+      confirmText: 'Submit Deletion',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'item',
+        reason: `Request to delete province: ${provName}`,
+        urgency: 'high',
+        items: [{
+          item_type: 'province',
+          item_id: id,
+          item_name: provName,
+          category: 'Province'
+        }]
+      });
+      showSuccess(`Deletion request for "${provName}" has been submitted to Deletion Requests.`, 'Request Submitted');
+    } catch (e) {
+      showError(e.message || 'Failed to submit deletion request.', 'Submission Failed');
     }
   };
 
@@ -155,13 +164,15 @@ export default function Provinces() {
     try {
       if (editingProvince) {
         await provinceService.updateProvince(editingProvince.id, formData);
+        showSuccess(`Province "${formData.name}" has been updated successfully.`, 'Province Updated');
       } else {
         await provinceService.createProvince(formData);
+        showSuccess(`Province "${formData.name}" has been created successfully.`, 'Province Created');
       }
       closeModal();
       loadProvinces();
     } catch (e) {
-      alert(e.message || 'Failed to save province.');
+      showError(e.message || 'Failed to save province.', 'Save Failed');
     }
   };
 

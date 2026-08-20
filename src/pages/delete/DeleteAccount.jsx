@@ -9,8 +9,10 @@ import DeletionDetailsModal from "./DeletionDetailsModal";
 import DeletionConfirmModal from "./DeletionConfirmModal";
 import DeletionAnalyticsModal from "./DeletionAnalyticsModal";
 import deletionRequestService from "../../services/deletionRequestService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function DeleteAccount() {
+  const { showSuccess, showError } = useAlert();
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -174,10 +176,11 @@ export default function DeleteAccount() {
       setConfirmAction(null);
       setAdminNotes("");
       setSelectedRequest(null);
-      alert(res.message || (newStatus === "approved" ? "Deletion request approved and item/account deleted." : "Deletion request rejected."));
+      const msg = res.message || (newStatus === "approved" ? "Deletion request approved and item/account deleted." : "Deletion request rejected.");
+      showSuccess(msg, newStatus === "approved" ? "Request Approved" : "Request Rejected");
       loadRequests();
     } catch (e) {
-      alert(e.message || "Failed to update request status.");
+      showError(e.message || "Failed to update request status.", "Action Failed");
     }
   };
 

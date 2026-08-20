@@ -8,11 +8,12 @@ import GalleryList from "./GalleryList";
 import GalleryUploadModal from "./GalleryUploadModal";
 import GalleryEditModal from "./GalleryEditModal";
 import GalleryPreviewModal from "./GalleryPreviewModal";
-import categoryService from "../../services/categoryService";
 import galleryService from "../../services/galleryService";
 import deletionRequestService from "../../services/deletionRequestService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Gallery() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [mediaItems, setMediaItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -110,23 +111,30 @@ export default function Gallery() {
   const handleDelete = async (id) => {
     const item = mediaItems.find(m => m.id === id);
     const mediaTitle = item?.title || `Media #${id}`;
-    if (window.confirm(`Submit deletion request for "${mediaTitle}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
-      try {
-        await deletionRequestService.createRequest({
-          request_type: 'item',
-          reason: `Request to delete media item: ${mediaTitle}`,
-          urgency: 'low',
-          items: [{
-            item_type: 'gallery',
-            item_id: id,
-            item_name: mediaTitle,
-            category: item?.category || 'Gallery'
-          }]
-        });
-        alert(`Deletion request for "${mediaTitle}" has been submitted to Deletion Requests.`);
-      } catch (e) {
-        alert(e.message || 'Failed to submit deletion request.');
-      }
+    const confirmed = await showConfirm({
+      title: 'Submit Deletion Request',
+      message: `Are you sure you want to submit a deletion request for "${mediaTitle}"?\n\nThis will be sent to Deletion Requests for review and approval.`,
+      confirmText: 'Submit Deletion',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'item',
+        reason: `Request to delete media item: ${mediaTitle}`,
+        urgency: 'low',
+        items: [{
+          item_type: 'gallery',
+          item_id: id,
+          item_name: mediaTitle,
+          category: item?.category || 'Gallery'
+        }]
+      });
+      showSuccess(`Deletion request for "${mediaTitle}" has been submitted to Deletion Requests.`, 'Request Submitted');
+    } catch (e) {
+      showError(e.message || 'Failed to submit deletion request.', 'Submission Failed');
     }
   };
 
@@ -152,9 +160,10 @@ export default function Gallery() {
       });
       setIsEditOpen(false);
       setEditingMedia(null);
+      showSuccess(`Media item "${editingMedia.title}" has been updated successfully.`, 'Media Updated');
       loadMedia();
     } catch (err) {
-      alert(err.message || "Failed to update media item.");
+      showError(err.message || "Failed to update media item.", 'Update Failed');
     }
   };
 
@@ -170,9 +179,10 @@ export default function Gallery() {
         status: newMedia.status || "Published"
       });
       setIsUploadModalOpen(false);
+      showSuccess(`Media item "${newMedia.title}" has been created and published successfully.`, 'Media Uploaded');
       loadMedia();
     } catch (err) {
-      alert(err.message || "Failed to create media item.");
+      showError(err.message || "Failed to create media item.", 'Upload Failed');
     }
   };
 

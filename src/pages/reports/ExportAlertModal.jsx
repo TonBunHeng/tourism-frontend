@@ -48,12 +48,12 @@ export default function ExportAlertModal({ isOpen, format, activeTab, recordCoun
         {/* Icon */}
         <div className="flex justify-center mb-4">
           {isPDF ? (
-            <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
-              <FileText size={32} className="text-red-500 dark:text-red-400" />
+            <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center animate-pulse-glow-danger">
+              <FileText size={32} className="text-red-500 dark:text-red-400 animate-alert-pop" />
             </div>
           ) : (
-            <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
-              <FileSpreadsheet size={32} className="text-emerald-600 dark:text-emerald-400" />
+            <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center animate-pulse-glow-success">
+              <FileSpreadsheet size={32} className="text-emerald-600 dark:text-emerald-400 animate-alert-pop" />
             </div>
           )}
         </div>

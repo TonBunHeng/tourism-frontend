@@ -152,10 +152,10 @@ export default function Profile() {
   }, [loadUserData, populateUserData]);
 
   const userStats = [
-    { label: 'Total Places', value: String(statsData.totalPlaces), icon: MapPinned, color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' },
-    { label: 'Total Reviews', value: String(statsData.totalReviews), icon: MessageSquare, color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]' },
-    { label: 'Total Favorites', value: String(statsData.totalFavorites), icon: Heart, color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]', bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]' },
-    { label: 'Total Photos', value: String(statsData.totalPhotos), icon: Image, color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]', bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]' }
+    { label: 'Total Places', value: String(statsData.totalPlaces), subtext: 'Destinations created', icon: MapPinned, color: 'text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]', bg: 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)]' },
+    { label: 'Total Reviews', value: String(statsData.totalReviews), subtext: 'Traveler feedback ratings', icon: MessageSquare, color: 'text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]', bg: 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)]' },
+    { label: 'Total Favorites', value: String(statsData.totalFavorites), subtext: 'Saved wishlist destinations', icon: Heart, color: 'text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]', bg: 'bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)]' },
+    { label: 'Total Photos', value: String(statsData.totalPhotos), subtext: 'Gallery uploads & media', icon: Image, color: 'text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]', bg: 'bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)]' }
   ];
 
   const achievements = [

@@ -5,8 +5,10 @@ import ChatsList from "./ChatsList";
 import ChatWindow from "./ChatWindow";
 import ChatUserInfo from "./ChatUserInfo";
 import chatService from "../../services/chatService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Chats() {
+  const { showError } = useAlert();
   const [chats, setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -105,7 +107,7 @@ export default function Chats() {
       await chatService.sendMessage(selectedChat.id, messageText);
       loadChats();
     } catch (e) {
-      alert(e.message || "Failed to send message.");
+      showError(e.message || "Failed to send message.", "Send Message Failed");
     }
   };
 

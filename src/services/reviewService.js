@@ -21,7 +21,16 @@ export const reviewService = {
     return await api.put(`/reviews/${id}`, data);
   },
 
+  async updateReviewStatus(id, status) {
+    return await api.put(`/reviews/${id}/status`, { status });
+  },
+
   async addReply(reviewId, comment) {
+    return await api.post(`/reviews/${reviewId}/replies`, { comment });
+  },
+
+  async replyToReview(reviewId, data) {
+    const comment = typeof data === 'object' ? data.comment : data;
     return await api.post(`/reviews/${reviewId}/replies`, { comment });
   },
 

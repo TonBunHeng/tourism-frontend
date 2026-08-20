@@ -9,8 +9,10 @@ import EventModal, { calculateAutoStatus } from './EventModal';
 import EventDetailsModal from './EventDetailsModal';
 import eventService from '../../services/eventService';
 import deletionRequestService from '../../services/deletionRequestService';
+import { useAlert } from '../../context/AlertContext';
 
 export default function Events() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
@@ -126,23 +128,30 @@ export default function Events() {
   const handleDelete = async (eventId) => {
     const event = events.find(e => e.id === eventId);
     const eventTitle = event?.title || `Event #${eventId}`;
-    if (window.confirm(`Submit deletion request for "${eventTitle}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
-      try {
-        await deletionRequestService.createRequest({
-          request_type: 'item',
-          reason: `Request to delete event: ${eventTitle}`,
-          urgency: 'medium',
-          items: [{
-            item_type: 'event',
-            item_id: eventId,
-            item_name: eventTitle,
-            category: event?.category || 'Event'
-          }]
-        });
-        alert(`Deletion request for "${eventTitle}" has been submitted to Deletion Requests.`);
-      } catch (e) {
-        alert(e.message || 'Failed to submit deletion request.');
-      }
+    const confirmed = await showConfirm({
+      title: 'Submit Deletion Request',
+      message: `Are you sure you want to submit a deletion request for "${eventTitle}"?\n\nThis will be sent to Deletion Requests for review and approval.`,
+      confirmText: 'Submit Deletion',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'item',
+        reason: `Request to delete event: ${eventTitle}`,
+        urgency: 'medium',
+        items: [{
+          item_type: 'event',
+          item_id: eventId,
+          item_name: eventTitle,
+          category: event?.category || 'Event'
+        }]
+      });
+      showSuccess(`Deletion request for "${eventTitle}" has been submitted to Deletion Requests.`, 'Request Submitted');
+    } catch (e) {
+      showError(e.message || 'Failed to submit deletion request.', 'Submission Failed');
     }
   };
 
@@ -220,13 +229,15 @@ export default function Events() {
 
       if (editingEvent) {
         await eventService.updateEvent(editingEvent.id, payload);
+        showSuccess(`Event "${formData.title}" has been updated successfully.`, 'Event Updated');
       } else {
         await eventService.createEvent(payload);
+        showSuccess(`Event "${formData.title}" has been created successfully.`, 'Event Created');
       }
       closeModal();
       loadEvents();
     } catch (e) {
-      alert(e.message || 'Failed to save event.');
+      showError(e.message || 'Failed to save event.', 'Save Failed');
     }
   };
 

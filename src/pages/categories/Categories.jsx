@@ -9,8 +9,10 @@ import CategoryModal from "./CategoryModal";
 import CategoryDetailsModal from "./CategoryDetailsModal";
 import categoryService from "../../services/categoryService";
 import deletionRequestService from "../../services/deletionRequestService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Categories() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -83,23 +85,30 @@ export default function Categories() {
   const handleDelete = async (id) => {
     const category = categories.find(c => c.id === id);
     const categoryName = category?.name || `Category #${id}`;
-    if (window.confirm(`Submit deletion request for category "${categoryName}"?\n(This will be sent to Deletion Requests for review and approval)`)) {
-      try {
-        await deletionRequestService.createRequest({
-          request_type: 'item',
-          reason: `Request to delete category: ${categoryName}`,
-          urgency: 'medium',
-          items: [{
-            item_type: 'category',
-            item_id: id,
-            item_name: categoryName,
-            category: 'Category'
-          }]
-        });
-        alert(`Deletion request for "${categoryName}" has been submitted to Deletion Requests.`);
-      } catch (e) {
-        alert(e.message || "Failed to submit deletion request.");
-      }
+    const confirmed = await showConfirm({
+      title: 'Submit Deletion Request',
+      message: `Are you sure you want to submit a deletion request for category "${categoryName}"?\n\nThis will be sent to Deletion Requests for administrator review and approval.`,
+      confirmText: 'Submit Deletion',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await deletionRequestService.createRequest({
+        request_type: 'item',
+        reason: `Request to delete category: ${categoryName}`,
+        urgency: 'medium',
+        items: [{
+          item_type: 'category',
+          item_id: id,
+          item_name: categoryName,
+          category: 'Category'
+        }]
+      });
+      showSuccess(`Deletion request for "${categoryName}" has been submitted to Deletion Requests.`, 'Request Submitted');
+    } catch (e) {
+      showError(e.message || "Failed to submit deletion request.", 'Submission Failed');
     }
   };
 
@@ -140,13 +149,15 @@ export default function Categories() {
     try {
       if (editingCategory) {
         await categoryService.updateCategory(editingCategory.id, formData);
+        showSuccess(`Category "${formData.name}" has been updated successfully.`, 'Category Updated');
       } else {
         await categoryService.createCategory(formData);
+        showSuccess(`Category "${formData.name}" has been created successfully.`, 'Category Created');
       }
       closeModal();
       loadCategories();
     } catch (e) {
-      alert(e.message || "Failed to save category.");
+      showError(e.message || "Failed to save category.", 'Save Failed');
     }
   };
 

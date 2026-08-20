@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Trash2, AlertTriangle } from 'lucide-react';
 import deletionRequestService from '../../services/deletionRequestService';
+import { useAlert } from '../../context/AlertContext';
 
 export default function SecurityTab({
   userData = {},
@@ -12,6 +13,7 @@ export default function SecurityTab({
   showConfirmPassword = false,
   setShowConfirmPassword = () => {}
 }) {
+  const { showWarning, showSuccess, showError } = useAlert();
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -19,7 +21,7 @@ export default function SecurityTab({
   const handleRequestAccountDeletion = async (e) => {
     e.preventDefault();
     if (!deleteReason.trim()) {
-      alert('Please provide a reason for the deletion request.');
+      showWarning('Please provide a reason for your deletion request.', 'Reason Required');
       return;
     }
 
@@ -36,11 +38,11 @@ export default function SecurityTab({
           category: userData.role || 'User'
         }]
       });
-      alert('Your account deletion request has been submitted to Deletion Requests for review and approval.');
+      showSuccess('Your account deletion request has been submitted to Deletion Requests for review and approval.', 'Request Submitted');
       setShowDeleteModal(false);
       setDeleteReason('');
     } catch (err) {
-      alert(err.message || 'Failed to submit account deletion request.');
+      showError(err.message || 'Failed to submit account deletion request.', 'Submission Failed');
     } finally {
       setIsDeleting(false);
     }

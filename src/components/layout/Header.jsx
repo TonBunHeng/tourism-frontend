@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Bell, Search, User, Settings, LogOut, Menu,
-  X, MessageCircle, Globe, Sun, Moon
+  X, MessageCircle, Globe, Sun, Moon, Loader2
 } from "lucide-react";
 import { getInitialTheme, applyTheme, THEME_CHANGE_EVENT, isDarkTheme } from '../../utils/Theme';
 import LogoutAlert from './LogoutAlert';
+import notificationService from '../../services/notificationService';
 
 export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggleExpand }) {
+  const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -15,6 +17,10 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const [currentLang, setCurrentLang] = useState('EN');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifs, setLoadingNotifs] = useState(false);
 
   const [userName, setUserName] = useState(() => {
     try {
@@ -43,40 +49,86 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
     }
   });
 
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return isDarkTheme(getInitialTheme());
-  });
+  const [isDarkMode, setIsDarkMode] = useState(() => isDarkTheme(getInitialTheme()));
 
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const langRef = useRef(null);
 
-  useEffect(() => {
-    const handleAvatarSync = () => {
-      try {
-        const u = JSON.parse(localStorage.getItem('user') || '{}');
-        setUserAvatar(u.image || u.avatar || u.profile_photo_url || null);
-        setUserName(u.name || u.username || 'Admin User');
-        setUserEmail(u.email || 'admin@tourism.gov.kh');
-      } catch (e) {}
-    };
+  const formatTimeAgo = (dateString) => {
+    if (!dateString) return 'Just now';
+    try {
+      const now = new Date();
+      const date = new Date(dateString);
+      const diffSec = Math.floor((now - date) / 1000);
 
-    window.addEventListener('storage', handleAvatarSync);
-    window.addEventListener('user-profile-updated', handleAvatarSync);
-    return () => {
-      window.removeEventListener('storage', handleAvatarSync);
-      window.removeEventListener('user-profile-updated', handleAvatarSync);
-    };
+      if (diffSec < 60) return 'Just now';
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return `${diffMin}m ago`;
+      const diffHour = Math.floor(diffMin / 60);
+      if (diffHour < 24) return `${diffHour}h ago`;
+      const diffDays = Math.floor(diffHour / 24);
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const fetchHeaderNotifications = useCallback(async () => {
+    try {
+      const res = await notificationService.getNotifications({ limit: 6 });
+      const data = res?.data || res || [];
+      const notifs = Array.isArray(data) ? data : (data.data || []);
+      setNotifications(notifs);
+
+      if (res?.meta?.unread_count !== undefined) {
+        setUnreadCount(res.meta.unread_count);
+      } else {
+        setUnreadCount(notifs.filter(n => !n.read).length);
+      }
+    } catch (e) {
+      // Graceful silence on network error
+    }
   }, []);
 
   useEffect(() => {
+    fetchHeaderNotifications();
+
+    const handleUpdate = () => fetchHeaderNotifications();
+    window.addEventListener('notifications-updated', handleUpdate);
+
+    // Light background poll every 45s
+    const interval = setInterval(fetchHeaderNotifications, 45000);
+
+    return () => {
+      window.removeEventListener('notifications-updated', handleUpdate);
+      clearInterval(interval);
+    };
+  }, [fetchHeaderNotifications]);
+
+  // Sync profile info if updated elsewhere
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        if (u.name || u.username) setUserName(u.name || u.username);
+        if (u.email) setUserEmail(u.email);
+        setUserAvatar(u.image || u.avatar || u.profile_photo_url || null);
+      } catch (e) {}
+    };
+
+    window.addEventListener('profile-updated', handleProfileUpdate);
+    return () => window.removeEventListener('profile-updated', handleProfileUpdate);
+  }, []);
+
+  // Theme Sync
+  useEffect(() => {
     const handleThemeChange = (e) => {
-      if (e.detail && typeof e.detail.isDark === 'boolean') {
-        setIsDarkMode(e.detail.isDark);
+      if (e?.detail?.theme) {
+        setIsDarkMode(isDarkTheme(e.detail.theme));
       } else {
         setIsDarkMode(document.documentElement.classList.contains('dark'));
       }
@@ -91,13 +143,6 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
     setIsDarkMode(nextMode);
     applyTheme(nextMode ? 'dark' : 'light');
   };
-
-  const notifications = [
-    { id: 1, title: 'New user registered', time: '5 min ago', read: false },
-    { id: 2, title: 'Place "Angkor Wat" updated', time: '1 hour ago', read: false },
-    { id: 3, title: 'New review posted', time: '3 hours ago', read: true },
-    { id: 4, title: 'System update completed', time: 'Yesterday', read: true },
-  ];
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -118,13 +163,40 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
   const handleSidebarToggle = () => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       if (toggleSidebar) toggleSidebar();
     } else {
       if (toggleExpand) toggleExpand();
+    }
+  };
+
+  const handleMarkAllRead = async (e) => {
+    e?.stopPropagation();
+    try {
+      await notificationService.markAllRead();
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setUnreadCount(0);
+      window.dispatchEvent(new CustomEvent('notifications-updated'));
+    } catch (err) {
+      console.error('Failed to mark all as read:', err);
+    }
+  };
+
+  const handleNotificationClick = async (notif) => {
+    setShowNotifications(false);
+    if (!notif.read) {
+      try {
+        await notificationService.markAsRead(notif.id);
+        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+        setUnreadCount(prev => Math.max(0, prev - 1));
+        window.dispatchEvent(new CustomEvent('notifications-updated'));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (notif.link) {
+      navigate(notif.link);
     }
   };
 
@@ -158,7 +230,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
             {/* Dark / Light Mode Toggle */}
             <button
               onClick={handleToggleTheme}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors cursor-pointer"
               aria-label="Toggle dark mode"
             >
               {isDarkMode ? (
@@ -172,42 +244,39 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
             <div ref={langRef} className="relative">
               <button
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-300 transition-colors cursor-pointer"
                 aria-label="Change language"
               >
                 <Globe size={20} />
               </button>
 
               {showLangMenu && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
-                  <div className="p-1.5">
-                    <button
-                      onClick={() => {
-                        setCurrentLang('EN');
-                        setShowLangMenu(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors ${currentLang === 'EN'
-                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-semibold'
-                        : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                        }`}
-                    >
-                      <span>English</span>
-                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded">EN</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setCurrentLang('KH');
-                        setShowLangMenu(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors mt-1 ${currentLang === 'KH'
-                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-semibold'
-                        : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                        }`}
-                    >
-                      <span>ភាសាខ្មែរ</span>
-                      <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded">KH</span>
-                    </button>
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 py-1 z-50 animate-smooth-pop">
+                  <div className="px-3 py-1.5 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                    Select Language
                   </div>
+                  <button
+                    onClick={() => { setCurrentLang('EN'); setShowLangMenu(false); }}
+                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors cursor-pointer ${
+                      currentLang === 'EN'
+                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium'
+                        : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <span>English</span>
+                    <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded">EN</span>
+                  </button>
+                  <button
+                    onClick={() => { setCurrentLang('KH'); setShowLangMenu(false); }}
+                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors cursor-pointer ${
+                      currentLang === 'KH'
+                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium'
+                        : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <span>ភាសាខ្មែរ</span>
+                    <span className="text-xs uppercase px-1.5 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded">KH</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -216,38 +285,79 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
             <div ref={notificationRef} className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                 aria-label="Notifications"
               >
                 <Bell size={20} className="text-gray-600 dark:text-zinc-300" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-zinc-900"></span>
+                  <span className="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full ring-2 ring-white dark:ring-zinc-900">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
                 )}
               </button>
 
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
-                  <div className="p-4 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800 dark:text-zinc-100">Notifications</h3>
-                    <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium">
-                      Mark all read
-                    </button>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors ${!notification.read ? 'bg-blue-50/50 dark:bg-zinc-800' : ''
-                          }`}
+                  <div className="p-3.5 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-sm text-gray-800 dark:text-zinc-100">Notifications</h3>
+                      {unreadCount > 0 && (
+                        <span className="px-1.5 py-0.5 text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:text-teal-400 rounded-full">
+                          {unreadCount} new
+                        </span>
+                      )}
+                    </div>
+                    {unreadCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleMarkAllRead}
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium cursor-pointer"
                       >
-                        <p className="text-sm text-gray-800 dark:text-zinc-200">{notification.title}</p>
-                        <span className="text-xs text-gray-400">{notification.time}</span>
-                      </div>
-                    ))}
+                        Mark all read
+                      </button>
+                    )}
                   </div>
-                  <div className="p-3 border-t border-gray-100 dark:border-zinc-800 text-center">
-                    <Link to="/notifications" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium">
-                      View all notifications
+
+                  <div className="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-zinc-800">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          onClick={() => handleNotificationClick(notification)}
+                          className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors ${
+                            !notification.read ? 'bg-teal-50/40 dark:bg-teal-950/20' : ''
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-xs font-semibold text-gray-900 dark:text-zinc-100 line-clamp-1">
+                              {notification.title}
+                            </p>
+                            {!notification.read && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0 mt-1" />
+                            )}
+                          </div>
+                          <p className="text-[11px] text-gray-500 dark:text-zinc-400 line-clamp-2 mt-0.5">
+                            {notification.description}
+                          </p>
+                          <span className="text-[10px] text-gray-400 dark:text-zinc-500 block mt-1">
+                            {formatTimeAgo(notification.created_at)}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-8 text-center text-xs text-gray-400 dark:text-zinc-500">
+                        No notifications found
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-2.5 border-t border-gray-100 dark:border-zinc-800 text-center bg-gray-50/50 dark:bg-zinc-900/50">
+                    <Link
+                      to="/notifications"
+                      onClick={() => setShowNotifications(false)}
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-semibold"
+                    >
+                      View all in Notifications Center →
                     </Link>
                   </div>
                 </div>

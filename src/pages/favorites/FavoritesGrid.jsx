@@ -1,110 +1,264 @@
-import { Heart, MapPin, Star, Clock, Users, Calendar, Check, Eye, Trash2 } from 'lucide-react';
-
-
+import React from 'react';
+import {
+  MapPin,
+  Star,
+  Trash2,
+  Eye,
+  CheckCircle2,
+  Clock,
+  Heart,
+  Landmark,
+  Check,
+  DollarSign,
+  Compass,
+  User,
+  Calendar
+} from 'lucide-react';
+import { renderStars } from '../../utils/StatusUtils';
 
 export default function FavoritesGrid({
-  favorites,
-  selectedFavorites,
+  favorites = [],
+  selectedFavorites = [],
+  setSelectedFavorites,
   onToggleSelect,
   onToggleVisited,
+  onToggleStatus,
+  onDelete,
   onViewDetails,
-  onDelete
+  onView
 }) {
+  const handleToggleVisit = (id) => {
+    if (onToggleVisited) onToggleVisited(id);
+    else if (onToggleStatus) onToggleStatus(id);
+  };
+
+  const handleView = (favorite) => {
+    if (onView) onView(favorite);
+    else if (onViewDetails) onViewDetails(favorite);
+  };
+
+  const handleDelete = (id) => {
+    if (onDelete) onDelete(id);
+  };
+
+  const handleSelect = (id, e) => {
+    e.stopPropagation();
+    if (onToggleSelect) {
+      onToggleSelect(id);
+    } else if (setSelectedFavorites) {
+      setSelectedFavorites(prev =>
+        prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+      );
+    }
+  };
+
+  if (!favorites || favorites.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="w-16 h-16 rounded-full bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)] flex items-center justify-center mb-4 border border-[var(--color-rose-badge-border)] dark:border-[var(--color-rose-badge-dark-border)]">
+          <Landmark className="w-8 h-8" />
+        </div>
+        <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">
+          No Favorite Destinations Found
+        </h3>
+        <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] max-w-md">
+          No user favorites match your search or filter criteria.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
-      {favorites.length > 0 ? (
-        favorites.map((favorite) => {
-          const FavoriteIcon = favorite.icon;
-          const isSelected = selectedFavorites.includes(favorite.id);
-          return (
-            <div
-              key={favorite.id}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
-            >
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 md:p-6">
+      {favorites.map((favorite) => {
+        const IconComponent = favorite.icon || Landmark;
+        const isVisited = Boolean(favorite.visited || favorite.status === 'Visited');
+        const isSelected = selectedFavorites.includes(favorite.id);
+        const ratingVal = Number(favorite.rating || favorite.place?.rating || 5.0).toFixed(1);
+        const reviewsCount = favorite.reviewsCount ?? favorite.reviews ?? favorite.place?.reviews_count ?? 0;
 
+        const userInfo = favorite.user || {};
+        const userName = userInfo.name || favorite.user_name || 'Traveler';
+        const userAvatar = userInfo.avatar || favorite.user_avatar || null;
+        const userEmail = userInfo.email || favorite.user_email || 'user@angkorverses.com';
+        const savedDate = favorite.saved_date || (favorite.created_at ? new Date(favorite.created_at).toLocaleDateString() : 'Recent');
+
+        return (
+          <div
+            key={favorite.id}
+            className={`bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group ${isSelected ? 'ring-2 ring-[var(--color-primary)]' : ''
+              }`}
+          >
+            {/* Image & Badges */}
+            <div className="relative h-44 w-full overflow-hidden bg-slate-100 dark:bg-zinc-800">
+              {favorite.image ? (
+                <img
+                  src={favorite.image}
+                  alt={favorite.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&q=80&w=600';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-zinc-800 dark:to-zinc-900">
+                  <IconComponent className="w-12 h-12 text-[var(--color-primary)] opacity-40" />
+                </div>
+              )}
+
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+              {/* Selection Checkbox */}
+              <div className="absolute top-3 left-3 z-10">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={(e) => handleSelect(favorite.id, e)}
+                  aria-label={`Select ${favorite.name}`}
+                  className="w-4 h-4 rounded text-[var(--color-primary)] focus:ring-[var(--color-primary)] border-white/80 bg-white/90 cursor-pointer shadow"
+                />
+              </div>
+
+              {/* Heart Badge (Top Right) */}
               <div className="absolute top-3 right-3 z-10">
-                <Heart className="w-5 h-5 fill-[var(--color-rose-badge-text)] text-[var(--color-rose-badge-text)]" />
+                <button
+                  type="button"
+                  onClick={() => handleDelete(favorite.id || favorite.place_id)}
+                  title="Remove from favorites"
+                  className="p-1.5 rounded-full bg-white/90 dark:bg-zinc-900/90 text-[var(--color-rose-badge-text)] hover:scale-110 active:scale-95 transition-all shadow cursor-pointer"
+                >
+                  <Heart className="w-4 h-4 fill-current text-[var(--color-rose-badge-text)]" />
+                </button>
               </div>
 
-              <div className="flex items-start gap-3 mb-3 mt-2">
-                <div className="w-14 h-14 flex-shrink-0 rounded-md bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] flex items-center justify-center">
-                  <FavoriteIcon className="w-7 h-7 text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm truncate">{favorite.name}</h3>
-                  <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
-                    <MapPin className="w-3 h-3 flex-shrink-0" />
-                    <span className="truncate">{favorite.location}</span>
-                  </span>
-                </div>
-              </div>
+              {/* Category & Status Badges */}
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md bg-black/60 backdrop-blur-md text-white border border-white/20">
+                  <IconComponent className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[110px]">{favorite.category || 'Destination'}</span>
+                </span>
 
-              <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 line-clamp-2">{favorite.description}</p>
-
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
-                  <Star className="w-3.5 h-3.5 fill-[var(--color-amber-star)] text-[var(--color-amber-star)] flex-shrink-0" />
-                  <span>{favorite.rating}</span>
-                  <span className="text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] truncate">({favorite.reviews})</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
-                  <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{favorite.bestTime}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
-                  <Users className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{favorite.visitors.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
-                  <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{favorite.savedDate}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border flex-shrink-0 ${favorite.visited
-                    ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)]'
-                    : 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]'
-                  }`}>
-                  {favorite.visited ? (
-                    <><Check className="w-3 h-3" /> Visited</>
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md backdrop-blur-md border ${isVisited
+                      ? 'bg-emerald-500/90 text-white border-emerald-400/40'
+                      : 'bg-blue-600/90 text-white border-blue-400/40'
+                    }`}
+                >
+                  {isVisited ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Visited
+                    </>
                   ) : (
-                    <><Clock className="w-3 h-3" /> To Visit</>
+                    <>
+                      <Clock className="w-3.5 h-3.5" /> To Visit
+                    </>
                   )}
                 </span>
-                <div className="flex gap-1 flex-shrink-0">
+              </div>
+            </div>
+
+            {/* Card Body */}
+            <div className="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <h3
+                  onClick={() => handleView(favorite)}
+                  className="font-bold text-sm md:text-base text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-info-dark-text)] transition-colors cursor-pointer line-clamp-1"
+                >
+                  {favorite.name}
+                </h3>
+
+                <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1.5 mt-1">
+                  <MapPin className="w-3.5 h-3.5 text-[var(--color-rose-badge-text)] shrink-0" />
+                  <span className="truncate">{favorite.location || 'Cambodia'}</span>
+                </p>
+
+                {/* Traveler / User Info Highlight */}
+                <div className="flex items-center gap-2 mt-3 p-2 bg-[var(--color-surface-hover-light)]/70 dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                  <div className="w-7 h-7 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] flex items-center justify-center font-bold text-[10px] shrink-0 overflow-hidden">
+                    {userAvatar ? (
+                      <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-3.5 h-3.5" />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">
+                      {userName}
+                    </p>
+                    <p className="text-[10px] text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
+                      <Calendar className="w-2.5 h-2.5" /> {savedDate}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Place details grid */}
+                <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                  <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
+                    <Star className="w-3.5 h-3.5 fill-[var(--color-warning-text)] text-[var(--color-warning-text)] shrink-0" />
+                    <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                      {ratingVal}
+                    </span>
+                    <span className="text-[10px] text-[var(--color-text-muted-light)] truncate">({reviewsCount})</span>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
+                    <DollarSign className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-muted-light)]" />
+                    <span className="truncate">{favorite.price || 'Free'}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
+                    <Clock className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-muted-light)]" />
+                    <span className="truncate">{favorite.bestTime || 'Morning'}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] min-w-0">
+                    <Compass className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-muted-light)]" />
+                    <span className="truncate">{favorite.duration || '2-3 Hours'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Footer Actions */}
+              <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                <button
+                  type="button"
+                  onClick={() => handleToggleVisit(favorite.id)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${isVisited
+                      ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)] hover:opacity-85'
+                      : 'bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-neutral-badge-dark-bg)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:text-[var(--color-primary)]'
+                    }`}
+                  title={isVisited ? 'Mark as to visit' : 'Mark as visited'}
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{isVisited ? 'Visited' : 'Mark Visited'}</span>
+                </button>
+
+                <div className="flex items-center gap-1">
                   <button
-                    onClick={() => onToggleVisited(favorite.id)}
-                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors"
-                    title={favorite.visited ? 'Mark as not visited' : 'Mark as visited'}
-                  >
-                    <Check className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
-                  </button>
-                  <button
-                    onClick={() => onViewDetails(favorite)}
-                    className="p-1.5 hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors"
+                    type="button"
+                    onClick={() => handleView(favorite)}
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
                     title="View Details"
                   >
-                    <Eye className="w-3.5 h-3.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)]" />
+                    <Eye className="w-4 h-4" />
                   </button>
+
                   <button
-                    onClick={() => onDelete(favorite.id)}
-                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
-                    title="Remove"
+                    type="button"
+                    onClick={() => handleDelete(favorite.id || favorite.place_id)}
+                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    title="Remove from favorites"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             </div>
-          );
-        })
-      ) : (
-        <div className="col-span-full text-center py-12">
-          <h3 className="text-lg font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">No favorites found</h3>
-          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Try adjusting your search or filter criteria</p>
-        </div>
-      )}
+          </div>
+        );
+      })}
     </div>
   );
 }

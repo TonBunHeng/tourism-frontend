@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
-import { User, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import RatingsHeader from "./RatingsHeader";
 import RatingsStats from "./RatingsStats";
 import RatingsSentiment from "./RatingsSentiment";
 import RatingsToolbar from "./RatingsToolbar";
 import RatingsGrid from "./RatingsGrid";
 import RatingsTable from "./RatingsTable";
-import ReviewsList from "./ReviewsList";
 import ReviewDetailsModal from "./ReviewDetailsModal";
 import ReviewReplyModal from "./ReviewReplyModal";
 import RatingsAnalyticsModal from "./RatingsAnalyticsModal";
 import reviewService from "../../services/reviewService";
 import placeService from "../../services/placeService";
+import { useAlert } from "../../context/AlertContext";
 
 export default function Ratings() {
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [reviews, setReviews] = useState([]);
   const [places, setPlaces] = useState(["All"]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +34,7 @@ export default function Ratings() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 8;
 
   const statuses = ["All", "Approved", "Pending", "Rejected"];
   const ratings = ["All", "5", "4", "3", "2", "1"];
@@ -66,9 +67,9 @@ export default function Ratings() {
 
       const res = await reviewService.getReviews(params);
       if (res.success && res.data) {
-        const formatted = res.data.map(r => ({
+        const formatted = res.data.map((r) => ({
           ...r,
-          user: r.user || { name: "Anonymous", email: "user@example.com" },
+          user: r.user || { name: "Anonymous Traveler", email: "user@example.com" },
           place: r.place || { name: "General Attraction" },
           title: r.title || "User Review",
           comment: r.comment || "",
@@ -96,129 +97,177 @@ export default function Ratings() {
   }, [currentPage, searchTerm, selectedStatus, selectedRating]);
 
   // Client side filtering for places & sorting
-  const filteredReviews = reviews.filter((review) => {
-    const matchesPlace =
-      selectedPlace === "All" || review.place?.name === selectedPlace;
-    return matchesPlace;
-  }).sort((a, b) => {
-    if (sortBy === "highest") return b.rating - a.rating;
-    if (sortBy === "lowest") return a.rating - b.rating;
-    if (sortBy === "most-replies") return (b.replies?.length || 0) - (a.replies?.length || 0);
-    return new Date(b.created_at || b.date) - new Date(a.created_at || a.date);
-  });
+  const filteredReviews = reviews
+    .filter((review) => {
+      const matchesPlace =
+        selectedPlace === "All" || review.place?.name === selectedPlace;
+      return matchesPlace;
+    })
+    .sort((a, b) => {
+      if (sortBy === "highest") return Number(b.rating) - Number(a.rating);
+      if (sortBy === "lowest") return Number(a.rating) - Number(b.rating);
+      if (sortBy === "most-replies") return (b.replies?.length || 0) - (a.replies?.length || 0);
+      return new Date(b.created_at || b.date || 0) - new Date(a.created_at || a.date || 0);
+    });
 
   const handleStatusChange = async (id, newStatus) => {
     try {
       await reviewService.updateReviewStatus(id, newStatus);
+      showSuccess(`Review status updated to "${newStatus}".`, "Status Updated");
       loadReviews();
     } catch (e) {
-      console.error("Failed to update review status", e);
+      showError(e.message || "Failed to update review status", "Update Failed");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this review?")) return;
+    const confirmed = await showConfirm({
+      title: "Delete Review",
+      message: "Are you sure you want to delete this tourist review permanently?",
+      confirmText: "Delete Review",
+      type: "danger"
+    });
+    if (!confirmed) return;
+
     try {
       await reviewService.deleteReview(id);
+      showSuccess("Review has been deleted successfully.", "Review Deleted");
       loadReviews();
     } catch (e) {
-      console.error("Failed to delete review", e);
+      showError(e.message || "Failed to delete review", "Delete Failed");
     }
   };
 
   const handleReplySubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!replyText.trim() || !selectedReview) return;
     try {
       await reviewService.replyToReview(selectedReview.id, { comment: replyText });
       setReplyText("");
       setIsReplyModalOpen(false);
+      showSuccess("Your reply has been posted successfully.", "Reply Submitted");
       loadReviews();
     } catch (e) {
-      console.error("Failed to reply to review", e);
+      showError(e.message || "Failed to reply to review", "Reply Failed");
     }
   };
 
-  return (
-    <div className="flex flex-col gap-6">
-      <RatingsHeader
-        onOpenAnalytics={() => setIsAnalyticsOpen(true)}
-      />
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + filteredReviews.length, totalRecords);
 
+  return (
+    <div className="flex flex-col">
+      {/* Header with Analytics button */}
+      <RatingsHeader onOpenAnalytics={() => setIsAnalyticsOpen(true)} />
+
+      {/* Top 4 Stat Summary Cards */}
       <RatingsStats reviews={reviews} />
 
+      {/* Sentiment & Star Distribution Cards */}
       <RatingsSentiment reviews={reviews} />
 
-      <RatingsToolbar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        selectedStatus={selectedStatus}
-        setSelectedStatus={setSelectedStatus}
-        selectedRating={selectedRating}
-        setSelectedRating={setSelectedRating}
-        selectedPlace={selectedPlace}
-        setSelectedPlace={setSelectedPlace}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        places={places}
-        statuses={statuses}
-        ratings={ratings}
-      />
-
-      {viewMode === "table" ? (
-        <RatingsTable
-          reviews={filteredReviews}
-          isLoading={isLoading}
-          onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
-          onView={(rev) => { setSelectedReview(rev); setIsDetailsOpen(true); }}
-          onReply={(rev) => { setSelectedReview(rev); setIsReplyModalOpen(true); }}
+      {/* Main Reviews Container */}
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
+        <RatingsToolbar
+          searchTerm={searchTerm}
+          onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1); }}
+          selectedStatus={selectedStatus}
+          onStatusChange={(val) => { setSelectedStatus(val); setCurrentPage(1); }}
+          selectedPlace={selectedPlace}
+          onPlaceChange={(val) => { setSelectedPlace(val); }}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          places={places}
+          statuses={statuses}
         />
-      ) : (
-        <RatingsGrid
-          reviews={filteredReviews}
-          isLoading={isLoading}
-          onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
-          onView={(rev) => { setSelectedReview(rev); setIsDetailsOpen(true); }}
-          onReply={(rev) => { setSelectedReview(rev); setIsReplyModalOpen(true); }}
-        />
-      )}
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 rounded-lg border">
-        <p className="text-xs text-gray-700">
-          Showing <span className="font-medium">{filteredReviews.length}</span> of{" "}
-          <span className="font-medium">{totalRecords}</span> reviews
-        </p>
-        <div className="flex gap-2">
-          <button
-            disabled={currentPage <= 1}
-            onClick={() => setCurrentPage(p => p - 1)}
-            className="flex items-center gap-1 px-3 py-1 text-xs border rounded-md disabled:opacity-40 hover:bg-gray-50"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" /> Previous
-          </button>
-          <button
-            disabled={currentPage >= totalPages}
-            onClick={() => setCurrentPage(p => p + 1)}
-            className="flex items-center gap-1 px-3 py-1 text-xs border rounded-md disabled:opacity-40 hover:bg-gray-50"
-          >
-            Next <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        {viewMode === "table" ? (
+          <RatingsTable
+            reviews={filteredReviews}
+            isLoading={isLoading}
+            onStatusChange={handleStatusChange}
+            onDelete={handleDelete}
+            onView={(rev) => { setSelectedReview(rev); setIsDetailsOpen(true); }}
+            onReply={(rev) => { setSelectedReview(rev); setIsReplyModalOpen(true); }}
+            startIndex={startIndex}
+          />
+        ) : (
+          <RatingsGrid
+            reviews={filteredReviews}
+            isLoading={isLoading}
+            onStatusChange={handleStatusChange}
+            onDelete={handleDelete}
+            onView={(rev) => { setSelectedReview(rev); setIsDetailsOpen(true); }}
+            onReply={(rev) => { setSelectedReview(rev); setIsReplyModalOpen(true); }}
+          />
+        )}
+
+        {/* Pagination Footer */}
+        {totalRecords > 0 && (
+          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
+            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{" "}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{" "}
+              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{totalRecords}</span> reviews
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage <= 1}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => {
+                const pageNum = idx + 1;
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-[var(--color-primary)] text-white shadow-sm font-bold"
+                        : "border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage >= totalPages}
+                className="p-1.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
+      {/* Review Details Modal */}
       <ReviewDetailsModal
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
         review={selectedReview}
         onStatusChange={handleStatusChange}
-        onReply={() => { setIsDetailsOpen(false); setIsReplyModalOpen(true); }}
+        onReply={() => {
+          setIsDetailsOpen(false);
+          setIsReplyModalOpen(true);
+        }}
       />
 
+      {/* Admin Reply Modal */}
       <ReviewReplyModal
         isOpen={isReplyModalOpen}
         onClose={() => setIsReplyModalOpen(false)}
@@ -228,6 +277,7 @@ export default function Ratings() {
         onSubmit={handleReplySubmit}
       />
 
+      {/* Analytics Modal */}
       <RatingsAnalyticsModal
         isOpen={isAnalyticsOpen}
         onClose={() => setIsAnalyticsOpen(false)}

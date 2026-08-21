@@ -1,12 +1,25 @@
 import api from './api';
 
+const ADMIN_ROLES = ['Super Admin', 'Admin', 'Guide / Editor'];
+
 export const authService = {
   async login(credentials) {
     const res = await api.post('/auth/login', credentials);
     if (res.success && res.data?.token) {
+      const user = res.data.user;
+      
+      // Verify user has admin permissions
+      if (user && !ADMIN_ROLES.includes(user.role)) {
+        this.clearSession();
+        return {
+          success: false,
+          message: 'Access denied. Administrator privileges required.',
+        };
+      }
+
       localStorage.setItem('auth_token', res.data.token);
       localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      localStorage.setItem('user', JSON.stringify(user));
       window.dispatchEvent(new Event('user-profile-updated'));
     }
     return res;
@@ -24,12 +37,17 @@ export const authService = {
   },
 
   async me() {
-    const res = await api.get('/auth/me');
-    if (res.success && res.data) {
-      localStorage.setItem('user', JSON.stringify(res.data));
-      window.dispatchEvent(new Event('user-profile-updated'));
+    try {
+      const res = await api.get('/auth/me');
+      if (res.success && res.data) {
+        localStorage.setItem('user', JSON.stringify(res.data));
+        window.dispatchEvent(new Event('user-profile-updated'));
+      }
+      return res;
+    } catch (error) {
+      this.clearSession();
+      throw error;
     }
-    return res;
   },
 
   async updateProfile(data) {
@@ -60,17 +78,36 @@ export const authService = {
     } catch (e) {
       // Ignore API errors on logout
     } finally {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      sessionStorage.clear();
-      window.dispatchEvent(new Event('user-profile-updated'));
+      this.clearSession();
     }
   },
 
-  isAuthenticated() {
+  clearSession() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+    window.dispatchEvent(new Event('user-profile-updated'));
+  },
+
+  getToken() {
     const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
-    return Boolean(token && token !== 'undefined' && token !== 'null');
+    if (!token || token === 'undefined' || token === 'null' || token.trim() === '') {
+      return null;
+    }
+    return token;
+  },
+
+  isAuthenticated() {
+    const token = this.getToken();
+    const user = this.getCurrentUser();
+    return Boolean(token && user && this.hasAdminRole());
+  },
+
+  hasAdminRole() {
+    const user = this.getCurrentUser();
+    if (!user || !user.role) return false;
+    return ADMIN_ROLES.includes(user.role);
   },
 
   getCurrentUser() {

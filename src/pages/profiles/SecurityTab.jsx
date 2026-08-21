@@ -178,7 +178,7 @@ export default function SecurityTab({
 
       {/* Account Deletion Request Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-xl max-w-md w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden p-6 space-y-4">
             <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
               <Trash2 className="w-6 h-6" />

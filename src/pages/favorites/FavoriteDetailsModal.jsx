@@ -53,7 +53,7 @@ export default function FavoriteDetailsModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-2xl max-w-2xl w-full max-h-[90vh] shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
         
         {/* Modal Header */}

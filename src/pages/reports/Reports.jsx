@@ -1,32 +1,40 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ReportsHeader from './ReportsHeader';
 import ReportsStats from './ReportsStats';
 import ReportsTable from './ReportsTable';
 import ReportsAnalyticsModal from './ReportsAnalyticsModal';
 import ExportAlertModal from './ExportAlertModal';
+import { exportToPDF, exportToExcel } from '../../utils/exportReports';
 import placeService from '../../services/placeService';
 import eventService from '../../services/eventService';
 import userService from '../../services/userService';
 import reviewService from '../../services/reviewService';
 import categoryService from '../../services/categoryService';
-import { exportToPDF, exportToExcel } from '../../utils/exportReports';
 
 export default function Reports() {
-  const [activeTab, setActiveTab] = useState('places');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Tab persistence via search param + sessionStorage
+  const [activeTab, setActiveTab] = useState(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl) return tabFromUrl;
+    const tabFromStorage = sessionStorage.getItem('reports_active_tab');
+    return tabFromStorage || 'places';
+  });
+
   const [selectedDay, setSelectedDay] = useState('');
   const [appliedDay, setAppliedDay] = useState('');
-
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [totalExports, setTotalExports] = useState(14);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('pdf');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Live Datasets State
   const [datasets, setDatasets] = useState({
     places: [],
     events: [],
@@ -39,20 +47,20 @@ export default function Reports() {
     setIsLoading(true);
     try {
       const [placesRes, eventsRes, usersRes, reviewsRes, categoriesRes] = await Promise.allSettled([
-        placeService.getPlaces({ per_page: 100 }),
-        eventService.getEvents({ per_page: 100 }),
-        userService.getUsers({ per_page: 100 }),
-        reviewService.getReviews({ per_page: 100 }),
-        categoryService.getCategories({ per_page: 100 })
+        placeService.getPlaces(),
+        eventService.getEvents(),
+        userService.getUsers(),
+        reviewService.getReviews(),
+        categoryService.getCategories()
       ]);
 
       const formattedPlaces = (placesRes.status === 'fulfilled' && placesRes.value?.data)
         ? placesRes.value.data.map(p => ({
             id: p.id,
             name: p.name,
-            category: p.category || p.category_detail?.name || 'Attraction',
-            province: p.province || p.province_detail?.name || 'Siem Reap',
-            rating: Number(p.rating || 5.0),
+            category: p.category_name || (typeof p.category === 'object' ? p.category?.name : p.category) || 'General',
+            province: p.province_name || (typeof p.province === 'object' ? p.province?.name : p.province) || 'Siem Reap',
+            rating: Number(p.rating || 4.5),
             reviews: Number(p.reviews_count || 0),
             status: p.status || 'Active',
             createdAt: p.created_at ? p.created_at.split('T')[0] : '2026-08-18',
@@ -150,6 +158,13 @@ export default function Reports() {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
+    sessionStorage.setItem('reports_active_tab', tabId);
+    if (tabId === 'places') {
+      searchParams.delete('tab');
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setSearchParams({ tab: tabId }, { replace: true });
+    }
   };
 
   const handleSubmitFilter = () => {

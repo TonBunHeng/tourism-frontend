@@ -26,6 +26,7 @@ import Settings from '../pages/settings/Settings';
 import Profile from '../pages/profiles/Profile';
 import Reports from '../pages/reports/Reports';
 import Notifications from '../pages/notifications/Notifications';
+import Security from '../pages/security/Security';
 
 const AppRoutes = () => {
   return (
@@ -62,6 +63,7 @@ const AppRoutes = () => {
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/security" element={<Security />} />
           </Route>
         </Route>
 

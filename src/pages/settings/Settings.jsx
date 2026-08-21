@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getInitialTheme } from "../../utils/Theme";
 import {
   Settings as SettingsIcon,
@@ -24,10 +25,30 @@ import { useAlert } from "../../context/AlertContext";
 
 export default function Settings() {
   const { showConfirm, showSuccess, showError } = useAlert();
-  const [activeTab, setActiveTab] = useState("general");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Tab persistence via search param + sessionStorage
+  const [activeTab, setActiveTab] = useState(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl) return tabFromUrl;
+    const tabFromStorage = sessionStorage.getItem('settings_active_tab');
+    return tabFromStorage || "general";
+  });
+
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    sessionStorage.setItem('settings_active_tab', tabId);
+    if (tabId === 'general') {
+      searchParams.delete('tab');
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setSearchParams({ tab: tabId }, { replace: true });
+    }
+  };
 
   // Comprehensive System Settings State
   const defaultSettings = {
@@ -45,7 +66,7 @@ export default function Settings() {
 
     // Appearance
     theme: getInitialTheme(),
-    primaryColor: "#22b7ab",
+    primaryColor: "#003E83",
     sidebarStyle: "modern",
     compactSidebar: false,
     fontSize: "medium",
@@ -193,7 +214,7 @@ export default function Settings() {
         <SettingsTabs
           tabs={tabs}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
 
         {/* Tab Content Body */}

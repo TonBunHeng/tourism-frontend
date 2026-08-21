@@ -1,10 +1,8 @@
-import { RefreshCw, Download } from 'lucide-react';
+import React from 'react';
 
 export default function DashboardHeader({
   timeRange,
-  onTimeRangeChange,
-  isLoading,
-  onRefresh
+  onTimeRangeChange
 }) {
   return (
     <div className="mb-8">
@@ -47,16 +45,6 @@ export default function DashboardHeader({
               Yearly
             </button>
           </div>
-          <button
-            onClick={onRefresh}
-            className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all cursor-pointer active:scale-95"
-            title="Refresh dashboard"
-          >
-            <RefreshCw className={`w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] ${isLoading ? 'animate-spin' : ''}`} />
-          </button>
-          <button className="p-2.5 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] transition-all cursor-pointer active:scale-95" title="Export report">
-            <Download className="w-5 h-5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
-          </button>
         </div>
       </div>
     </div>

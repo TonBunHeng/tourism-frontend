@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, Sun, Moon, ShieldCheck, ArrowRight } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, Sun, Moon, ShieldCheck, ArrowRight, Ban, AlertTriangle } from "lucide-react";
 import logo from "../../assets/images/tourism_logo.png";
 import { getInitialTheme, applyTheme, isDarkTheme, THEME_CHANGE_EVENT } from "../../utils/Theme";
 import authService from "../../services/authService";
@@ -9,14 +9,17 @@ import { useAlert } from "../../context/AlertContext";
 export default function Login() {
   const { showInfo } = useAlert();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [formData, setFormData] = useState({
-    email: "admin@tourism.gov.kh",
-    password: "password123",
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isIpBlocked, setIsIpBlocked] = useState(false);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -54,16 +57,23 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage("");
+    setIsIpBlocked(false);
 
     try {
       const res = await authService.login(formData);
       if (res.success) {
-        navigate("/dashboard");
+        const destination = location.state?.from?.pathname || "/dashboard";
+        navigate(destination, { replace: true });
       } else {
-        setErrorMessage(res.message || "Invalid credentials.");
+        setErrorMessage(res.message || "Invalid login credentials.");
       }
     } catch (err) {
-      setErrorMessage(err.message || "Failed to log in to API backend.");
+      if (err?.error === 'IP_BLOCKED' || err?.ip_blocked) {
+        setIsIpBlocked(true);
+        setErrorMessage(err.message || "Access Denied: Your IP address has been blocked by system administrators.");
+      } else {
+        setErrorMessage(err.message || "Failed to log in to API backend.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -98,11 +108,11 @@ export default function Login() {
           {/* Middle/Bottom Features Highlight */}
           <div className="relative z-10 mt-12 mb-6 hidden md:block space-y-4">
             <div className="flex items-center gap-3 text-xs lg:text-sm text-blue-100/90 bg-white/10 backdrop-blur-sm px-3.5 py-2.5 rounded-xl border border-white/10">
-              <ShieldCheck className="w-5 h-5 text-[#22b7ab] shrink-0" />
+              <ShieldCheck className="w-5 h-5 text-blue-300 shrink-0" />
               <span>Secure Role-Based Access Control</span>
             </div>
             <div className="flex items-center gap-3 text-xs lg:text-sm text-blue-100/90 bg-white/10 backdrop-blur-sm px-3.5 py-2.5 rounded-xl border border-white/10">
-              <div className="w-2 h-2 rounded-full bg-[#22b7ab] animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-blue-300 animate-pulse" />
               <span>Real-time Tourism Data Analytics</span>
             </div>
           </div>
@@ -137,9 +147,28 @@ export default function Login() {
             </button>
           </div>
 
+          {/* Error / IP Blocked Notice */}
           {errorMessage && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium">
-              {errorMessage}
+            <div className={`mb-5 p-4 rounded-xl border flex items-start gap-3 ${
+              isIpBlocked
+                ? 'bg-red-600 text-white border-red-700 shadow-md'
+                : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium'
+            }`}>
+              {isIpBlocked ? (
+                <Ban className="w-5 h-5 text-white shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              )}
+              <div className="min-w-0">
+                <p className={`text-sm ${isIpBlocked ? 'font-bold' : 'font-semibold'}`}>
+                  {errorMessage}
+                </p>
+                {isIpBlocked && (
+                  <p className="text-xs text-red-100 mt-1">
+                    Your IP address has been restricted from accessing AngkorVerses due to malicious traffic or repeated failed login attempts. Contact your Super Admin to unblock.
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
@@ -161,7 +190,7 @@ export default function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="admin@tourism.gov.kh"
-                  className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-[#22b7ab] focus:border-transparent transition text-sm"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-blue-500 focus:border-transparent transition text-sm"
                   required
                 />
               </div>
@@ -178,8 +207,8 @@ export default function Login() {
                   onClick={(e) => { 
                     e.preventDefault(); 
                     showInfo("Please contact the Super Administrator (admin@tourism.gov.kh) to securely reset your credentials.", "Password Reset Request"); 
-                  }}
-                  className="text-xs text-[#003E83] dark:text-[#22b7ab] hover:underline font-medium cursor-pointer"
+                    }}
+                  className="text-xs text-[#003E83] dark:text-blue-400 hover:underline font-medium cursor-pointer"
                 >
                   Forgot password?
                 </a>
@@ -195,7 +224,7 @@ export default function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-11 py-3 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-[#22b7ab] focus:border-transparent transition text-sm"
+                  className="w-full pl-11 pr-11 py-3 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-blue-500 focus:border-transparent transition text-sm"
                   required
                 />
                 <button
@@ -215,7 +244,7 @@ export default function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 dark:border-zinc-700 text-[#003E83] focus:ring-[#003E83] dark:focus:ring-[#22b7ab] cursor-pointer"
+                  className="w-4 h-4 rounded border-slate-300 dark:border-zinc-700 text-[#003E83] focus:ring-[#003E83] dark:focus:ring-blue-500 cursor-pointer"
                 />
                 <span className="text-xs font-medium text-slate-600 dark:text-zinc-400">Remember session</span>
               </label>

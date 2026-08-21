@@ -14,7 +14,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
-    if (token) {
+    if (token && token !== 'undefined' && token !== 'null') {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -32,6 +32,7 @@ api.interceptors.response.use(
       localStorage.removeItem('user');
       sessionStorage.clear();
       window.dispatchEvent(new Event('user-profile-updated'));
+
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }

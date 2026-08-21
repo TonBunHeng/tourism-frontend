@@ -18,20 +18,47 @@ import {
   Calendar,
   AlertTriangle
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useAlert } from '../../context/AlertContext';
 import notificationService from '../../services/notificationService';
+import NotificationDetailsModal from './NotificationDetailsModal';
 
 export default function Notifications() {
   const { showConfirm, showSuccess, showError } = useAlert();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Tab persistence via URL search param + sessionStorage
+  const [filterCategory, setFilterCategory] = useState(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && tabFromUrl.toLowerCase() !== 'security') return tabFromUrl;
+    const tabFromStorage = sessionStorage.getItem('notifications_active_tab');
+    if (tabFromStorage && tabFromStorage.toLowerCase() !== 'security') return tabFromStorage;
+    return 'All';
+  });
+
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filterCategory, setFilterCategory] = useState('All');
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // Selected Notification for Details Modal
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
   const categories = ['All', 'Alerts', 'Reviews', 'Messages', 'Users', 'System'];
+
+  // Sync tab state to URL & Storage
+  const handleTabChange = (cat) => {
+    setFilterCategory(cat);
+    sessionStorage.setItem('notifications_active_tab', cat);
+    if (cat === 'All') {
+      searchParams.delete('tab');
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setSearchParams({ tab: cat }, { replace: true });
+    }
+  };
 
   const formatTimeAgo = (dateString) => {
     if (!dateString) return 'Recent';
@@ -56,31 +83,38 @@ export default function Notifications() {
   };
 
   const getNotificationIcon = (type, category) => {
-    const cat = category || '';
-    const typ = type || '';
+    const cat = (category || '').toLowerCase();
+    const typ = (type || '').toLowerCase();
 
-    if (typ === 'deletion_request' || cat === 'Alerts') {
+    if (cat === 'security' || typ === 'security') {
+      return {
+        icon: ShieldAlert,
+        iconBg: 'bg-red-50 dark:bg-red-950/40',
+        iconColor: 'text-red-600 dark:text-red-400'
+      };
+    }
+    if (typ === 'deletion_request' || cat === 'alerts') {
       return {
         icon: UserX,
         iconBg: 'bg-rose-50 dark:bg-rose-950/40',
         iconColor: 'text-rose-600 dark:text-rose-400'
       };
     }
-    if (typ === 'review' || cat === 'Reviews') {
+    if (typ === 'review' || cat === 'reviews') {
       return {
         icon: Star,
         iconBg: 'bg-amber-50 dark:bg-amber-950/40',
         iconColor: 'text-amber-600 dark:text-amber-400'
       };
     }
-    if (typ === 'chat' || cat === 'Messages') {
+    if (typ === 'chat' || cat === 'messages') {
       return {
         icon: MessageCircle,
-        iconBg: 'bg-teal-50 dark:bg-teal-950/40',
-        iconColor: 'text-teal-600 dark:text-teal-400'
+        iconBg: 'bg-blue-50 dark:bg-blue-950/40',
+        iconColor: 'text-blue-600 dark:text-blue-400'
       };
     }
-    if (typ === 'user' || cat === 'Users') {
+    if (typ === 'user' || cat === 'users') {
       return {
         icon: Users,
         iconBg: 'bg-indigo-50 dark:bg-indigo-950/40',
@@ -90,12 +124,12 @@ export default function Notifications() {
     if (typ === 'event') {
       return {
         icon: Calendar,
-        iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
-        iconColor: 'text-emerald-600 dark:text-emerald-400'
+        iconBg: 'bg-blue-50 dark:bg-blue-950/40',
+        iconColor: 'text-blue-600 dark:text-blue-400'
       };
     }
     return {
-      icon: ShieldAlert,
+      icon: Info,
       iconBg: 'bg-blue-50 dark:bg-blue-950/40',
       iconColor: 'text-blue-600 dark:text-blue-400'
     };
@@ -119,16 +153,15 @@ export default function Notifications() {
       const notifs = Array.isArray(data) ? data : (data.data || []);
       setNotifications(notifs);
 
-      // Update unread count from meta or calculate
+      // Meta counts
       if (res?.meta?.unread_count !== undefined) {
         setUnreadCount(res.meta.unread_count);
       } else {
-        const unread = notifs.filter(n => !n.read).length;
-        setUnreadCount(unread);
+        const unreadRes = await notificationService.getUnreadCount();
+        setUnreadCount(unreadRes?.unread_count || 0);
       }
     } catch (err) {
       console.error('Failed to load notifications:', err);
-      showError('Failed to fetch notifications from the database.', 'Error');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -137,94 +170,125 @@ export default function Notifications() {
 
   useEffect(() => {
     fetchNotifications();
+
+    const handleSync = () => fetchNotifications(true);
+    window.addEventListener('notifications-updated', handleSync);
+    return () => window.removeEventListener('notifications-updated', handleSync);
   }, [fetchNotifications]);
 
-  const handleMarkAllRead = async () => {
-    try {
-      await notificationService.markAllRead();
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-      setUnreadCount(0);
-      showSuccess('All notifications marked as read.', 'Notifications Updated');
-      window.dispatchEvent(new CustomEvent('notifications-updated'));
-    } catch (err) {
-      console.error('Failed to mark all as read:', err);
-      showError('Failed to mark notifications as read.');
+  const handleOpenDetails = (notification, e) => {
+    if (e) e.stopPropagation();
+    setSelectedNotification(notification);
+    setIsDetailsModalOpen(true);
+
+    if (!notification.read) {
+      handleMarkAsRead(notification.id);
     }
   };
 
   const handleMarkAsRead = async (id, e) => {
-    // If clicking directly on a link or button, avoid duplicate click
-    if (e?.target?.closest('a')) return;
-
+    if (e) e.stopPropagation();
     try {
       await notificationService.markAsRead(id);
       setNotifications(prev =>
-        prev.map(n => (n.id === id ? { ...n, read: true } : n))
+        prev.map(n => (n.id === id ? { ...n, read: true, read_at: new Date().toISOString() } : n))
       );
+      if (selectedNotification && selectedNotification.id === id) {
+        setSelectedNotification(prev => ({ ...prev, read: true }));
+      }
       setUnreadCount(prev => Math.max(0, prev - 1));
       window.dispatchEvent(new CustomEvent('notifications-updated'));
     } catch (err) {
-      console.error('Failed to mark notification as read:', err);
+      console.error('Mark read error:', err);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationService.markAllRead();
+      setNotifications(prev => prev.map(n => ({ ...n, read: true, read_at: new Date().toISOString() })));
+      setUnreadCount(0);
+      showSuccess('All notifications marked as read.', 'Success');
+      window.dispatchEvent(new CustomEvent('notifications-updated'));
+    } catch (err) {
+      showError(err.message || 'Failed to mark all as read.', 'Error');
     }
   };
 
   const handleDeleteNotification = async (id, e) => {
-    e?.stopPropagation();
-    try {
-      await notificationService.deleteNotification(id);
-      setNotifications(prev => prev.filter(n => n.id !== id));
-      setUnreadCount(prev => {
-        const item = notifications.find(n => n.id === id);
-        return item && !item.read ? Math.max(0, prev - 1) : prev;
-      });
-      showSuccess('Notification removed.', 'Removed');
-      window.dispatchEvent(new CustomEvent('notifications-updated'));
-    } catch (err) {
-      console.error('Failed to delete notification:', err);
-      showError('Failed to delete notification.');
+    if (e) e.stopPropagation();
+    const confirmed = await showConfirm({
+      title: 'Delete Notification',
+      message: 'Are you sure you want to permanently remove this notification?',
+      confirmText: 'Delete',
+      type: 'danger'
+    });
+
+    if (confirmed) {
+      try {
+        await notificationService.deleteNotification(id);
+        setNotifications(prev => prev.filter(n => n.id !== id));
+        if (selectedNotification && selectedNotification.id === id) {
+          setIsDetailsModalOpen(false);
+          setSelectedNotification(null);
+        }
+        showSuccess('Notification deleted.', 'Success');
+        window.dispatchEvent(new CustomEvent('notifications-updated'));
+      } catch (err) {
+        showError(err.message || 'Failed to delete notification.', 'Error');
+      }
     }
   };
 
   const handleClearAll = async () => {
     const confirmed = await showConfirm({
-      title: 'Clear Notifications',
-      message: 'Are you sure you want to clear all notifications? This action cannot be undone.',
+      title: 'Clear All Notifications',
+      message: 'Are you sure you want to clear all notification records? This action cannot be undone.',
       confirmText: 'Clear All',
       type: 'danger'
     });
+
     if (confirmed) {
       try {
         await notificationService.clearAll();
         setNotifications([]);
         setUnreadCount(0);
-        showSuccess('All notifications have been cleared.', 'Notifications Cleared');
+        showSuccess('All notifications cleared.', 'Success');
         window.dispatchEvent(new CustomEvent('notifications-updated'));
       } catch (err) {
-        console.error('Failed to clear notifications:', err);
-        showError('Failed to clear notifications from database.');
+        showError(err.message || 'Failed to clear notifications.', 'Error');
       }
     }
   };
 
   return (
-    <div className="flex flex-col space-y-6">
-      {/* Header */}
+    <div className="space-y-6">
+      {/* Notification Details Modal */}
+      <NotificationDetailsModal
+        isOpen={isDetailsModalOpen}
+        notification={selectedNotification}
+        onClose={() => setIsDetailsModalOpen(false)}
+        onMarkRead={handleMarkAsRead}
+        onDelete={handleDeleteNotification}
+      />
+
+      {/* Header Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
             Notifications Center
           </h1>
-          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
-            Real-time updates for deletion requests, tourist reviews, chat messages, and system alerts
+          <p className="text-xs sm:text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+            Real-time updates for security alerts, tourist reviews, chat messages, and system events
           </p>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           <button
             type="button"
             onClick={() => fetchNotifications(true)}
-            disabled={refreshing || loading}
-            className="py-2 px-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer"
+            disabled={refreshing}
+            className="py-2 px-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-60"
             title="Refresh notifications"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -237,7 +301,7 @@ export default function Notifications() {
               onClick={handleMarkAllRead}
               className="py-2 px-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <CheckCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              <CheckCheck className="w-4 h-4 text-[#003E83] dark:text-blue-400" />
               Mark All Read
             </button>
           )}
@@ -262,10 +326,10 @@ export default function Notifications() {
             <button
               key={cat}
               type="button"
-              onClick={() => setFilterCategory(cat)}
+              onClick={() => handleTabChange(cat)}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                filterCategory === cat
-                  ? 'bg-[var(--color-primary)] text-white shadow-xs font-bold'
+                filterCategory.toLowerCase() === cat.toLowerCase()
+                  ? 'bg-[#003E83] dark:bg-blue-600 text-white shadow-xs font-bold'
                   : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-gray-100 dark:hover:bg-zinc-800'
               }`}
             >
@@ -280,7 +344,7 @@ export default function Notifications() {
               type="checkbox"
               checked={showUnreadOnly}
               onChange={(e) => setShowUnreadOnly(e.target.checked)}
-              className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] w-3.5 h-3.5"
+              className="rounded border-gray-300 text-[#003E83] dark:text-blue-500 focus:ring-[#003E83] dark:focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer"
             />
             Show unread only ({unreadCount})
           </label>
@@ -291,7 +355,7 @@ export default function Notifications() {
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm overflow-hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {loading ? (
           <div className="p-12 text-center flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#003E83] dark:text-blue-500 animate-spin" />
             <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
               Fetching real notifications from database...
             </p>
@@ -307,13 +371,13 @@ export default function Notifications() {
             return (
               <div
                 key={notification.id}
-                onClick={(e) => handleMarkAsRead(notification.id, e)}
-                className={`p-4 md:p-5 flex items-start justify-between gap-4 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/50 cursor-pointer ${
-                  !notification.read ? 'bg-teal-50/30 dark:bg-teal-950/20' : ''
+                onClick={(e) => handleOpenDetails(notification, e)}
+                className={`p-4 md:p-5 flex items-start justify-between gap-4 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/50 cursor-pointer group ${
+                  !notification.read ? 'bg-blue-50/30 dark:bg-blue-950/20' : ''
                 }`}
               >
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className={`p-2.5 rounded-lg shrink-0 ${iconBg}`}>
+                  <div className={`p-2.5 rounded-lg shrink-0 ${iconBg} transition-transform duration-200 group-hover:scale-105`}>
                     <Icon className={`w-5 h-5 ${iconColor}`} />
                   </div>
                   <div className="min-w-0">
@@ -322,7 +386,7 @@ export default function Notifications() {
                         {notification.category || 'General'}
                       </span>
                       {!notification.read && (
-                        <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse shrink-0" />
+                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0" />
                       )}
                       <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                         <Clock className="w-3 h-3" />
@@ -333,7 +397,7 @@ export default function Notifications() {
                     <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">
                       {notification.title}
                     </h3>
-                    <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5 leading-relaxed">
+                    <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5 leading-relaxed line-clamp-2">
                       {notification.description}
                     </p>
                   </div>
@@ -343,22 +407,20 @@ export default function Notifications() {
                   <button
                     type="button"
                     onClick={(e) => handleDeleteNotification(notification.id, e)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all duration-150 transform hover:scale-110 active:scale-95 cursor-pointer"
                     title="Delete notification"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
 
-                  {notification.link && (
-                    <Link
-                      to={notification.link}
-                      onClick={() => handleMarkAsRead(notification.id)}
-                      className="p-1.5 rounded-lg text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-primary)] hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-                      title="Open details"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </Link>
-                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => handleOpenDetails(notification, e)}
+                    className="p-1.5 rounded-lg text-slate-400 dark:text-zinc-500 hover:text-[#003E83] dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all duration-150 transform hover:scale-110 active:scale-95 cursor-pointer group/btn"
+                    title="Open details"
+                  >
+                    <ChevronRight className="w-5 h-5 text-[#003E83] dark:text-blue-400 transition-transform duration-150 group-hover/btn:translate-x-0.5" />
+                  </button>
                 </div>
               </div>
             );
@@ -369,7 +431,7 @@ export default function Notifications() {
               <Bell className="w-6 h-6" />
             </div>
             <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-              No notifications found
+              No {filterCategory !== 'All' ? filterCategory : ''} notifications found
             </h3>
             <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
               You are all caught up with recent database events!

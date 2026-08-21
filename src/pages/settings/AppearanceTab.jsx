@@ -22,7 +22,7 @@ export default function AppearanceTab({ settings, setSettings }) {
   const sidebarStyles = [
     { id: 'modern', name: 'Modern Dark', desc: 'Dark background with vibrant accents' },
     { id: 'light', name: 'Light Clean', desc: 'Minimalist border-separated light sidebar' },
-    { id: 'brand', name: 'Brand Gradient', desc: 'Subtle brand teal highlight styling' }
+    { id: 'brand', name: 'Brand Gradient', desc: 'Subtle brand blue highlight styling' }
   ];
 
   const fontSizes = [

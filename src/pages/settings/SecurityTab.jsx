@@ -313,7 +313,7 @@ export default function SecurityTab({ settings, setSettings }) {
 
       {/* 2FA QR Code Setup Modal */}
       {show2FAModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-modal-overlay)] backdrop-blur-xs animate-in fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-sm w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4 text-center">
             <div className="flex justify-between items-center pb-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">

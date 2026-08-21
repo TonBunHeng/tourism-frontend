@@ -4,7 +4,7 @@ import tourism_app_icon from "../../../public/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Map, Images, CalendarDays,
   Star, Heart, Trash2, MessageCircle, Settings, LogOut,
-  Users, User, X, FileText
+  Users, User, X, FileText, ShieldCheck, Bell
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
 
@@ -56,6 +56,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
     { name: "Places", icon: MapPinned, path: "/place" },
     { name: "Galleries", icon: Images, path: "/galleries" },
     { name: "Events", icon: CalendarDays, path: "/events" },
+    { name: "Security", icon: ShieldCheck, path: "/security" },
   ];
 
   const engagementItems = [
@@ -86,7 +87,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
         <button
           key={item.name}
           onClick={() => setShowLogoutAlert(true)}
-          className="group relative flex items-center w-full px-3 py-2 my-0.5 rounded-md cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] overflow-hidden"
+          className="group relative flex items-center w-full px-3 py-1.5 my-0.5 rounded-md cursor-pointer transition-colors duration-200 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] overflow-hidden"
         >
           <div className="flex items-center w-full min-w-0">
             <div className="flex items-center justify-center w-6 h-6 shrink-0">
@@ -110,13 +111,13 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
       <Link
         to={item.path || '#'}
         key={item.name}
-        className={`group relative flex items-center px-3 py-2 my-0.5 rounded-md cursor-pointer transition-colors duration-200 overflow-hidden
+        className={`group relative flex items-center px-3 py-1.5 my-0.5 rounded-md cursor-pointer transition-all duration-200 overflow-hidden
           ${isActive
-            ? 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] font-semibold'
+            ? 'bg-[var(--color-info-bg)] text-[var(--color-info-text)] dark:bg-[var(--color-info-dark-bg)] dark:text-[var(--color-info-dark-text)] font-semibold shadow-xs'
             : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'}`}
       >
         <div className="flex items-center w-full min-w-0">
-          <div className="flex items-center justify-center w-6 h-6 shrink-0">
+          <div className="flex items-center justify-center w-6 h-6 shrink-0 transition-transform duration-150 group-hover:scale-110">
             <Icon size={19} strokeWidth={2} />
           </div>
 
@@ -147,7 +148,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
         className={`fixed md:static inset-y-0 left-0 z-40 bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 transition-all duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
           } ${isExpanded ? 'w-56' : 'w-56 md:w-20'}`}
       >
-        {/* Brand Header - Level with Header.jsx (h-16 and matching border-b) */}
+        {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-3.5 border-b border-gray-200 dark:border-zinc-800 overflow-hidden shrink-0">
           <div className="flex items-center gap-3 w-full min-w-0">
             <div
@@ -170,11 +171,10 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
           </button>
         </div>
 
-
         {/* Navigation Areas */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-3 px-3 flex flex-col gap-6">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-2 px-2.5 flex flex-col gap-4">
           <div>
-            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-2 max-h-6' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-1 max-h-5' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
               Management
             </h3>
             <div className="flex flex-col">
@@ -183,7 +183,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
           </div>
 
           <div>
-            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-2 max-h-6' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-1 max-h-5' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
               Engagement
             </h3>
             <div className="flex flex-col">
@@ -192,7 +192,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
           </div>
 
           <div>
-            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-2 max-h-6' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
+            <h3 className={`px-3 text-[10px] font-bold text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)] uppercase tracking-widest transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100 mb-1 max-h-5' : 'opacity-100 md:opacity-0 md:max-h-0 md:mb-0 md:overflow-hidden'}`}>
               Preferences
             </h3>
             <div className="flex flex-col">
@@ -201,7 +201,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
           </div>
         </div>
 
-        {/* Profile Card Section - Level with Footer.jsx (h-14 and matching border-t) */}
+        {/* Profile Card Section */}
         <div className="h-14 px-2.5 border-t border-gray-200 dark:border-zinc-800 shrink-0 bg-white dark:bg-zinc-900 flex items-center">
           <Link
             to="/profile"

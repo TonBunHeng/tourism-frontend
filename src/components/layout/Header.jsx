@@ -302,7 +302,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-sm text-gray-800 dark:text-zinc-100">Notifications</h3>
                       {unreadCount > 0 && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:text-teal-400 rounded-full">
+                        <span className="px-1.5 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 rounded-full">
                           {unreadCount} new
                         </span>
                       )}
@@ -325,7 +325,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                           key={notification.id}
                           onClick={() => handleNotificationClick(notification)}
                           className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors ${
-                            !notification.read ? 'bg-teal-50/40 dark:bg-teal-950/20' : ''
+                            !notification.read ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
@@ -333,7 +333,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                               {notification.title}
                             </p>
                             {!notification.read && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0 mt-1" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1" />
                             )}
                           </div>
                           <p className="text-[11px] text-gray-500 dark:text-zinc-400 line-clamp-2 mt-0.5">

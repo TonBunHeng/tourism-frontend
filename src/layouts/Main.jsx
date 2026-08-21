@@ -27,6 +27,7 @@ export default function Main() {
       "/": "Login",
       "/dashboard": "Dashboard",
       "/place": "Places",
+      "/places": "Places",
       "/categories": "Categories",
       "/provinces": "Provinces",
       "/galleries": "Galleries",
@@ -38,8 +39,10 @@ export default function Main() {
       "/favorites": "Favorites",
       "/deletion-requests": "Deletion Requests",
       "/chat": "Chat",
+      "/security": "Security & Audit Center",
       "/settings": "Settings",
       "/profile": "Profile",
+      "/notifications": "Notifications Center",
       "/login": "Login",
       "/logout": "Logout",
     };

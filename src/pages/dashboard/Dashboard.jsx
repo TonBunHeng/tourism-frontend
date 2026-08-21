@@ -41,8 +41,6 @@ export default function Dashboard() {
       <DashboardHeader
         timeRange={timeRange}
         onTimeRangeChange={setTimeRange}
-        isLoading={isLoading}
-        onRefresh={handleRefresh}
       />
 
       {/* Stats Cards Rows 1 and 2 */}

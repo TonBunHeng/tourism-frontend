@@ -9,6 +9,7 @@ import GalleryUploadModal from "./GalleryUploadModal";
 import GalleryEditModal from "./GalleryEditModal";
 import GalleryPreviewModal from "./GalleryPreviewModal";
 import galleryService from "../../services/galleryService";
+import categoryService from "../../services/categoryService";
 import deletionRequestService from "../../services/deletionRequestService";
 import { useAlert } from "../../context/AlertContext";
 

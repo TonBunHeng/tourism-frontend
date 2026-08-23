@@ -204,14 +204,22 @@ export default function Notifications() {
   };
 
   const handleMarkAllRead = async () => {
-    try {
-      await notificationService.markAllRead();
-      setNotifications(prev => prev.map(n => ({ ...n, read: true, read_at: new Date().toISOString() })));
-      setUnreadCount(0);
-      showSuccess('All notifications marked as read.', 'Success');
-      window.dispatchEvent(new CustomEvent('notifications-updated'));
-    } catch (err) {
-      showError(err.message || 'Failed to mark all as read.', 'Error');
+    const confirmed = await showConfirm({
+      title: 'Mark All as Read',
+      message: 'Are you sure you want to mark all notifications as read?',
+      confirmText: 'Mark All Read',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      try {
+        await notificationService.markAllRead();
+        setNotifications(prev => prev.map(n => ({ ...n, read: true, read_at: new Date().toISOString() })));
+        setUnreadCount(0);
+        window.dispatchEvent(new CustomEvent('notifications-updated'));
+      } catch (err) {
+        showError(err.message || 'Failed to mark all as read.', 'Error');
+      }
     }
   };
 

@@ -1,9 +1,7 @@
-import { Download, CheckCheck } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 export default function SecurityHeader({
-  unreadCount,
-  onOpenExport,
-  onMarkAllRead
+  onOpenExport
 }) {
   return (
     <div className="mb-6 sm:mb-8">
@@ -18,17 +16,6 @@ export default function SecurityHeader({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          {unreadCount > 0 && (
-            <button
-              type="button"
-              onClick={onMarkAllRead}
-              className="py-2 px-3.5 rounded-md border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 text-xs font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <CheckCheck className="w-4 h-4" />
-              Mark All Read
-            </button>
-          )}
-
           <button
             type="button"
             onClick={onOpenExport}

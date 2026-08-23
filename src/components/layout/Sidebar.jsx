@@ -25,7 +25,7 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
     const handleUserSync = () => {
       try {
         setUser(JSON.parse(localStorage.getItem('user') || '{}'));
-      } catch (e) {}
+      } catch (e) { }
     };
 
     window.addEventListener('storage', handleUserSync);
@@ -56,10 +56,10 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
     { name: "Places", icon: MapPinned, path: "/place" },
     { name: "Galleries", icon: Images, path: "/galleries" },
     { name: "Events", icon: CalendarDays, path: "/events" },
-    { name: "Security", icon: ShieldCheck, path: "/security" },
   ];
 
   const engagementItems = [
+    { name: "Security", icon: ShieldCheck, path: "/security" },
     { name: "Favorites", icon: Heart, path: "/favorites" },
     { name: "Ratings & Reviews", icon: Star, path: "/ratings" },
     { name: "Reports", icon: FileText, path: "/reports" },

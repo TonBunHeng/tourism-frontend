@@ -174,9 +174,7 @@ export default function Security() {
 
       {/* Header */}
       <SecurityHeader
-        unreadCount={meta.unread_count || 0}
         onOpenExport={() => setIsExportModalOpen(true)}
-        onMarkAllRead={handleMarkAllRead}
       />
 
       {/* Standard KPI Stats Cards */}

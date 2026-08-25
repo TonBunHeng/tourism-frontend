@@ -60,7 +60,7 @@ export default function SecurityList({
   };
 
   return (
-    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden shadow-xs">
+    <>
       {/* Mobile Card View */}
       <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {alerts.length > 0 ? (
@@ -311,6 +311,6 @@ export default function SecurityList({
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }

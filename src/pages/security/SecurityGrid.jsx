@@ -6,7 +6,8 @@ import {
   Trash2,
   Lock,
   ChevronRight,
-  AlertTriangle
+  AlertTriangle,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function SecurityGrid({
@@ -16,8 +17,20 @@ export default function SecurityGrid({
   onMarkRead,
   onDeleteAlert
 }) {
-  if (loading || alerts.length === 0) {
-    return null;
+  if (loading) return null;
+
+  if (alerts.length === 0) {
+    return (
+      <div className="text-center py-12 px-4">
+        <ShieldCheck className="w-12 h-12 text-blue-500 mx-auto mb-2 opacity-80" />
+        <h3 className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-1">
+          No security alerts found
+        </h3>
+        <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+          All authentication records are safe and within normal limits.
+        </p>
+      </div>
+    );
   }
 
   const formatTimeAgo = (dateString) => {

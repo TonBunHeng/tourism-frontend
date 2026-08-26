@@ -21,7 +21,6 @@ import Users from '../pages/users/Users';
 import Ratings from '../pages/ratings/Ratings';
 import Favorites from '../pages/favorites/Favorites';
 import DeletionRequests from '../pages/delete/DeletionRequests';
-import Chats from '../pages/chats/Chats';
 import Settings from '../pages/settings/Settings';
 import Profile from '../pages/profiles/Profile';
 import Reports from '../pages/reports/Reports';
@@ -59,7 +58,7 @@ const AppRoutes = () => {
             <Route path="/ratings" element={<Ratings />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/deletion-requests" element={<DeletionRequests />} />
-            <Route path="/chat" element={<Chats />} />
+            <Route path="/chat" element={<Navigate to="/dashboard" replace />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notifications" element={<Notifications />} />

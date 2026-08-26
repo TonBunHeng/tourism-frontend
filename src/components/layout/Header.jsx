@@ -414,10 +414,6 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                       <Settings size={18} className="text-gray-400" />
                       Settings
                     </Link>
-                    <Link to="/chat" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
-                      <MessageCircle size={18} className="text-gray-400" />
-                      Messages
-                    </Link>
 
                     <button
                       type="button"

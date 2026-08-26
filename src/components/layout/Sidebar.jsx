@@ -69,7 +69,6 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
   const accountItems = [
     { name: "Users", icon: Users, path: "/users" },
     { name: "Profile", icon: User, path: "/profile" },
-    { name: "Chat", icon: MessageCircle, path: "/chat" },
     { name: "Settings", icon: Settings, path: "/settings" },
     { name: "Log out", icon: LogOut, path: "/logout" },
   ];

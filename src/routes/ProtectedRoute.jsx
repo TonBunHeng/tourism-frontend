@@ -5,7 +5,7 @@ import authService from '../services/authService';
 export default function ProtectedRoute() {
   const location = useLocation();
   const [isVerifying, setIsVerifying] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(() => authService.isAuthenticated());
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -20,11 +20,13 @@ export default function ProtectedRoute() {
         return;
       }
 
-      // If we already have stored admin credentials, allow rendering immediately while verifying with backend
       try {
+        // Authoritative server-side verification - Never trust localStorage alone
         const res = await authService.me();
         if (isMounted) {
-          if (res.success && authService.hasAdminRole()) {
+          const user = res?.data?.user || res?.data;
+          const allowedRoles = ['Super Admin', 'Admin', 'Guide / Editor'];
+          if (res?.success && user && allowedRoles.includes(user.role)) {
             setIsAuthorized(true);
           } else {
             authService.clearSession();
@@ -45,8 +47,20 @@ export default function ProtectedRoute() {
 
     verifyAuth();
 
+    const handleStorageChange = () => {
+      if (!authService.getToken()) {
+        setIsAuthorized(false);
+        setIsVerifying(false);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('user-profile-updated', handleStorageChange);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('user-profile-updated', handleStorageChange);
     };
   }, [location.pathname]);
 
@@ -55,12 +69,13 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (isVerifying && !isAuthorized) {
+  // Show verification screen while validating token with Laravel backend
+  if (isVerifying) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#09090b]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-[#003E83] border-t-transparent dark:border-blue-500 dark:border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-medium text-slate-500 dark:text-zinc-400">Verifying session...</p>
+          <p className="text-sm font-medium text-slate-500 dark:text-zinc-400">Verifying administrator session...</p>
         </div>
       </div>
     );

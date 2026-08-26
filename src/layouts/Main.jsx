@@ -38,7 +38,6 @@ export default function Main() {
       "/ratings": "Ratings",
       "/favorites": "Favorites",
       "/deletion-requests": "Deletion Requests",
-      "/chat": "Chat",
       "/security": "Security & Audit Center",
       "/settings": "Settings",
       "/profile": "Profile",

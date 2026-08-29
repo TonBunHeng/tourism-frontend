@@ -95,20 +95,20 @@ export default function FavoritesGrid({
                 <img
                   src={favorite.image}
                   alt={favorite.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&q=80&w=600';
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-zinc-800 dark:to-zinc-900">
-                  <IconComponent className="w-12 h-12 text-[var(--color-primary)] opacity-40" />
+                <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-zinc-800">
+                  <IconComponent className="w-12 h-12 text-[#003E83] dark:text-blue-400 opacity-40" />
                 </div>
               )}
 
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+              {/* Dark overlay for contrast */}
+              <div className="absolute inset-0 bg-black/40" />
 
               {/* Selection Checkbox */}
               <div className="absolute top-3 left-3 z-10">
@@ -117,7 +117,7 @@ export default function FavoritesGrid({
                   checked={isSelected}
                   onChange={(e) => handleSelect(favorite.id, e)}
                   aria-label={`Select ${favorite.name}`}
-                  className="w-4 h-4 rounded text-[var(--color-primary)] focus:ring-[var(--color-primary)] border-white/80 bg-white/90 cursor-pointer shadow"
+                  className="w-4 h-4 rounded text-[#003E83] focus:ring-[#003E83] border-gray-300 bg-white cursor-pointer shadow-xs"
                 />
               </div>
 
@@ -127,23 +127,23 @@ export default function FavoritesGrid({
                   type="button"
                   onClick={() => handleDelete(favorite.id || favorite.place_id)}
                   title="Remove from favorites"
-                  className="p-1.5 rounded-full bg-white/90 dark:bg-zinc-900/90 text-[var(--color-rose-badge-text)] hover:scale-110 active:scale-95 transition-all shadow cursor-pointer"
+                  className="p-1.5 rounded-full bg-white/90 dark:bg-zinc-900/90 text-rose-600 hover:bg-white transition-colors shadow-xs cursor-pointer"
                 >
-                  <Heart className="w-4 h-4 fill-current text-[var(--color-rose-badge-text)]" />
+                  <Heart className="w-4 h-4 fill-current text-rose-600" />
                 </button>
               </div>
 
               {/* Category & Status Badges */}
               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md bg-black/60 backdrop-blur-md text-white border border-white/20">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md bg-black/75 text-white border border-white/20">
                   <IconComponent className="w-3.5 h-3.5" />
                   <span className="truncate max-w-[110px]">{favorite.category || 'Destination'}</span>
                 </span>
 
                 <span
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md backdrop-blur-md border ${isVisited
-                      ? 'bg-emerald-500/90 text-white border-emerald-400/40'
-                      : 'bg-blue-600/90 text-white border-blue-400/40'
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md border ${isVisited
+                      ? 'bg-emerald-600 text-white border-emerald-500'
+                      : 'bg-[#003E83] text-white border-blue-800'
                     }`}
                 >
                   {isVisited ? (

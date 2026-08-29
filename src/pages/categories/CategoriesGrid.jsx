@@ -25,16 +25,16 @@ export default function CategoriesGrid({
             <div
               key={category.id}
               onClick={() => handleView(category)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-5 overflow-hidden hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] cursor-pointer"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-5 overflow-hidden hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer"
             >
               {/* Top Accent Color Bar */}
-              <div className="h-1.5 -mx-5 -mt-5 mb-4" style={{ backgroundColor: themeColor }} />
+              <div className="h-1 -mx-5 -mt-5 mb-4" style={{ backgroundColor: themeColor }} />
 
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="flex items-center gap-3 min-w-0">
                   {/* Category Color Icon Badge */}
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-white shrink-0 shadow-sm transition-transform group-hover:scale-105"
+                    className="w-10 h-10 rounded-md flex items-center justify-center text-white shrink-0 shadow-xs"
                     style={{ backgroundColor: themeColor }}
                   >
                     <FolderTree className="w-5 h-5 text-white" />

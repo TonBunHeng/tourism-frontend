@@ -52,18 +52,18 @@ export default function SecurityDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark-modal)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 transition-all"
+        className="w-full max-w-xl bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark-modal)] border border-gray-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="p-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] flex items-center justify-between bg-red-500/5 dark:bg-red-950/20">
+        <div className="p-4 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between bg-red-50/50 dark:bg-red-950/20">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="p-2.5 rounded-xl border bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 shrink-0 animate-alert-pop">
-              <ShieldAlert className="w-6 h-6" />
+            <div className="p-2 rounded-md border bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 shrink-0">
+              <ShieldAlert className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">

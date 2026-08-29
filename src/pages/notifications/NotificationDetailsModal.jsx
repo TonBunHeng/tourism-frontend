@@ -92,24 +92,24 @@ export default function NotificationDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark-modal)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 transition-all"
+        className="w-full max-w-lg bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark-modal)] border border-gray-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="p-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] flex items-center justify-between bg-slate-50/60 dark:bg-zinc-800/40">
+        <div className="p-4 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between bg-slate-50/60 dark:bg-zinc-800/40">
           <div className="flex items-center gap-3 min-w-0">
-            <div className={`p-2.5 rounded-xl border ${getCategoryBadgeColor(notification.category, notification.type)} shrink-0 animate-alert-pop`}>
-              <IconComponent className="w-5 h-5" />
+            <div className={`p-2 rounded-md border ${getCategoryBadgeColor(notification.category, notification.type)} shrink-0`}>
+              <IconComponent className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className={`inline-block text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${getCategoryBadgeColor(notification.category, notification.type)} mb-1`}>
+              <span className={`inline-block text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border ${getCategoryBadgeColor(notification.category, notification.type)} mb-1`}>
                 {notification.category || 'General'}
               </span>
-              <h2 className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">
+              <h2 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">
                 Notification Details
               </h2>
             </div>
@@ -118,7 +118,7 @@ export default function NotificationDetailsModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200/60 dark:hover:bg-zinc-800 transition cursor-pointer"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
             title="Close modal"
           >
             <X className="w-5 h-5" />
@@ -235,9 +235,9 @@ export default function NotificationDetailsModal({
               <button
                 type="button"
                 onClick={() => onMarkRead(notification.id)}
-                className="py-2.5 px-4 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                className="py-2 px-3.5 rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-700 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
               >
-                <Check className="w-4 h-4 text-blue-500" />
+                <Check className="w-3.5 h-3.5 text-blue-600" />
                 Mark as Read
               </button>
             )}
@@ -246,7 +246,7 @@ export default function NotificationDetailsModal({
               <Link
                 to={notification.link}
                 onClick={onClose}
-                className="py-2.5 px-4 rounded-xl bg-[#003E83] hover:bg-[#002e62] dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+                className="py-2 px-3.5 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>Go to Page</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -256,7 +256,7 @@ export default function NotificationDetailsModal({
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-4 rounded-xl bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold transition cursor-pointer"
+              className="py-2 px-3.5 rounded-md bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-zinc-200 text-xs font-medium transition-colors cursor-pointer"
             >
               Close
             </button>

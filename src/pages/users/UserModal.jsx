@@ -1,27 +1,29 @@
 import { useState, useRef } from "react";
-import { X, ChevronDown, User, Lock, Mail, Phone, MapPin, Key, Upload, Trash2, Camera } from "lucide-react";
+import { X, User, Mail, Phone, MapPin, Camera, Trash2, ChevronDown, AlertCircle, Lock } from "lucide-react";
 import uploadService from "../../services/uploadService";
+import { validateImageFile } from "../../utils/fileValidation";
 
 export default function UserModal({
   isOpen,
-  onClose,
   editingUser,
-  formData = {},
-  onFormChange,
-  onSubmit,
-  newUser,
-  onNewUserChange
+  userData,
+  newUserData,
+  onUserChange,
+  onNewUserChange,
+  onClose,
+  onSubmit
 }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [fileValidationError, setFileValidationError] = useState('');
   const fileInputRef = useRef(null);
 
   if (!isOpen) return null;
 
-  const data = formData || newUser || {};
+  const data = editingUser ? userData : newUserData;
 
   const handleChange = (field, value) => {
-    if (onFormChange) {
-      onFormChange(field, value);
+    if (editingUser && onUserChange) {
+      onUserChange({ ...data, [field]: value });
     } else if (onNewUserChange) {
       onNewUserChange({ ...data, [field]: value });
     }
@@ -30,6 +32,14 @@ export default function UserModal({
   const handleAvatarSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setFileValidationError('');
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      setFileValidationError(validation.error);
+      if (e.target) e.target.value = '';
+      return;
+    }
 
     // Instant local preview
     const reader = new FileReader();
@@ -57,34 +67,38 @@ export default function UserModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-lg w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center">
-              <User className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded bg-blue-50 dark:bg-zinc-800 text-[#003E83] dark:text-blue-400 flex items-center justify-center">
+              <User className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+              <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">
                 {editingUser ? "Edit User Account" : "Add New User Account"}
               </h3>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                {editingUser ? "Update user profile details and password" : "Create a new user account with role & permissions"}
-              </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleFormSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        <form onSubmit={handleFormSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+          {fileValidationError && (
+            <div className="p-3 rounded bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center gap-2 text-xs text-red-700 dark:text-red-400 font-medium">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{fileValidationError}</span>
+            </div>
+          )}
+
           {/* Avatar Picture Picker */}
           <div className="flex flex-col items-center justify-center pb-2">
             <div
@@ -295,7 +309,7 @@ export default function UserModal({
             <button
               type="submit"
               disabled={isUploading}
-              className="flex-1 py-2.5 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors shadow-md text-center cursor-pointer disabled:opacity-50"
+              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors text-center cursor-pointer disabled:opacity-50"
             >
               {isUploading ? "Uploading..." : editingUser ? "Save Changes" : "Create User"}
             </button>

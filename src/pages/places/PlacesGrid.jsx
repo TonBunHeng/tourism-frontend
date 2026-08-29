@@ -19,19 +19,19 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
             <div
               key={place.id}
               onClick={() => onViewPlace(place.id)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] cursor-pointer flex flex-col justify-between"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer flex flex-col justify-between"
             >
               <div>
                 {/* 1. Header Media: Photo or Interactive Google Map */}
                 <div
-                  className="relative w-full h-36 mb-4 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] shadow-sm group/media"
+                  className="relative w-full h-36 mb-4 rounded-md overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] group/media"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {currentTab === 'photo' && hasImage ? (
                     <img
                       src={place.image_url || place.image}
                       alt={place.name}
-                      className="w-full h-full object-cover group-hover/media:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <iframe
@@ -55,9 +55,9 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
                           e.stopPropagation();
                           setActiveMediaTab(prev => ({ ...prev, [place.id]: 'photo' }));
                         }}
-                        className={`p-1 px-2 rounded text-[10px] font-semibold backdrop-blur-md transition-colors ${currentTab === 'photo'
-                          ? 'bg-black/75 text-white'
-                          : 'bg-white/80 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-white'
+                        className={`p-1 px-2 rounded text-[10px] font-semibold transition-colors ${currentTab === 'photo'
+                          ? 'bg-black/85 text-white'
+                          : 'bg-white/90 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-white'
                           }`}
                       >
                         Photo
@@ -68,9 +68,9 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
                           e.stopPropagation();
                           setActiveMediaTab(prev => ({ ...prev, [place.id]: 'map' }));
                         }}
-                        className={`p-1 px-2 rounded text-[10px] font-semibold backdrop-blur-md transition-colors ${currentTab === 'map'
-                          ? 'bg-black/75 text-white'
-                          : 'bg-white/80 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-white'
+                        className={`p-1 px-2 rounded text-[10px] font-semibold transition-colors ${currentTab === 'map'
+                          ? 'bg-black/85 text-white'
+                          : 'bg-white/90 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-white'
                           }`}
                       >
                         Map

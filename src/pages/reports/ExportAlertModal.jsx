@@ -26,14 +26,14 @@ export default function ExportAlertModal({ isOpen, format, activeTab, recordCoun
 
   return (
     <div
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 transition-opacity duration-150"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="export-modal-title"
     >
       <div
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl max-w-md w-full mx-4 p-6 relative animate-in fade-in zoom-in duration-200 border border-gray-100 dark:border-zinc-800"
+        className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg max-w-md w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}

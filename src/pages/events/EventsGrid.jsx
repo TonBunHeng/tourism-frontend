@@ -24,12 +24,12 @@ export default function EventsGrid({
             <div
               key={event.id}
               onClick={() => handleView(event)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02] cursor-pointer"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer"
             >
               {/* Event Image Picture Header */}
-              <div className="relative w-full h-36 mb-3 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
+              <div className="relative w-full h-36 mb-3 rounded-md overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
                 {event.imageUrl ? (
-                  <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-[var(--color-primary)] flex items-center justify-center p-3 text-center">
                     <span className="text-white text-xs font-semibold drop-shadow">{event.title}</span>

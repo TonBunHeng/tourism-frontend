@@ -10,7 +10,7 @@ export default function ProvincesGrid({ provinces, onViewProvince, onEditProvinc
             <div
               key={province.id}
               onClick={() => onViewProvince(province.id)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-5 hover:shadow-lg transition-all duration-200 lg:hover:scale-[1.02] cursor-pointer"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer"
             >
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="min-w-0">

@@ -10,11 +10,45 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor to attach Bearer Auth token
+// Patterns that identify sensitive internal errors (SQL, DB credentials, stack traces)
+const SENSITIVE_ERROR_PATTERNS = [
+  /SQLSTATE/i,
+  /QueryException/i,
+  /PDOException/i,
+  /Connection refused/i,
+  /Database.*failed/i,
+  /vendor\/laravel/i,
+  /Stack trace:/i,
+  /\.php:\d+/i,
+  /Undefined variable/i,
+  /Integrity constraint violation/i,
+];
+
+/**
+ * Sanitize error messages to prevent leaking server architecture,
+ * database details, file paths, or credentials to end users.
+ */
+function sanitizeErrorMessage(rawMessage, statusCode) {
+  if (!rawMessage || typeof rawMessage !== 'string') {
+    if (statusCode === 403) return 'You do not have permission to perform this action.';
+    if (statusCode === 404) return 'The requested resource was not found.';
+    if (statusCode >= 500) return 'A server error occurred. Please try again later.';
+    return 'An unexpected error occurred.';
+  }
+
+  const isSensitive = SENSITIVE_ERROR_PATTERNS.some(pattern => pattern.test(rawMessage));
+  if (isSensitive) {
+    return 'A server error occurred. Please try again later.';
+  }
+
+  return rawMessage;
+}
+
+// Request interceptor to attach Bearer Auth token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
-    if (token && token !== 'undefined' && token !== 'null') {
+    if (token && token !== 'undefined' && token !== 'null' && token.trim() !== '') {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -22,22 +56,55 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add response interceptor for standard error handling
+// Response interceptor for authentication handling and error sanitization
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const status = error?.response?.status;
+    const responseData = error?.response?.data;
+
+    // 401 Unauthorized: Session is expired or invalid
+    if (status === 401) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       sessionStorage.clear();
       window.dispatchEvent(new Event('user-profile-updated'));
 
-      if (window.location.pathname !== '/login') {
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
+
+      return Promise.reject({
+        success: false,
+        message: 'Your session has expired. Please sign in again.',
+        status: 401,
+      });
     }
-    return Promise.reject(error.response ? error.response.data : error);
+
+    // 403 Forbidden: Authorized session, but insufficient privileges
+    if (status === 403) {
+      const sanitized = sanitizeErrorMessage(responseData?.message, 403);
+      return Promise.reject({
+        success: false,
+        message: sanitized,
+        status: 403,
+      });
+    }
+
+    // Sanitize any generic or server error
+    if (responseData) {
+      const sanitizedMessage = sanitizeErrorMessage(responseData.message || responseData.error, status);
+      return Promise.reject({
+        ...responseData,
+        message: sanitizedMessage,
+      });
+    }
+
+    return Promise.reject({
+      success: false,
+      message: sanitizeErrorMessage(error?.message, status),
+    });
   }
 );
 

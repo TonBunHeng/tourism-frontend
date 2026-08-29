@@ -15,26 +15,26 @@ export default function GalleryGrid({ media, mediaItems, onPreview, onEdit, onDe
         items.map((item) => (
           <div
             key={item.id}
-            className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02]"
+            className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 sm:p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors"
           >
             {/* Top Media Picture Banner */}
-            <div className="relative w-full h-40 mb-3 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
+            <div className="relative w-full h-40 mb-3 rounded-md overflow-hidden border border-gray-200 dark:border-zinc-800 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
               {item.type === 'video' ? (
                 <div className="w-full h-full bg-black/60 flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow-lg">
-                    <Video className="w-6 h-6 text-[var(--color-info-text)] ml-0.5" />
+                  <div className="w-10 h-10 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow-md">
+                    <Video className="w-5 h-5 text-[var(--color-info-text)] ml-0.5" />
                   </div>
                 </div>
               ) : (
                 <img
                   src={item.url}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover"
                 />
               )}
 
               {/* Status Badge */}
-              <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-semibold rounded-full border shadow-sm backdrop-blur-md ${getStatusColor(item.status)}`}>
+              <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-semibold rounded-full border shadow-xs ${getStatusColor(item.status)}`}>
                 {item.status}
               </span>
             </div>

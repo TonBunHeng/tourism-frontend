@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { X, ChevronDown, Upload, Trash2, Calendar, Sparkles } from 'lucide-react';
+import { X, ChevronDown, Upload, Trash2, Calendar, AlertCircle, Sparkles } from 'lucide-react';
 import uploadService from '../../services/uploadService';
+import { validateImageFile } from '../../utils/fileValidation';
 
 export const calculateAutoStatus = (startDate, endDate, manualStatus) => {
   if (manualStatus === 'Cancelled') return 'Cancelled';
@@ -31,6 +32,7 @@ export default function EventModal({
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [autoStatusMode, setAutoStatusMode] = useState(true);
+  const [fileValidationError, setFileValidationError] = useState('');
 
   const safeFormData = formData || {};
   const safeCategories = Array.isArray(categories) && categories.length > 0
@@ -48,7 +50,7 @@ export default function EventModal({
   const handleStartDateChange = (val) => {
     const nextData = { ...safeFormData, start_date: val, date: val };
     if (autoStatusMode) {
-      nextData.status = calculateAutoStatus(val, nextData.end_date, null);
+      nextData.status = calculateAutoStatus(val, safeFormData.end_date, safeFormData.status);
     }
     updateForm(nextData);
   };
@@ -56,15 +58,15 @@ export default function EventModal({
   const handleEndDateChange = (val) => {
     const nextData = { ...safeFormData, end_date: val };
     if (autoStatusMode) {
-      nextData.status = calculateAutoStatus(nextData.start_date, val, null);
+      nextData.status = calculateAutoStatus(safeFormData.start_date, val, safeFormData.status);
     }
     updateForm(nextData);
   };
 
-  const handleStatusChange = (val) => {
+  const handleManualStatusChange = (val) => {
     if (val === 'Auto') {
       setAutoStatusMode(true);
-      const computed = calculateAutoStatus(safeFormData.start_date, safeFormData.end_date, null);
+      const computed = calculateAutoStatus(safeFormData.start_date, safeFormData.end_date);
       updateForm({ ...safeFormData, status: computed });
     } else {
       setAutoStatusMode(false);
@@ -75,6 +77,14 @@ export default function EventModal({
   const handleImageFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setFileValidationError('');
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      setFileValidationError(validation.error);
+      if (e.target) e.target.value = '';
+      return;
+    }
 
     // Instant local preview
     const reader = new FileReader();
@@ -101,28 +111,34 @@ export default function EventModal({
   const currentComputedStatus = calculateAutoStatus(safeFormData.start_date, safeFormData.end_date, safeFormData.status);
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-lg w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)]">
-              <Calendar className="w-5 h-5" />
+            <div className="p-1.5 rounded bg-blue-50 text-[#003E83] dark:bg-zinc-800 dark:text-blue-400">
+              <Calendar className="w-4 h-4" />
             </div>
-            <h3 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-wide">
+            <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">
               {editingEvent ? 'Edit Event' : 'Create New Event'}
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={onSubmit}>
-          <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+          <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            {fileValidationError && (
+              <div className="p-3 rounded bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center gap-2 text-xs text-red-700 dark:text-red-400 font-medium">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{fileValidationError}</span>
+              </div>
+            )}
             {/* Category & Status */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -372,7 +388,7 @@ export default function EventModal({
             <button
               type="submit"
               disabled={isUploading || !safeFormData.title?.trim() || !safeFormData.location?.trim()}
-              className="flex-1 py-3 px-4 rounded-md bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-medium text-sm transition-colors shadow-lg shadow-[var(--color-primary)]/25 text-center cursor-pointer disabled:opacity-50"
+              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors text-center cursor-pointer disabled:opacity-50"
             >
               {isUploading ? 'Uploading Image...' : editingEvent ? 'Update Event' : 'Create Event'}
             </button>

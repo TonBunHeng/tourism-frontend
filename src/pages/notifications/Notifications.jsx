@@ -385,7 +385,7 @@ export default function Notifications() {
                 }`}
               >
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className={`p-2.5 rounded-lg shrink-0 ${iconBg} transition-transform duration-200 group-hover:scale-105`}>
+                  <div className={`p-2.5 rounded-lg shrink-0 ${iconBg}`}>
                     <Icon className={`w-5 h-5 ${iconColor}`} />
                   </div>
                   <div className="min-w-0">
@@ -394,7 +394,7 @@ export default function Notifications() {
                         {notification.category || 'General'}
                       </span>
                       {!notification.read && (
-                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0" />
+                        <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
                       )}
                       <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                         <Clock className="w-3 h-3" />
@@ -411,11 +411,11 @@ export default function Notifications() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
                     onClick={(e) => handleDeleteNotification(notification.id, e)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all duration-150 transform hover:scale-110 active:scale-95 cursor-pointer"
+                    className="p-1.5 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
                     title="Delete notification"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -424,10 +424,10 @@ export default function Notifications() {
                   <button
                     type="button"
                     onClick={(e) => handleOpenDetails(notification, e)}
-                    className="p-1.5 rounded-lg text-slate-400 dark:text-zinc-500 hover:text-[#003E83] dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all duration-150 transform hover:scale-110 active:scale-95 cursor-pointer group/btn"
+                    className="p-1.5 rounded text-gray-400 hover:text-[#003E83] dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                     title="Open details"
                   >
-                    <ChevronRight className="w-5 h-5 text-[#003E83] dark:text-blue-400 transition-transform duration-150 group-hover/btn:translate-x-0.5" />
+                    <ChevronRight className="w-5 h-5 text-[#003E83] dark:text-blue-400" />
                   </button>
                 </div>
               </div>

@@ -50,7 +50,7 @@ export default function SettingsHeader({
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-[var(--color-white)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0"
+          className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-medium rounded-md bg-[#003E83] hover:bg-[#002e62] disabled:opacity-50 text-white transition-colors shrink-0 cursor-pointer"
         >
           {saving ? (
             <>
@@ -59,7 +59,7 @@ export default function SettingsHeader({
             </>
           ) : saveSuccess ? (
             <>
-              <CheckCircle2 className="w-4 h-4 text-[var(--color-white)] animate-bounce" />
+              <CheckCircle2 className="w-4 h-4 text-white" />
               <span>Saved!</span>
             </>
           ) : (

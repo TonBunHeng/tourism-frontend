@@ -159,7 +159,7 @@ export default function SecurityTab({ settings, setSettings }) {
           <button
             type="button"
             onClick={handlePasswordChange}
-            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent shadow-lg shadow-[var(--color-primary)]/25 transition-all"
+            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 bg-[#003E83] hover:bg-[#002e62] text-white text-xs md:text-sm font-medium rounded-md border border-transparent transition-colors cursor-pointer"
           >
             Update Password
           </button>
@@ -313,41 +313,33 @@ export default function SecurityTab({ settings, setSettings }) {
 
       {/* 2FA QR Code Setup Modal */}
       {show2FAModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-sm w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4 text-center">
-            <div className="flex justify-between items-center pb-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-              <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[var(--color-primary)]" /> 2FA Setup
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150">
+          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-sm w-full border border-gray-200 dark:border-zinc-800 shadow-lg space-y-4 text-center">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-zinc-800">
+              <h4 className="text-sm font-bold text-gray-900 dark:text-zinc-100 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-[#003E83] dark:text-blue-400" /> Two-Factor Authentication
               </h4>
               <button
                 onClick={() => setShow2FAModal(false)}
-                className="text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)]"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-              Scan this QR code with Google Authenticator or Authy to configure two-factor login.
+            <p className="text-xs text-gray-600 dark:text-zinc-400 text-left">
+              To pair an authenticator app (Google Authenticator, Microsoft Authenticator), verify your email and follow the on-screen setup.
             </p>
 
-            <div className="w-40 h-40 mx-auto bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md p-3 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-center">
-              <img
-                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/AngkorVersesAdmin:admin@tourism.gov.kh?secret=JBSWY3DPEHPK3PXP"
-                alt="2FA QR Code"
-                className="w-full h-full object-contain"
-              />
-            </div>
-
-            <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-2.5 rounded-lg text-left">
-              <span className="text-[10px] text-[var(--color-text-muted-light)] uppercase font-semibold block">Secret Key</span>
-              <code className="text-xs font-mono font-bold text-[var(--color-primary)] select-all">
-                JBSW Y3DP EHPK 3PXP
-              </code>
+            <div className="p-3 bg-gray-50 dark:bg-zinc-800/50 rounded border border-gray-200 dark:border-zinc-700 text-xs text-gray-700 dark:text-zinc-300 text-left space-y-2">
+              <p className="font-medium text-gray-900 dark:text-zinc-100">Status: Enforced by Administrator</p>
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400">
+                When enabled, secondary OTP verification is requested upon sign in. Ensure your mobile authenticator is kept up to date.
+              </p>
             </div>
 
             <button
               onClick={() => setShow2FAModal(false)}
-              className="w-full flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent transition-all"
+              className="w-full py-2 bg-[#003E83] hover:bg-[#002e62] text-white text-xs font-semibold rounded-md transition-colors cursor-pointer"
             >
               Done / Close
             </button>

@@ -78,7 +78,7 @@ export default function ReportsTable({
                 onClick={() => { onTabChange(tab.id); setCurrentPage(1); }}
                 className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-all shrink-0 cursor-pointer ${
                   isSelected
-                    ? 'bg-[var(--color-primary)] text-[var(--color-white)] shadow-md shadow-[var(--color-primary)]/20 font-semibold'
+                    ? 'bg-[#003E83] text-white font-semibold'
                     : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
                 }`}
               >

@@ -154,7 +154,7 @@ export default function BackupTab({ settings, setSettings }) {
             type="button"
             onClick={handleCreateBackup}
             disabled={creatingBackup}
-            className="w-full px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 text-[var(--color-white)] text-xs md:text-sm font-semibold rounded-md border border-transparent flex items-center justify-center gap-1.5 md:gap-2 transition-all shadow-lg shadow-[var(--color-primary)]/25"
+            className="w-full px-4 py-2 bg-[#003E83] hover:bg-[#002e62] disabled:opacity-50 text-white text-xs md:text-sm font-medium rounded-md border border-transparent flex items-center justify-center gap-1.5 md:gap-2 transition-colors cursor-pointer"
           >
             {creatingBackup ? (
               <>
@@ -286,8 +286,8 @@ export default function BackupTab({ settings, setSettings }) {
 
       {/* Restore Warning Modal */}
       {restoreModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-md w-full border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150">
+          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-md w-full border border-gray-200 dark:border-zinc-800 shadow-lg space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" /> Restore Database File

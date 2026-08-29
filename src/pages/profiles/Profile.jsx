@@ -19,8 +19,11 @@ import EditProfileModal from './EditProfileModal';
 import ImageCropModal from './ImageCropModal';
 import authService from '../../services/authService';
 import dashboardService from '../../services/dashboardService';
+import { useAlert } from '../../context/AlertContext';
+import { validateImageFile } from '../../utils/fileValidation';
 
 export default function Profile() {
+  const { showAlert } = useAlert();
   const [userData, setUserData] = useState({
     name: 'Admin User',
     email: 'admin@tourism.gov.kh',
@@ -176,6 +179,17 @@ export default function Profile() {
 
   const handleSelectFileForCrop = (file) => {
     if (!file) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      showAlert({
+        type: 'error',
+        title: 'Invalid File',
+        message: validation.error
+      });
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (e) => {
       setRawImageSrc(e.target.result);

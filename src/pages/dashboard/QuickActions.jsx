@@ -59,10 +59,10 @@ export default function QuickActions() {
             <button
               key={index}
               onClick={() => navigate(action.path)}
-              className={`p-4 ${action.bg} rounded-md hover:shadow-md transition-all duration-200 hover:scale-105 transform text-center cursor-pointer flex flex-col items-center justify-center`}
+              className={`p-3.5 ${action.bg} rounded-md border border-gray-100 dark:border-zinc-800/80 hover:brightness-95 transition-colors text-center cursor-pointer flex flex-col items-center justify-center`}
             >
-              <Icon className={`w-6 h-6 ${action.color} mb-1`} />
-              <span className="text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{action.label}</span>
+              <Icon className={`w-5 h-5 ${action.color} mb-1`} />
+              <span className="text-xs font-medium text-gray-800 dark:text-zinc-200">{action.label}</span>
             </button>
           );
         })}

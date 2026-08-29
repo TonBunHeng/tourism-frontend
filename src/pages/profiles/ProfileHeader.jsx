@@ -23,7 +23,7 @@ export default function ProfileHeader({
             <button
               type="button"
               onClick={onDeleteImage}
-              className="absolute top-0 right-0 p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-transform active:scale-95 cursor-pointer z-10"
+              className="absolute top-0 right-0 p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full shadow transition-colors cursor-pointer z-10"
               title="Delete picture"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -34,7 +34,7 @@ export default function ProfileHeader({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 p-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-full shadow-lg transition-transform active:scale-95 cursor-pointer"
+                className="absolute bottom-0 right-0 p-2 bg-[#003E83] hover:bg-[#002e62] text-white rounded-full shadow transition-colors cursor-pointer"
                 title="Change & crop profile picture"
               >
                 <Camera className="w-3.5 h-3.5" />
@@ -42,7 +42,7 @@ export default function ProfileHeader({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 onChange={handleImageUpload}
                 className="hidden"
               />
@@ -71,46 +71,33 @@ export default function ProfileHeader({
         <div className="hidden sm:flex flex-wrap items-center gap-3">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{userData.name || 'User'}</h2>
           {userData.verified && (
-            <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)]">
+            <span className="flex items-center gap-1 text-xs px-2.5 py-0.5 bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] rounded-full border border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] font-medium">
               <CheckCircle className="w-3 h-3" />
               Verified
             </span>
           )}
-          <span className="text-xs px-2 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]">
+          <span className="text-xs px-2.5 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)] font-medium">
             {userData.role || 'User'}
           </span>
         </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2 text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-          {userData.email && (
-            <span className="flex items-center gap-1 min-w-0">
-              <Mail className="w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{userData.email}</span>
-            </span>
-          )}
-          {userData.phone && (
-            <span className="flex items-center gap-1">
-              <Phone className="w-4 h-4 flex-shrink-0" />
-              {userData.phone}
-            </span>
-          )}
-          {(userData.address || userData.location) && (
-            <span className="flex items-center gap-1">
-              <MapPin className="w-4 h-4 flex-shrink-0" />
-              {userData.address || userData.location}
-            </span>
-          )}
-        </div>
-        {userData.bio && (
-          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-2 max-w-2xl">{userData.bio}</p>
-        )}
-        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">
-          {userData.loginAt && (
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              Login at: {userData.loginAt}
-            </span>
-          )}
-          {userData.loginAt && userData.joinDate && <span>•</span>}
+
+        <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-2">
+          {userData.bio}
+        </p>
+
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-4 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+          <span className="flex items-center gap-1">
+            <Mail className="w-3.5 h-3.5 text-gray-400" />
+            {userData.email}
+          </span>
+          <span className="flex items-center gap-1">
+            <Phone className="w-3.5 h-3.5 text-gray-400" />
+            {userData.phone}
+          </span>
+          <span className="flex items-center gap-1">
+            <MapPin className="w-3.5 h-3.5 text-gray-400" />
+            {userData.location}
+          </span>
           {userData.joinDate && (
             <span className="flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" />
@@ -122,7 +109,7 @@ export default function ProfileHeader({
       <button
         type="button"
         onClick={() => setIsEditing(true)}
-        className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 w-full sm:w-auto cursor-pointer active:scale-95"
+        className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-medium rounded-md bg-[#003E83] hover:bg-[#002e62] text-white transition-colors shrink-0 w-full sm:w-auto cursor-pointer"
       >
         <Edit className="w-4 h-4 shrink-0" />
         <span>Edit Profile</span>

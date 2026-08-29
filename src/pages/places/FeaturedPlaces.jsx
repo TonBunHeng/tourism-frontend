@@ -55,13 +55,13 @@ export default function FeaturedPlaces() {
         {featuredPlaces.map((place, index) => (
           <div
             key={index}
-            className="relative overflow-hidden rounded-lg p-6 text-[var(--color-white)] shadow-lg hover:shadow-xl transition-all duration-300 transform group cursor-pointer h-52 flex flex-col justify-end"
+            className="relative overflow-hidden rounded-md p-5 text-white shadow-sm border border-gray-200 dark:border-zinc-800 transition-colors group cursor-pointer h-48 flex flex-col justify-end"
           >
             {/* Background Image */}
             <img
               src={place.image}
               alt={place.name}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="absolute inset-0 w-full h-full object-cover"
             />
 
             {/* Solid Dark Overlay for text legibility */}

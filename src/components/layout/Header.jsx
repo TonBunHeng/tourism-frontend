@@ -251,7 +251,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
               </button>
 
               {showLangMenu && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 py-1 z-50 animate-smooth-pop">
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 rounded-md shadow-md border border-gray-200 dark:border-zinc-800 py-1 z-50">
                   <div className="px-3 py-1.5 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
                     Select Language
                   </div>
@@ -259,7 +259,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                     onClick={() => { setCurrentLang('EN'); setShowLangMenu(false); }}
                     className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors cursor-pointer ${
                       currentLang === 'EN'
-                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium'
+                        ? 'bg-blue-50 dark:bg-zinc-800 text-[#003E83] dark:text-blue-400 font-medium'
                         : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
                     }`}
                   >
@@ -270,7 +270,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                     onClick={() => { setCurrentLang('KH'); setShowLangMenu(false); }}
                     className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors cursor-pointer ${
                       currentLang === 'KH'
-                        ? 'bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 font-medium'
+                        ? 'bg-blue-50 dark:bg-zinc-800 text-[#003E83] dark:text-blue-400 font-medium'
                         : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
                     }`}
                   >
@@ -285,24 +285,24 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
             <div ref={notificationRef} className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="relative p-2 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                 aria-label="Notifications"
               >
                 <Bell size={20} className="text-gray-600 dark:text-zinc-300" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full ring-2 ring-white dark:ring-zinc-900">
+                  <span className="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-bold text-white bg-red-600 rounded-full">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
-                  <div className="p-3.5 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+                <div className="absolute right-0 mt-2 w-72 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-md shadow-md border border-gray-200 dark:border-zinc-800 overflow-hidden z-50">
+                  <div className="p-3.5 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-sm text-gray-800 dark:text-zinc-100">Notifications</h3>
                       {unreadCount > 0 && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 rounded-full">
+                        <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-blue-100 text-[#003E83] dark:bg-blue-950/60 dark:text-blue-400 rounded">
                           {unreadCount} new
                         </span>
                       )}
@@ -311,7 +311,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                       <button
                         type="button"
                         onClick={handleMarkAllRead}
-                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium cursor-pointer"
+                        className="text-xs text-[#003E83] dark:text-blue-400 hover:underline font-medium cursor-pointer"
                       >
                         Mark all read
                       </button>
@@ -319,43 +319,40 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                   </div>
 
                   <div className="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-zinc-800">
-                    {notifications.length > 0 ? (
-                      notifications.map((notification) => (
+                    {loadingNotifs ? (
+                      <div className="p-6 text-center text-gray-400 flex items-center justify-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                        <span className="text-xs">Loading notifications...</span>
+                      </div>
+                    ) : notifications.length === 0 ? (
+                      <div className="p-6 text-center text-gray-400 dark:text-zinc-500 text-xs">
+                        No notifications found.
+                      </div>
+                    ) : (
+                      notifications.map(n => (
                         <div
-                          key={notification.id}
-                          onClick={() => handleNotificationClick(notification)}
-                          className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors ${
-                            !notification.read ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                          key={n.id}
+                          onClick={() => handleNotificationClick(n)}
+                          className={`p-3 text-xs flex items-start gap-2.5 transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/60 ${
+                            !n.read ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                           }`}
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-xs font-semibold text-gray-900 dark:text-zinc-100 line-clamp-1">
-                              {notification.title}
-                            </p>
-                            {!notification.read && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1" />
-                            )}
+                          <div className={`w-2 h-2 mt-1 rounded-full shrink-0 ${!n.read ? 'bg-blue-600' : 'bg-transparent'}`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-800 dark:text-zinc-200 truncate">{n.title || n.subject || 'System Notification'}</p>
+                            <p className="text-gray-500 dark:text-zinc-400 truncate mt-0.5">{n.message || n.body}</p>
+                            <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-1">{formatTimeAgo(n.created_at)}</p>
                           </div>
-                          <p className="text-[11px] text-gray-500 dark:text-zinc-400 line-clamp-2 mt-0.5">
-                            {notification.description}
-                          </p>
-                          <span className="text-[10px] text-gray-400 dark:text-zinc-500 block mt-1">
-                            {formatTimeAgo(notification.created_at)}
-                          </span>
                         </div>
                       ))
-                    ) : (
-                      <div className="py-8 text-center text-xs text-gray-400 dark:text-zinc-500">
-                        No notifications found
-                      </div>
                     )}
                   </div>
 
-                  <div className="p-2.5 border-t border-gray-100 dark:border-zinc-800 text-center bg-gray-50/50 dark:bg-zinc-900/50">
+                  <div className="p-2.5 border-t border-gray-200 dark:border-zinc-800 text-center bg-gray-50/50 dark:bg-zinc-900/50">
                     <Link
                       to="/notifications"
                       onClick={() => setShowNotifications(false)}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-semibold"
+                      className="text-xs text-[#003E83] dark:text-blue-400 hover:underline font-medium"
                     >
                       View all in Notifications Center →
                     </Link>
@@ -371,7 +368,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                 className="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                 aria-label="Profile menu"
               >
-                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-zinc-800 text-blue-700 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 flex items-center justify-center font-bold text-xs overflow-hidden">
                   {userAvatar ? (
                     <img
                       src={userAvatar}
@@ -386,9 +383,9 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-lg shadow-xl border border-gray-100 dark:border-zinc-800 overflow-hidden z-50 animate-smooth-pop">
-                  <div className="px-3.5 py-3 border-b border-gray-100 dark:border-zinc-800 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-900 rounded-md shadow-md border border-gray-200 dark:border-zinc-800 overflow-hidden z-50">
+                  <div className="px-3.5 py-3 border-b border-gray-200 dark:border-zinc-800 flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-zinc-800 text-blue-700 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
                       {userAvatar ? (
                         <img
                           src={userAvatar}
@@ -405,15 +402,23 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                     </div>
                   </div>
 
-                  <div className="p-2">
-                    <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
-                      <User size={18} className="text-gray-400" />
+                  <div className="p-1.5">
+                    <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition-colors">
+                      <User size={16} className="text-gray-400" />
                       My Profile
                     </Link>
-                    <Link to="/settings" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-md transition-colors">
-                      <Settings size={18} className="text-gray-400" />
-                      Settings
-                    </Link>
+                    {(() => {
+                      const role = JSON.parse(localStorage.getItem('user') || '{}')?.role;
+                      if (role === 'Super Admin' || role === 'Admin') {
+                        return (
+                          <Link to="/settings" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition-colors">
+                            <Settings size={16} className="text-gray-400" />
+                            Settings
+                          </Link>
+                        );
+                      }
+                      return null;
+                    })()}
 
                     <button
                       type="button"
@@ -421,9 +426,9 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                         setShowProfileMenu(false);
                         setShowLogoutAlert(true);
                       }}
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md transition-colors w-full text-left cursor-pointer"
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors w-full text-left cursor-pointer"
                     >
-                      <LogOut size={18} className="text-red-500 dark:text-red-400" />
+                      <LogOut size={16} className="text-red-500 dark:text-red-400" />
                       Log Out
                     </button>
                   </div>

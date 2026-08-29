@@ -25,7 +25,7 @@ export default function UsersGrid({
             <div
               key={user.id}
               onClick={() => handleView(user)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] rounded-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200 sm:hover:scale-[1.02] cursor-pointer"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 sm:p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer"
             >
               <div className="flex items-start gap-3 mb-3">
                 <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-[var(--color-info-border)] overflow-hidden">

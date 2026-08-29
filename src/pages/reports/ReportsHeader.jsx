@@ -49,7 +49,7 @@ export default function ReportsHeader({
           {/* Reports Analytics Button */}
           <button
             onClick={onOpenAnalytics}
-            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-semibold rounded-md border border-transparent bg-[var(--color-primary)] text-[var(--color-white)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/25 shrink-0 cursor-pointer active:scale-95"
+            className="flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2 text-xs md:text-sm font-medium rounded-md bg-[#003E83] hover:bg-[#002e62] text-white transition-colors shrink-0 cursor-pointer"
           >
             <BarChart2 className="w-4 h-4 shrink-0" />
             <span>Analytics</span>
@@ -61,7 +61,7 @@ export default function ReportsHeader({
             {/* Styled Date Picker Button */}
             <div
               onClick={handleOpenPicker}
-              className="relative flex items-center justify-center gap-1.5 md:gap-2 px-3.5 py-2 text-xs md:text-sm font-semibold rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-100 dark:hover:bg-gray-800 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] transition-all shrink-0 cursor-pointer active:scale-95 shadow-sm"
+              className="relative flex items-center justify-center gap-1.5 md:gap-2 px-3.5 py-2 text-xs md:text-sm font-medium rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-100 dark:hover:bg-gray-800 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] transition-colors shrink-0 cursor-pointer shadow-sm"
             >
               <input
                 ref={dateInputRef}

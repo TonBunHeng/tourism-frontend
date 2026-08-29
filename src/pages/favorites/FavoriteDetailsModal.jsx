@@ -53,8 +53,8 @@ export default function FavoriteDetailsModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-2xl max-w-2xl w-full max-h-[90vh] shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 transition-opacity duration-150">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg max-w-2xl w-full max-h-[90vh] shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col">
         
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shrink-0">
@@ -103,16 +103,16 @@ export default function FavoriteDetailsModal({
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg bg-black/60 backdrop-blur-md text-white border border-white/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md bg-black/75 text-white border border-white/20">
                 <IconComponent className="w-4 h-4" />
                 <span>{favorite.category || 'Destination'}</span>
               </span>
 
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg backdrop-blur-md border ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md border ${
                   isVisited
-                    ? 'bg-emerald-500/90 text-white border-emerald-400/40'
-                    : 'bg-blue-600/90 text-white border-blue-400/40'
+                    ? 'bg-emerald-600 text-white border-emerald-500'
+                    : 'bg-[#003E83] text-white border-blue-800'
                 }`}
               >
                 {isVisited ? (
@@ -303,7 +303,7 @@ export default function FavoriteDetailsModal({
               handleToggle(favorite.id);
               onClose();
             }}
-            className="py-2 px-5 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-white)] font-semibold text-xs md:text-sm transition-all flex items-center gap-1.5 shadow-md shadow-[var(--color-primary)]/20 cursor-pointer"
+            className="py-2 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-xs md:text-sm transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             {isVisited ? <Clock className="w-4 h-4" /> : <Check className="w-4 h-4" />}
             <span>{isVisited ? 'Mark as To Visit' : 'Mark as Visited'}</span>

@@ -7,12 +7,15 @@ import {
   Upload,
   Image as ImageIcon,
   X,
-  CheckCircle2
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
+import { validateImageFile } from '../../utils/fileValidation';
 
 export default function GeneralTab({ settings, setSettings }) {
   const [logoPreview, setLogoPreview] = useState(settings.logoUrl || null);
   const [faviconPreview, setFaviconPreview] = useState(settings.faviconUrl || null);
+  const [uploadError, setUploadError] = useState('');
 
   const handleChange = (field, value) => {
     setSettings((prev) => ({
@@ -23,22 +26,42 @@ export default function GeneralTab({ settings, setSettings }) {
 
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setLogoPreview(url);
-      handleChange('logoUrl', url);
-      handleChange('logoFileName', file.name);
+    if (!file) return;
+
+    setUploadError('');
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      setUploadError(validation.error);
+      if (e.target) e.target.value = '';
+      return;
     }
+
+    const url = URL.createObjectURL(file);
+    setLogoPreview(url);
+    handleChange('logoUrl', url);
+    handleChange('logoFileName', file.name);
   };
 
   const handleFaviconUpload = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setFaviconPreview(url);
-      handleChange('faviconUrl', url);
-      handleChange('faviconFileName', file.name);
+    if (!file) return;
+
+    setUploadError('');
+    // Allow .ico along with standard images
+    const isIco = file.name.toLowerCase().endsWith('.ico');
+    if (!isIco) {
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        setUploadError(validation.error);
+        if (e.target) e.target.value = '';
+        return;
+      }
     }
+
+    const url = URL.createObjectURL(file);
+    setFaviconPreview(url);
+    handleChange('faviconUrl', url);
+    handleChange('faviconFileName', file.name);
   };
 
   const removeLogo = () => {
@@ -224,6 +247,13 @@ export default function GeneralTab({ settings, setSettings }) {
           <ImageIcon className="w-4 h-4 text-[var(--color-primary)]" />
           Brand Assets (Logo & Favicon)
         </h3>
+
+        {uploadError && (
+          <div className="p-3 rounded bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center gap-2 text-xs text-red-700 dark:text-red-400 font-medium">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{uploadError}</span>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Logo Uploader */}

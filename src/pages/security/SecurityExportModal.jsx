@@ -211,24 +211,24 @@ export default function SecurityExportModal({ isOpen, onClose, alerts = [], meta
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+        className="w-full max-w-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-gray-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="p-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between">
+        <div className="p-4 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#003E83]/10 dark:bg-blue-500/10 text-[#003E83] dark:text-blue-400">
-              <Download className="w-5 h-5" />
+            <div className="p-1.5 rounded bg-blue-50 text-[#003E83] dark:bg-zinc-800 dark:text-blue-400">
+              <Download className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+              <h2 className="text-sm font-bold text-gray-900 dark:text-zinc-100">
                 Download Security Report
               </h2>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+              <p className="text-xs text-gray-500 dark:text-zinc-400">
                 Choose your preferred export document format
               </p>
             </div>
@@ -237,34 +237,34 @@ export default function SecurityExportModal({ isOpen, onClose, alerts = [], meta
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body: Options */}
-        <div className="p-5 space-y-3">
+        <div className="p-4 space-y-2.5">
           {/* Option 1: PDF Document */}
           <button
             type="button"
             onClick={handleDownloadPDF}
             disabled={downloading}
-            className="w-full p-4 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[#003E83] dark:hover:border-blue-500 bg-slate-50/50 dark:bg-zinc-800/40 hover:bg-slate-100/70 dark:hover:bg-zinc-800 transition-all flex items-start gap-3.5 text-left cursor-pointer group"
+            className="w-full p-3 rounded-md border border-gray-200 dark:border-zinc-800 hover:border-[#003E83] dark:hover:border-blue-500 bg-gray-50/50 dark:bg-zinc-800/40 hover:bg-gray-100/70 dark:hover:bg-zinc-800 transition-colors flex items-start gap-3 text-left cursor-pointer group"
           >
-            <div className="p-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40 shrink-0 group-hover:scale-105 transition-transform">
-              <FileText className="w-5 h-5" />
+            <div className="p-2 rounded bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40 shrink-0">
+              <FileText className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                <h4 className="text-xs font-bold text-gray-900 dark:text-zinc-100">
                   PDF Security Audit Report
                 </h4>
-                <span className="text-[10px] uppercase font-bold text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/60 px-1.5 py-0.5 rounded border border-red-200 dark:border-red-900/40">
-                  Print / PDF
+                <span className="text-[10px] uppercase font-semibold text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/60 px-1.5 py-0.5 rounded border border-red-200 dark:border-red-900/40">
+                  PDF
                 </span>
               </div>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5">
                 Formatted executive document with KPIs, incident tables, and system defense summary.
               </p>
             </div>
@@ -275,21 +275,21 @@ export default function SecurityExportModal({ isOpen, onClose, alerts = [], meta
             type="button"
             onClick={handleDownloadCSV}
             disabled={downloading}
-            className="w-full p-4 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[#003E83] dark:hover:border-blue-500 bg-slate-50/50 dark:bg-zinc-800/40 hover:bg-slate-100/70 dark:hover:bg-zinc-800 transition-all flex items-start gap-3.5 text-left cursor-pointer group"
+            className="w-full p-3 rounded-md border border-gray-200 dark:border-zinc-800 hover:border-[#003E83] dark:hover:border-blue-500 bg-gray-50/50 dark:bg-zinc-800/40 hover:bg-gray-100/70 dark:hover:bg-zinc-800 transition-colors flex items-start gap-3 text-left cursor-pointer group"
           >
-            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/40 shrink-0 group-hover:scale-105 transition-transform">
-              <FileSpreadsheet className="w-5 h-5" />
+            <div className="p-2 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/40 shrink-0">
+              <FileSpreadsheet className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                <h4 className="text-xs font-bold text-gray-900 dark:text-zinc-100">
                   CSV / Excel Spreadsheet
                 </h4>
-                <span className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40">
+                <span className="text-[10px] uppercase font-semibold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40">
                   CSV
                 </span>
               </div>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5">
                 Spreadsheet data with raw timestamps, source IPs, target emails, and failure counters.
               </p>
             </div>
@@ -300,21 +300,21 @@ export default function SecurityExportModal({ isOpen, onClose, alerts = [], meta
             type="button"
             onClick={handleDownloadJSON}
             disabled={downloading}
-            className="w-full p-4 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:border-[#003E83] dark:hover:border-blue-500 bg-slate-50/50 dark:bg-zinc-800/40 hover:bg-slate-100/70 dark:hover:bg-zinc-800 transition-all flex items-start gap-3.5 text-left cursor-pointer group"
+            className="w-full p-3 rounded-md border border-gray-200 dark:border-zinc-800 hover:border-[#003E83] dark:hover:border-blue-500 bg-gray-50/50 dark:bg-zinc-800/40 hover:bg-gray-100/70 dark:hover:bg-zinc-800 transition-colors flex items-start gap-3 text-left cursor-pointer group"
           >
-            <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/40 shrink-0 group-hover:scale-105 transition-transform">
-              <Code className="w-5 h-5" />
+            <div className="p-2 rounded bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/40 shrink-0">
+              <Code className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                <h4 className="text-xs font-bold text-gray-900 dark:text-zinc-100">
                   JSON Security Audit Log
                 </h4>
-                <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/40">
+                <span className="text-[10px] uppercase font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/40">
                   JSON
                 </span>
               </div>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5">
                 Structured machine-readable logs for SIEM and security analysis tools.
               </p>
             </div>

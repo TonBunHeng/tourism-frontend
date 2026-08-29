@@ -90,7 +90,7 @@ export default function SecurityDetailsModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200/60 dark:hover:bg-zinc-800 transition cursor-pointer"
+            className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200/60 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
             title="Close modal"
           >
             <X className="w-5 h-5" />
@@ -117,7 +117,7 @@ export default function SecurityDetailsModal({
           </div>
 
           {/* Incident Parameters Grid */}
-          <div className="rounded-xl border border-red-500/30 bg-red-500/5 dark:bg-red-950/20 p-4 space-y-3">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/5 dark:bg-red-950/20 p-4 space-y-3">
             <div className="flex items-center justify-between gap-2 text-red-600 dark:text-red-400 font-semibold text-xs uppercase tracking-wider">
               <span className="flex items-center gap-2">
                 <AlertOctagon className="w-4 h-4" />
@@ -135,7 +135,7 @@ export default function SecurityDetailsModal({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 rounded-lg bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
+              <div className="p-3 rounded-md bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
                 <Mail className="w-5 h-5 text-slate-400 shrink-0" />
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-400 uppercase font-semibold">Target Account</p>
@@ -143,7 +143,7 @@ export default function SecurityDetailsModal({
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
+              <div className="p-3 rounded-md bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
                 <Globe className="w-5 h-5 text-slate-400 shrink-0" />
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-400 uppercase font-semibold">Source IP Address</p>
@@ -151,7 +151,7 @@ export default function SecurityDetailsModal({
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
+              <div className="p-3 rounded-md bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
                 <ShieldAlert className="w-5 h-5 text-red-500 shrink-0" />
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-400 uppercase font-semibold">Consecutive Failures</p>
@@ -159,7 +159,7 @@ export default function SecurityDetailsModal({
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
+              <div className="p-3 rounded-md bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-center gap-3">
                 <Lock className="w-5 h-5 text-indigo-500 shrink-0" />
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-400 uppercase font-semibold">Defense Status</p>
@@ -170,7 +170,7 @@ export default function SecurityDetailsModal({
               </div>
 
               {(data.user_agent || alert.user_agent) && (
-                <div className="p-3 rounded-lg bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-start gap-3 sm:col-span-2">
+                <div className="p-3 rounded-md bg-white/90 dark:bg-zinc-900/90 border border-slate-200/70 dark:border-zinc-800 flex items-start gap-3 sm:col-span-2">
                   <Laptop className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
                   <div className="min-w-0">
                     <p className="text-[10px] text-slate-400 uppercase font-semibold">Attacker User Agent</p>
@@ -184,7 +184,7 @@ export default function SecurityDetailsModal({
           </div>
 
           {/* Defense Explanation */}
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 space-y-2 text-xs">
+          <div className="p-4 rounded-lg bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 space-y-2 text-xs">
             <h4 className="font-semibold text-slate-700 dark:text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-blue-500" />
               IP Access Protection
@@ -201,7 +201,7 @@ export default function SecurityDetailsModal({
             <button
               type="button"
               onClick={() => onDelete(alert.id)}
-              className="py-2.5 px-3 rounded-xl border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+              className="py-2 px-3 rounded-md border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
               Delete
@@ -212,7 +212,7 @@ export default function SecurityDetailsModal({
               <button
                 type="button"
                 onClick={() => onUnblockIp(alert.ip_address)}
-                className="py-2.5 px-3.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                className="py-2 px-3.5 rounded-md border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Unblock this IP address"
               >
                 <ShieldOff className="w-4 h-4" />
@@ -222,7 +222,7 @@ export default function SecurityDetailsModal({
               <button
                 type="button"
                 onClick={() => onBlockIp(alert.ip_address)}
-                className="py-2.5 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shadow-xs"
+                className="py-2 px-3.5 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Block this IP address immediately"
               >
                 <Ban className="w-4 h-4" />
@@ -236,7 +236,7 @@ export default function SecurityDetailsModal({
               <button
                 type="button"
                 onClick={() => onMarkRead(alert.id)}
-                className="py-2.5 px-3.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                className="py-2 px-3.5 rounded-md border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Check className="w-4 h-4 text-blue-500" />
                 Acknowledge
@@ -246,7 +246,7 @@ export default function SecurityDetailsModal({
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-4 rounded-xl bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold transition cursor-pointer"
+              className="py-2 px-4 rounded-md bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-medium transition-colors cursor-pointer"
             >
               Close
             </button>

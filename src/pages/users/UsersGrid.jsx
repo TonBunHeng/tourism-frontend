@@ -25,7 +25,7 @@ export default function UsersGrid({
             <div
               key={user.id}
               onClick={() => handleView(user)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 sm:p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 hover:border-gray-400 dark:hover:border-zinc-600 shadow-xs transition-colors cursor-pointer"
             >
               <div className="flex items-start gap-3 mb-3">
                 <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-[var(--color-info-border)] overflow-hidden">
@@ -47,10 +47,10 @@ export default function UsersGrid({
                   </div>
                   <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">{user.email}</p>
                   <div className="flex items-center gap-1 mt-1 flex-wrap">
-                    <span className={`text-xs px-2 py-0.5 rounded-full border ${getRoleColor(user.role)}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-md border ${getRoleColor(user.role)}`}>
                       {user.role}
                     </span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(user.status)}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-md border ${getStatusColor(user.status)}`}>
                       {user.status}
                     </span>
                   </div>
@@ -59,7 +59,7 @@ export default function UsersGrid({
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleView(user); }}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="View Details"
                   >
                     <Eye className="w-3.5 h-3.5" />
@@ -67,7 +67,7 @@ export default function UsersGrid({
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleEdit(user); }}
-                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
                     title="Edit"
                   >
                     <Edit className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
@@ -75,7 +75,7 @@ export default function UsersGrid({
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleDeleteItem(user.id); }}
-                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
@@ -84,15 +84,15 @@ export default function UsersGrid({
               </div>
 
               <div className="grid grid-cols-3 gap-2 mb-3">
-                <div className="text-center p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg">
+                <div className="text-center p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md">
                   <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Reviews</p>
                   <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{user.reviews}</p>
                 </div>
-                <div className="text-center p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg">
+                <div className="text-center p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md">
                   <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Favorites</p>
                   <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{user.favorites}</p>
                 </div>
-                <div className="text-center p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg">
+                <div className="text-center p-2 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md">
                   <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Places</p>
                   <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{user.places}</p>
                 </div>
@@ -100,7 +100,7 @@ export default function UsersGrid({
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${getSubscriptionColor(user.subscription)}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-md border ${getSubscriptionColor(user.subscription)}`}>
                     {user.subscription}
                   </span>
                   <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">

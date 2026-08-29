@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import AppRoutes from './routes/AppRoutes';
 import './styles/globals.css';
-import { initTheme } from './utils/Theme';
+import { initAppearance } from './utils/Theme';
 import { AlertProvider } from './context/AlertContext';
 
 function App() {
   useEffect(() => {
-    initTheme();
+    initAppearance();
   }, []);
 
   return (

@@ -283,7 +283,7 @@ export default function Notifications() {
       {/* Header Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
             Notifications Center
           </h1>
           <p className="text-xs sm:text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
@@ -296,7 +296,7 @@ export default function Notifications() {
             type="button"
             onClick={() => fetchNotifications(true)}
             disabled={refreshing}
-            className="py-2 px-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-60"
+            className="py-2 px-3.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-60"
             title="Refresh notifications"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -307,7 +307,7 @@ export default function Notifications() {
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="py-2 px-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="py-2 px-3.5 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <CheckCheck className="w-4 h-4 text-[#003E83] dark:text-blue-400" />
               Mark All Read
@@ -318,7 +318,7 @@ export default function Notifications() {
             <button
               type="button"
               onClick={handleClearAll}
-              className="py-2 px-3.5 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="py-2 px-3.5 rounded-md border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 text-xs font-medium text-red-600 dark:text-red-400 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
               Clear All
@@ -327,8 +327,8 @@ export default function Notifications() {
         </div>
       </div>
 
-      {/* Filter Tabs Toolbar */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Filter Tabs */}
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           {categories.map(cat => (
             <button
@@ -360,7 +360,7 @@ export default function Notifications() {
       </div>
 
       {/* Notifications List */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm overflow-hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs overflow-hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {loading ? (
           <div className="p-12 text-center flex flex-col items-center justify-center space-y-3">
             <Loader2 className="w-8 h-8 text-[#003E83] dark:text-blue-500 animate-spin" />
@@ -385,8 +385,8 @@ export default function Notifications() {
                 }`}
               >
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className={`p-2.5 rounded-lg shrink-0 ${iconBg}`}>
-                    <Icon className={`w-5 h-5 ${iconColor}`} />
+                  <div className={`p-2 rounded-md shrink-0 ${iconBg}`}>
+                    <Icon className={`w-4 h-4 md:w-5 md:h-5 ${iconColor}`} />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">

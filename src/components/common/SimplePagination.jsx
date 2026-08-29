@@ -1,0 +1,181 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+/**
+ * SimplePagination
+ * Clean and minimal pagination component supporting Light and Dark themes.
+ */
+export default function SimplePagination({
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange,
+  startIndex = 0,
+  endIndex = 0,
+  totalRecords = 0,
+  label = 'records',
+  className = '',
+}) {
+  if (!totalRecords || totalRecords <= 0) return null;
+
+  // Safe range calculation
+  const from = Math.min(startIndex + 1, totalRecords);
+  const to = Math.min(endIndex, totalRecords);
+
+  // Generate page numbers with smart ellipsis
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+
+    if (currentPage >= totalPages - 3) {
+      return [
+        1,
+        '...',
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    }
+
+    return [
+      1,
+      '...',
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      '...',
+      totalPages,
+    ];
+  };
+
+  const pageNumbers = getPageNumbers();
+
+  return (
+    <div
+      className={`
+        flex flex-col sm:flex-row
+        items-center justify-between
+        gap-3
+        px-4 py-3
+        border-t border-gray-200 dark:border-zinc-800
+        bg-white dark:bg-zinc-900
+        ${className}
+      `}
+    >
+      {/* Record information */}
+      <div className="text-sm text-gray-500 dark:text-zinc-400">
+        Showing{' '}
+        <span className="font-medium text-gray-900 dark:text-white">
+          {from.toLocaleString()}
+        </span>{' '}
+        to{' '}
+        <span className="font-medium text-gray-900 dark:text-white">
+          {to.toLocaleString()}
+        </span>{' '}
+        of{' '}
+        <span className="font-medium text-gray-900 dark:text-white">
+          {totalRecords.toLocaleString()}
+        </span>{' '}
+        {label}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {/* Previous */}
+        <button
+          type="button"
+          onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
+          disabled={currentPage <= 1}
+          className="
+            h-8 px-3
+            flex items-center gap-1
+            rounded-md
+            border border-gray-300 dark:border-zinc-700
+            bg-white dark:bg-zinc-800
+            text-sm text-gray-700 dark:text-zinc-200
+            hover:bg-gray-50 dark:hover:bg-zinc-700
+            disabled:opacity-40
+            disabled:cursor-not-allowed
+            transition-colors
+            cursor-pointer
+          "
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Previous</span>
+        </button>
+
+        {/* Page numbers */}
+        {pageNumbers.map((pageNum, index) => {
+          if (pageNum === '...') {
+            return (
+              <span
+                key={`dots-${index}`}
+                className="
+                  w-8 h-8
+                  flex items-center justify-center
+                  text-sm text-gray-400 dark:text-zinc-500
+                "
+              >
+                ...
+              </span>
+            );
+          }
+
+          const isActive = pageNum === currentPage;
+
+          return (
+            <button
+              key={pageNum}
+              type="button"
+              onClick={() => onPageChange(pageNum)}
+              className={`
+                w-8 h-8
+                flex items-center justify-center
+                rounded-md
+                border
+                text-sm font-medium
+                transition-colors
+                cursor-pointer
+                ${
+                  isActive
+                    ? 'border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-zinc-900'
+                    : 'border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                }
+              `}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+
+        {/* Next */}
+        <button
+          type="button"
+          onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
+          disabled={currentPage >= totalPages}
+          className="
+            h-8 px-3
+            flex items-center gap-1
+            rounded-md
+            border border-gray-300 dark:border-zinc-700
+            bg-white dark:bg-zinc-800
+            text-sm text-gray-700 dark:text-zinc-200
+            hover:bg-gray-50 dark:hover:bg-zinc-700
+            disabled:opacity-40
+            disabled:cursor-not-allowed
+            transition-colors
+            cursor-pointer
+          "
+        >
+          <span>Next</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}

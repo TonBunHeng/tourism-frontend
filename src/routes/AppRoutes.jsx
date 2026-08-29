@@ -27,6 +27,8 @@ import Profile from '../pages/profiles/Profile';
 import Reports from '../pages/reports/Reports';
 import Notifications from '../pages/notifications/Notifications';
 import Security from '../pages/security/Security';
+import AuditLogs from '../pages/audit/AuditLogs';
+import SupportChat from '../pages/support/SupportChat';
 
 // Role Groups
 const ALL_ADMIN_ROLES = ['Super Admin', 'Admin', 'Guide / Editor'];
@@ -61,7 +63,9 @@ const AppRoutes = () => {
             <Route path="/reviews" element={<Ratings />} />
             <Route path="/ratings" element={<Ratings />} />
             <Route path="/favorites" element={<Favorites />} />
-            <Route path="/chat" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/chat" element={<SupportChat />} />
+            <Route path="/chats" element={<SupportChat />} />
+            <Route path="/support" element={<SupportChat />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notifications" element={<Notifications />} />
 
@@ -71,6 +75,8 @@ const AppRoutes = () => {
               <Route path="/user" element={<Navigate to="/users" replace />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/deletion-requests" element={<DeletionRequests />} />
+              <Route path="/audit-logs" element={<AuditLogs />} />
+              <Route path="/audit" element={<AuditLogs />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/security" element={<Security />} />
             </Route>

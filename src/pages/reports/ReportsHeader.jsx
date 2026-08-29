@@ -31,16 +31,16 @@ export default function ReportsHeader({
 
   // Shared class so Submit / Reset / PDF / Excel are consistent in size
   const actionBtnClass =
-    'flex items-center justify-center gap-1.5 md:gap-2 w-full sm:w-[100px] px-4 py-2 text-xs md:text-sm font-semibold rounded-md transition-all cursor-pointer active:scale-95 disabled:opacity-50 shrink-0';
+    'flex items-center justify-center gap-1.5 md:gap-2 w-full sm:w-[100px] px-3.5 py-2 text-xs md:text-sm font-medium rounded-md transition-colors cursor-pointer disabled:opacity-50 shrink-0';
 
   return (
     <div className="mb-6 md:mb-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
             Reports Management
           </h1>
-          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+          <p className="text-xs sm:text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
             Export comprehensive tourism data, user engagement metrics
           </p>
         </div>

@@ -41,7 +41,7 @@ export default function Footer() {
           <Link
             // to="/support"
             to="https://ai-chatbot-psi-sepia.vercel.app/" // for local testing, replace with the actual support URL in production
-            className="bg-blue-600 dark:bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 shadow-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200"
+            className="bg-[#003E83] hover:bg-[#002e62] text-white px-3 py-1.5 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors"
           >
             Contact Support
           </Link>

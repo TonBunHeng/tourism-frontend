@@ -58,23 +58,25 @@ export default function FavoriteDetailsModal({
         
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)] flex items-center justify-center border border-[var(--color-rose-badge-border)] dark:border-[var(--color-rose-badge-dark-border)]">
-              <Landmark className="w-4 h-4" />
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-md bg-[var(--color-rose-badge-bg)] dark:bg-[var(--color-rose-badge-dark-bg)] text-[var(--color-rose-badge-text)] dark:text-[var(--color-rose-badge-dark-text)] flex items-center justify-center border border-[var(--color-rose-badge-border)] dark:border-[var(--color-rose-badge-dark-border)]">
+              <Heart className="w-4 h-4 fill-current" />
             </div>
             <div>
-              <h3 className="font-bold text-base md:text-lg text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] leading-tight">
+              <h3 className="text-base md:text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
                 Favorite Place Details
               </h3>
-              <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">
-                Destination information & traveler activity
+              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+                Saved destination record #{favorite.id}
               </p>
             </div>
           </div>
+
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
+            title="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -83,7 +85,7 @@ export default function FavoriteDetailsModal({
         {/* Modal Body */}
         <div className="overflow-y-auto p-6 space-y-5 flex-1">
           {/* Hero Image / Banner */}
-          <div className="relative h-56 w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-zinc-800 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+          <div className="relative h-56 w-full rounded-lg overflow-hidden bg-slate-100 dark:bg-zinc-800 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
             {favorite.image ? (
               <img
                 src={favorite.image}
@@ -95,12 +97,12 @@ export default function FavoriteDetailsModal({
                 }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-zinc-800 dark:to-zinc-900">
+              <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-zinc-800">
                 <IconComponent className="w-16 h-16 text-[var(--color-primary)] opacity-40" />
               </div>
             )}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-black/60" />
 
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md bg-black/75 text-white border border-white/20">
@@ -140,7 +142,7 @@ export default function FavoriteDetailsModal({
           </div>
 
           {/* Favorited By (Traveler / User Info Section) */}
-          <div className="p-4 rounded-xl bg-[var(--color-info-bg)]/40 dark:bg-[var(--color-info-dark-bg)]/30 border border-[var(--color-info-border)]/50 dark:border-[var(--color-info-dark-border)]/50">
+          <div className="p-4 rounded-lg bg-[var(--color-info-bg)]/40 dark:bg-[var(--color-info-dark-bg)]/30 border border-[var(--color-info-border)]/50 dark:border-[var(--color-info-dark-border)]/50">
             <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] flex items-center gap-1.5 mb-3">
               <User className="w-4 h-4" /> Favorited By Traveler
             </span>
@@ -193,7 +195,7 @@ export default function FavoriteDetailsModal({
           {/* Key Place Attributes 2x2 Grid */}
           <div className="grid grid-cols-2 gap-3">
             {/* Rating & Reviews */}
-            <div className="p-3.5 rounded-xl bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="p-3.5 rounded-lg bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] block">
                 Destination Rating
               </span>
@@ -209,7 +211,7 @@ export default function FavoriteDetailsModal({
             </div>
 
             {/* Best Visiting Time */}
-            <div className="p-3.5 rounded-xl bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="p-3.5 rounded-lg bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] block">
                 Best Visiting Time
               </span>
@@ -223,7 +225,7 @@ export default function FavoriteDetailsModal({
             </div>
 
             {/* Entry Price */}
-            <div className="p-3.5 rounded-xl bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="p-3.5 rounded-lg bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] block">
                 Entry & Price
               </span>
@@ -237,7 +239,7 @@ export default function FavoriteDetailsModal({
             </div>
 
             {/* Travel Wishlist Status */}
-            <div className="p-3.5 rounded-xl bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="p-3.5 rounded-lg bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] block">
                 Travel Status
               </span>
@@ -253,7 +255,7 @@ export default function FavoriteDetailsModal({
 
           {/* Description */}
           {favorite.description && (
-            <div className="p-4 rounded-xl bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+            <div className="p-4 rounded-lg bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-surface-hover-dark)]/40 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] block mb-1.5">
                 Overview & Destination Description
               </span>
@@ -291,7 +293,7 @@ export default function FavoriteDetailsModal({
               onClose();
               handleDelete(favorite.id || favorite.place_id);
             }}
-            className="py-2 px-4 rounded-lg bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] hover:opacity-90 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] font-semibold text-xs md:text-sm transition-all flex items-center gap-1.5 border border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] cursor-pointer"
+            className="py-2 px-4 rounded-md bg-[var(--color-danger-bg)] dark:bg-[var(--color-danger-dark-bg)] hover:opacity-90 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] font-medium text-xs md:text-sm transition-colors flex items-center gap-1.5 border border-[var(--color-danger-border)] dark:border-[var(--color-danger-dark-border)] cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
             <span>Remove</span>

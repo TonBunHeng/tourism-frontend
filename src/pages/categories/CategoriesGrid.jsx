@@ -25,10 +25,10 @@ export default function CategoriesGrid({
             <div
               key={category.id}
               onClick={() => handleView(category)}
-              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-5 overflow-hidden hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors cursor-pointer"
+              className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 overflow-hidden hover:border-gray-400 dark:hover:border-zinc-600 shadow-xs transition-colors cursor-pointer"
             >
               {/* Top Accent Color Bar */}
-              <div className="h-1 -mx-5 -mt-5 mb-4" style={{ backgroundColor: themeColor }} />
+              <div className="h-1 -mx-4 -mt-4 mb-4" style={{ backgroundColor: themeColor }} />
 
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="flex items-center gap-3 min-w-0">
@@ -56,7 +56,7 @@ export default function CategoriesGrid({
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleView(category); }}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="View"
                   >
                     <Eye className="w-3.5 h-3.5" />
@@ -64,14 +64,14 @@ export default function CategoriesGrid({
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleEdit(category); }}
-                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="Edit"
                   >
                     <Edit className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleDeleteItem(category.id)}
-                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors"
+                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors"
                     title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -80,7 +80,7 @@ export default function CategoriesGrid({
               </div>
               <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-3 line-clamp-2">{category.description}</p>
               <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border flex-shrink-0 ${getStatusColor(category.status)}`}>
+                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-md border flex-shrink-0 ${getStatusColor(category.status)}`}>
                   <Clock className="w-3 h-3" />
                   {category.status}
                 </span>

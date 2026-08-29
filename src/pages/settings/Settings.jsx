@@ -1,6 +1,17 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getInitialTheme } from "../../utils/Theme";
+import {
+  getInitialTheme,
+  getInitialSidebarStyle,
+  getInitialCompactSidebar,
+  getInitialFontSize,
+  getInitialFontFamily,
+  applyTheme,
+  applySidebarStyle,
+  applyCompactSidebar,
+  applyFontSize,
+  applyFontFamily
+} from "../../utils/Theme";
 import {
   Settings as SettingsIcon,
   Palette,
@@ -67,9 +78,10 @@ export default function Settings() {
     // Appearance
     theme: getInitialTheme(),
     primaryColor: "#003E83",
-    sidebarStyle: "modern",
-    compactSidebar: false,
-    fontSize: "medium",
+    sidebarStyle: getInitialSidebarStyle(),
+    compactSidebar: getInitialCompactSidebar(),
+    fontSize: getInitialFontSize(),
+    fontFamily: getInitialFontFamily(),
 
     // Notifications
     pushNotifications: true,
@@ -122,6 +134,13 @@ export default function Settings() {
           }
         });
         setSettings(loaded);
+
+        // Apply any saved appearance settings loaded from backend
+        if (loaded.theme) applyTheme(loaded.theme);
+        if (loaded.sidebarStyle) applySidebarStyle(loaded.sidebarStyle);
+        if (loaded.compactSidebar !== undefined) applyCompactSidebar(loaded.compactSidebar);
+        if (loaded.fontSize) applyFontSize(loaded.fontSize);
+        if (loaded.fontFamily) applyFontFamily(loaded.fontFamily);
       }
     } catch (e) {
       console.error("Failed to load settings from API:", e);
@@ -152,6 +171,14 @@ export default function Settings() {
       }));
 
       await settingService.updateSettings(settingsArray);
+
+      // Re-apply appearance settings on save
+      if (settings.theme) applyTheme(settings.theme);
+      if (settings.sidebarStyle) applySidebarStyle(settings.sidebarStyle);
+      if (settings.compactSidebar !== undefined) applyCompactSidebar(settings.compactSidebar);
+      if (settings.fontSize) applyFontSize(settings.fontSize);
+      if (settings.fontFamily) applyFontFamily(settings.fontFamily);
+
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
       showSuccess("Your system settings have been saved and applied successfully.", "Settings Saved");
@@ -171,6 +198,11 @@ export default function Settings() {
     });
     if (confirmed) {
       setSettings(defaultSettings);
+      applyTheme('system');
+      applySidebarStyle('modern');
+      applyCompactSidebar(false);
+      applyFontSize('medium');
+      applyFontFamily('inter');
       showSuccess("Settings have been restored to system defaults.", "Settings Reset");
     }
   };

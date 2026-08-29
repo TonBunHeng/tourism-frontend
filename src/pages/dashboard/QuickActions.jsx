@@ -50,18 +50,18 @@ export default function QuickActions() {
   ];
 
   return (
-    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-6">
-      <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-4">Quick Actions</h3>
-      <div className="grid grid-cols-2 gap-3">
+    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-xs border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5">
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-3">Quick Actions</h3>
+      <div className="grid grid-cols-2 gap-2.5">
         {quickActions.map((action, index) => {
           const Icon = action.icon;
           return (
             <button
               key={index}
               onClick={() => navigate(action.path)}
-              className={`p-3.5 ${action.bg} rounded-md border border-gray-100 dark:border-zinc-800/80 hover:brightness-95 transition-colors text-center cursor-pointer flex flex-col items-center justify-center`}
+              className={`p-3 ${action.bg} rounded-md hover:brightness-95 transition-colors text-center cursor-pointer flex flex-col items-center justify-center`}
             >
-              <Icon className={`w-5 h-5 ${action.color} mb-1`} />
+              <Icon className={`w-4 h-4 ${action.color} mb-1`} />
               <span className="text-xs font-medium text-gray-800 dark:text-zinc-200">{action.label}</span>
             </button>
           );

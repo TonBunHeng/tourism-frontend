@@ -15,14 +15,14 @@ export default function GalleryGrid({ media, mediaItems, onPreview, onEdit, onDe
         items.map((item) => (
           <div
             key={item.id}
-            className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 sm:p-5 hover:border-gray-400 dark:hover:border-zinc-600 shadow-sm transition-colors"
+            className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 hover:border-gray-400 dark:hover:border-zinc-600 shadow-xs transition-colors"
           >
             {/* Top Media Picture Banner */}
             <div className="relative w-full h-40 mb-3 rounded-md overflow-hidden border border-gray-200 dark:border-zinc-800 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]">
               {item.type === 'video' ? (
                 <div className="w-full h-full bg-black/60 flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow-md">
-                    <Video className="w-5 h-5 text-[var(--color-info-text)] ml-0.5" />
+                  <div className="w-9 h-9 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center">
+                    <Video className="w-4 h-4 text-[var(--color-info-text)] ml-0.5" />
                   </div>
                 </div>
               ) : (
@@ -34,7 +34,7 @@ export default function GalleryGrid({ media, mediaItems, onPreview, onEdit, onDe
               )}
 
               {/* Status Badge */}
-              <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-semibold rounded-full border shadow-xs ${getStatusColor(item.status)}`}>
+              <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-medium rounded-md border ${getStatusColor(item.status)}`}>
                 {item.status}
               </span>
             </div>
@@ -45,7 +45,7 @@ export default function GalleryGrid({ media, mediaItems, onPreview, onEdit, onDe
                 <h3 className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm line-clamp-1">
                   {item.title}
                 </h3>
-                <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full border bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] shrink-0">
+                <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-md border bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] border-[var(--color-info-border)] dark:border-[var(--color-info-dark-border)] shrink-0">
                   {item.category}
                 </span>
               </div>

@@ -16,7 +16,7 @@ export default function SecurityToolbar({
   ];
 
   return (
-    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-3 rounded-xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-3 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
       {/* Search Input */}
       <div className="relative flex-1 min-w-[240px]">
         <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -25,7 +25,7 @@ export default function SecurityToolbar({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search by target email, IP address, or incident description..."
-          className="w-full pl-10 pr-4 py-2 rounded-lg bg-slate-50 dark:bg-zinc-800/60 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-blue-500"
+          className="w-full pl-10 pr-4 py-2 rounded-md bg-white dark:bg-zinc-800 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-slate-400 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] focus:outline-none focus:ring-1 focus:ring-[#003E83] focus:border-[#003E83] transition-colors"
         />
       </div>
 
@@ -36,7 +36,7 @@ export default function SecurityToolbar({
           <select
             value={statusFilter}
             onChange={(e) => onStatusFilterChange(e.target.value)}
-            className="py-1.5 px-3 rounded-lg bg-slate-50 dark:bg-zinc-800/60 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[#003E83] dark:focus:ring-blue-500 cursor-pointer"
+            className="py-1.5 px-3 rounded-md bg-white dark:bg-zinc-800 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-xs font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-1 focus:ring-[#003E83] focus:border-[#003E83] cursor-pointer transition-colors"
           >
             {statusOptions.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -51,7 +51,7 @@ export default function SecurityToolbar({
         </span>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg p-0.5 bg-slate-50 dark:bg-zinc-800/40">
+        <div className="flex items-center border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-0.5 bg-slate-50 dark:bg-zinc-800/40">
           <button
             type="button"
             onClick={() => onViewModeChange('list')}

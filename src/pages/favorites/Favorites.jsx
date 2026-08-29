@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  ChevronLeft,
-  ChevronRight,
   Landmark,
   Crown,
   Waves,
@@ -10,6 +8,7 @@ import {
   Leaf,
   Loader2
 } from "lucide-react";
+import SimplePagination from "../../components/common/SimplePagination";
 import FavoritesHeader from "./FavoritesHeader";
 import FavoritesStats from "./FavoritesStats";
 import FavoritesToolbar from "./FavoritesToolbar";
@@ -387,7 +386,7 @@ export default function Favorites() {
       <FavoritesStats favorites={favorites} />
 
       {/* 3. Main Explorer Card Container */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-xl shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col flex-1">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-xs border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col flex-1">
         {/* Search, Filter & Bulk Toolbar */}
         <FavoritesToolbar
           totalCount={filteredFavorites.length}
@@ -464,56 +463,17 @@ export default function Favorites() {
           )}
         </div>
 
-        {/* Pagination Footer */}
-        {!isLoading && filteredFavorites.length > 0 && (
-          <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-input-dark-bg)]/40">
-            <div className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
-              Showing <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{startIndex + 1}</span> to{" "}
-              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{endIndex}</span> of{" "}
-              <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{filteredFavorites.length}</span> destinations
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage <= 1}
-                className="p-1.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
-                title="Previous Page"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              {[...Array(totalPages)].map((_, idx) => {
-                const pageNum = idx + 1;
-                const isActive = pageNum === currentPage;
-                return (
-                  <button
-                    key={pageNum}
-                    type="button"
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-xs ${
-                      isActive
-                        ? "bg-[var(--color-primary)] text-white shadow-sm font-bold"
-                        : "border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage >= totalPages}
-                className="p-1.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
-                title="Next Page"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+        {/* Simple Pagination Footer */}
+        {!isLoading && (
+          <SimplePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalRecords={filteredFavorites.length}
+            label="destinations"
+          />
         )}
       </div>
 

@@ -46,7 +46,7 @@ export default function RatingsGrid({
         return (
           <div
             key={review.id}
-            className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 group"
+            className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg p-4 flex flex-col justify-between shadow-xs"
           >
             {/* Header: User & Status */}
             <div>
@@ -75,7 +75,7 @@ export default function RatingsGrid({
                   </div>
                 </div>
 
-                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-full border shrink-0 ${getStatusColor(review.status)}`}>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md border shrink-0 ${getStatusColor(review.status)}`}>
                   <Clock className="w-3 h-3" />
                   {review.status}
                 </span>
@@ -139,7 +139,7 @@ export default function RatingsGrid({
                     <button
                       type="button"
                       onClick={() => onStatusChange(review.id, 'Approved')}
-                      className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] hover:bg-[var(--color-success-bg)] dark:hover:bg-[var(--color-success-dark-bg)] rounded-md transition-colors cursor-pointer"
                       title="Approve Review"
                     >
                       <Check className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function RatingsGrid({
                     <button
                       type="button"
                       onClick={() => onStatusChange(review.id, 'Rejected')}
-                      className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
                       title="Reject Review"
                     >
                       <X className="w-4 h-4" />
@@ -158,7 +158,7 @@ export default function RatingsGrid({
                   <button
                     type="button"
                     onClick={() => onReply(review)}
-                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="Reply"
                   >
                     <Reply className="w-4 h-4" />
@@ -167,7 +167,7 @@ export default function RatingsGrid({
                 <button
                   type="button"
                   onClick={() => handleView(review)}
-                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
                   title="View Details"
                 >
                   <Eye className="w-4 h-4" />
@@ -176,7 +176,7 @@ export default function RatingsGrid({
                   <button
                     type="button"
                     onClick={() => onDelete(review.id)}
-                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="Delete Review"
                   >
                     <Trash2 className="w-4 h-4" />

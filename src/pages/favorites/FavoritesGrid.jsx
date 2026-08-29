@@ -86,7 +86,7 @@ export default function FavoritesGrid({
         return (
           <div
             key={favorite.id}
-            className={`bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group ${isSelected ? 'ring-2 ring-[var(--color-primary)]' : ''
+            className={`bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg overflow-hidden shadow-xs flex flex-col justify-between group ${isSelected ? 'ring-2 ring-[var(--color-primary)]' : ''
               }`}
           >
             {/* Image & Badges */}
@@ -225,7 +225,7 @@ export default function FavoritesGrid({
                 <button
                   type="button"
                   onClick={() => handleToggleVisit(favorite.id)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${isVisited
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md border transition-colors cursor-pointer ${isVisited
                       ? 'bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] border-[var(--color-success-border)] dark:border-[var(--color-success-dark-border)] hover:opacity-85'
                       : 'bg-[var(--color-neutral-badge-bg)] dark:bg-[var(--color-neutral-badge-dark-bg)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:text-[var(--color-primary)]'
                     }`}
@@ -239,7 +239,7 @@ export default function FavoritesGrid({
                   <button
                     type="button"
                     onClick={() => handleView(favorite)}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="View Details"
                   >
                     <Eye className="w-4 h-4" />
@@ -248,7 +248,7 @@ export default function FavoritesGrid({
                   <button
                     type="button"
                     onClick={() => handleDelete(favorite.id || favorite.place_id)}
-                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
                     title="Remove from favorites"
                   >
                     <Trash2 className="w-4 h-4" />

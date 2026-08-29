@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { SIDEBAR_COMPACT_CHANGE_EVENT } from "../utils/Theme";
 
 export default function Main() {
   const location = useLocation();
@@ -12,10 +13,25 @@ export default function Main() {
   const [isExpanded, setIsExpanded] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('sidebar_expanded');
-      return saved !== null ? JSON.parse(saved) : true;
+      if (saved !== null) {
+        return JSON.parse(saved);
+      }
+      const isCompact = localStorage.getItem('compact_sidebar') === 'true';
+      return !isCompact;
     }
     return true;
   });
+
+  useEffect(() => {
+    const handleCompactChange = (e) => {
+      if (e?.detail && typeof e.detail.compact === 'boolean') {
+        setIsExpanded(!e.detail.compact);
+      }
+    };
+
+    window.addEventListener(SIDEBAR_COMPACT_CHANGE_EVENT, handleCompactChange);
+    return () => window.removeEventListener(SIDEBAR_COMPACT_CHANGE_EVENT, handleCompactChange);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('sidebar_expanded', JSON.stringify(isExpanded));

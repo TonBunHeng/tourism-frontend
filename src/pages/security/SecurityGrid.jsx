@@ -60,7 +60,7 @@ export default function SecurityGrid({
           <div
             key={alert.id}
             onClick={() => onOpenDetails(alert)}
-            className={`p-5 rounded-xl bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
+            className={`p-4 rounded-lg bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-xs cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
               !alert.is_read ? 'ring-1 ring-red-500/30' : ''
             }`}
           >
@@ -68,7 +68,7 @@ export default function SecurityGrid({
               {/* Header */}
               <div className="flex items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
+                  <div className="p-2 rounded-md bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
                     <ShieldAlert className="w-4 h-4" />
                   </div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 px-2 py-0.5 rounded border border-red-200 dark:border-red-900/50">
@@ -88,7 +88,7 @@ export default function SecurityGrid({
               </h4>
 
               {/* Data attributes */}
-              <div className="mt-4 p-3 rounded-lg bg-slate-50 dark:bg-zinc-800/40 border border-slate-200/80 dark:border-zinc-800 space-y-2 text-xs">
+              <div className="mt-4 p-3 rounded-md bg-slate-50 dark:bg-zinc-800/40 border border-slate-200/80 dark:border-zinc-800 space-y-2 text-xs">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-slate-400 flex items-center gap-1.5 font-medium">
                     <Mail className="w-3.5 h-3.5" />
@@ -132,7 +132,7 @@ export default function SecurityGrid({
                 <button
                   type="button"
                   onClick={() => onDeleteAlert(alert.id)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                  className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                   title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -141,7 +141,7 @@ export default function SecurityGrid({
                 <button
                   type="button"
                   onClick={() => onOpenDetails(alert)}
-                  className="p-1.5 rounded-lg text-[#003E83] dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="p-1.5 rounded-md text-[#003E83] dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
                   title="Details"
                 >
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />

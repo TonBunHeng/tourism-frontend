@@ -145,13 +145,13 @@ export default function NotificationDetailsModal({
           </div>
 
           {/* Description */}
-          <div className="p-4 rounded-xl bg-slate-100/70 dark:bg-zinc-800/60 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-slate-700 dark:text-zinc-300 leading-relaxed text-sm">
+          <div className="p-4 rounded-lg bg-slate-100/70 dark:bg-zinc-800/60 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-slate-700 dark:text-zinc-300 leading-relaxed text-sm">
             {notification.description || 'No additional description provided.'}
           </div>
 
           {/* Security Alert Payload Card */}
           {isSecurity && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/5 dark:bg-red-950/20 p-4 space-y-3">
+            <div className="rounded-lg border border-red-500/30 bg-red-500/5 dark:bg-red-950/20 p-4 space-y-3">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-xs uppercase tracking-wider">
                 <AlertOctagon className="w-4 h-4" />
                 Security Incident Parameters
@@ -159,7 +159,7 @@ export default function NotificationDetailsModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 {data.email && (
-                  <div className="p-2.5 rounded-lg bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5">
+                  <div className="p-2.5 rounded-md bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5">
                     <Mail className="w-4 h-4 text-slate-400 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-[10px] text-slate-400 font-medium">Target Account</p>
@@ -169,7 +169,7 @@ export default function NotificationDetailsModal({
                 )}
 
                 {data.ip_address && (
-                  <div className="p-2.5 rounded-lg bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5">
+                  <div className="p-2.5 rounded-md bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5">
                     <Globe className="w-4 h-4 text-slate-400 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-[10px] text-slate-400 font-medium">Source IP</p>
@@ -179,7 +179,7 @@ export default function NotificationDetailsModal({
                 )}
 
                 {data.attempts && (
-                  <div className="p-2.5 rounded-lg bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5">
+                  <div className="p-2.5 rounded-md bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5">
                     <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-[10px] text-slate-400 font-medium">Failed Attempts</p>
@@ -189,7 +189,7 @@ export default function NotificationDetailsModal({
                 )}
 
                 {data.user_agent && (
-                  <div className="p-2.5 rounded-lg bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5 sm:col-span-2">
+                  <div className="p-2.5 rounded-md bg-white/80 dark:bg-zinc-900/80 border border-slate-200/60 dark:border-zinc-800 flex items-center gap-2.5 sm:col-span-2">
                     <Laptop className="w-4 h-4 text-slate-400 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-[10px] text-slate-400 font-medium">Client User Agent</p>
@@ -207,7 +207,7 @@ export default function NotificationDetailsModal({
               <h4 className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                 Event Data
               </h4>
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 space-y-1.5 text-xs">
+              <div className="p-3 rounded-lg bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 space-y-1.5 text-xs">
                 {Object.entries(data).map(([key, val]) => (
                   <div key={key} className="flex items-center justify-between gap-2">
                     <span className="text-slate-500 capitalize">{key.replace(/_/g, ' ')}:</span>
@@ -224,7 +224,7 @@ export default function NotificationDetailsModal({
           <button
             type="button"
             onClick={() => onDelete(notification.id)}
-            className="py-2.5 px-3.5 rounded-xl border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+            className="py-2 px-3.5 rounded-md border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
             Delete

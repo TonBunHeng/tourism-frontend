@@ -12,10 +12,10 @@ export default function SettingsHeader({
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 sm:mb-8">
       {/* Title & Description */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] tracking-tight">
           System Settings
         </h1>
-        <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
+        <p className="text-xs sm:text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-1">
           AngkorVerses Information System Admin Panel Configuration
         </p>
       </div>
@@ -30,7 +30,7 @@ export default function SettingsHeader({
             value={searchQuery || ''}
             onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
             placeholder="Search settings..."
-            className="w-full pl-9 pr-3 py-2 text-xs md:text-sm rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all placeholder:text-[var(--color-text-muted-light)]"
+            className="w-full pl-9 pr-3 py-2 text-xs md:text-sm rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-1 focus:ring-[#003E83] focus:border-[#003E83] transition-colors placeholder:text-[var(--color-text-muted-light)]"
           />
         </div>
 

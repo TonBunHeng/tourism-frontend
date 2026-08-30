@@ -28,7 +28,6 @@ import Reports from '../pages/reports/Reports';
 import Notifications from '../pages/notifications/Notifications';
 import Security from '../pages/security/Security';
 import AuditLogs from '../pages/audit/AuditLogs';
-import SupportChat from '../pages/support/SupportChat';
 
 // Role Groups
 const ALL_ADMIN_ROLES = ['Super Admin', 'Admin', 'Guide / Editor'];
@@ -63,9 +62,6 @@ const AppRoutes = () => {
             <Route path="/reviews" element={<Ratings />} />
             <Route path="/ratings" element={<Ratings />} />
             <Route path="/favorites" element={<Favorites />} />
-            <Route path="/chat" element={<SupportChat />} />
-            <Route path="/chats" element={<SupportChat />} />
-            <Route path="/support" element={<SupportChat />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notifications" element={<Notifications />} />
 

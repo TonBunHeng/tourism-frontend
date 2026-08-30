@@ -1,16 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   getInitialTheme,
-  getInitialSidebarStyle,
-  getInitialCompactSidebar,
-  getInitialFontSize,
-  getInitialFontFamily,
-  applyTheme,
-  applySidebarStyle,
-  applyCompactSidebar,
-  applyFontSize,
-  applyFontFamily
+  applyTheme
 } from "../../utils/Theme";
 import {
   Settings as SettingsIcon,
@@ -23,6 +15,7 @@ import {
 } from "lucide-react";
 
 import SettingsHeader from "./SettingsHeader";
+import SettingsStats from "./SettingsStats";
 import SettingsTabs from "./SettingsTabs";
 import GeneralTab from "./GeneralTab";
 import AppearanceTab from "./AppearanceTab";
@@ -33,6 +26,118 @@ import BackupTab from "./BackupTab";
 import AboutTab from "./AboutTab";
 import settingService from "../../services/settingService";
 import { useAlert } from "../../context/AlertContext";
+
+const KEY_GROUP_MAP = {
+  // General
+  siteName: 'general',
+  appName: 'general',
+  organizationName: 'general',
+  siteDescription: 'general',
+  contactEmail: 'general',
+  contactPhone: 'general',
+  emergencyPolice: 'general',
+  emergencyTouristPolice: 'general',
+  emergencyAmbulance: 'general',
+  emergencyFire: 'general',
+  defaultLanguage: 'general',
+  defaultCurrency: 'general',
+  timezone: 'general',
+  dateFormat: 'general',
+  termsOfServiceUrl: 'general',
+  privacyPolicyUrl: 'general',
+  maintenanceMode: 'general',
+  maintenanceMessage: 'general',
+  logoUrl: 'general',
+  logoFileName: 'general',
+  faviconUrl: 'general',
+  faviconFileName: 'general',
+
+  // Appearance
+  theme: 'appearance',
+  sidebarStyle: 'appearance',
+
+  // Notifications
+  pushNotifications: 'notifications',
+  emailNotifications: 'notifications',
+  smsNotifications: 'notifications',
+  newUserAlert: 'notifications',
+  newReviewAlert: 'notifications',
+  newEventAlert: 'notifications',
+  deletionRequestAlert: 'notifications',
+  securityAlert: 'notifications',
+
+  // Security
+  twoFactorAuth: 'security',
+  sessionTimeout: 'security',
+  passwordPolicy: 'security',
+  loginAttempts: 'security',
+
+  // Integrations
+  googleMapsApiKey: 'integrations',
+  mapboxApiKey: 'integrations',
+  weatherApiKey: 'integrations',
+  aiProvider: 'integrations',
+  aiApiKey: 'integrations',
+  smtpHost: 'integrations',
+  smtpPort: 'integrations',
+  smtpEncryption: 'integrations',
+  smtpUsername: 'integrations',
+  smtpPassword: 'integrations',
+
+  // Backup
+  backupSchedule: 'backup',
+  backupRetention: 'backup'
+};
+
+const SNAKE_TO_CAMEL = {
+  site_name: 'siteName',
+  app_name: 'appName',
+  organization_name: 'organizationName',
+  site_description: 'siteDescription',
+  contact_email: 'contactEmail',
+  support_email: 'contactEmail',
+  contact_phone: 'contactPhone',
+  support_phone: 'contactPhone',
+  emergency_police: 'emergencyPolice',
+  emergency_tourist_police: 'emergencyTouristPolice',
+  emergency_ambulance: 'emergencyAmbulance',
+  emergency_fire: 'emergencyFire',
+  default_language: 'defaultLanguage',
+  default_currency: 'defaultCurrency',
+  date_format: 'dateFormat',
+  terms_of_service_url: 'termsOfServiceUrl',
+  privacy_policy_url: 'privacyPolicyUrl',
+  maintenance_mode: 'maintenanceMode',
+  maintenance_message: 'maintenanceMessage',
+  logo_url: 'logoUrl',
+  favicon_url: 'faviconUrl',
+  two_factor_auth: 'twoFactorAuth',
+  session_timeout: 'sessionTimeout',
+  password_policy: 'passwordPolicy',
+  login_attempts: 'loginAttempts',
+  google_maps_api_key: 'googleMapsApiKey',
+  mapbox_api_key: 'mapboxApiKey',
+  weather_api_key: 'weatherApiKey',
+  ai_provider: 'aiProvider',
+  ai_api_key: 'aiApiKey',
+  smtp_host: 'smtpHost',
+  smtp_port: 'smtpPort',
+  smtp_encryption: 'smtpEncryption',
+  smtp_username: 'smtpUsername',
+  smtp_password: 'smtpPassword',
+  backup_schedule: 'backupSchedule',
+  backup_retention: 'backupRetention'
+};
+
+const SETTING_TABS = [
+  { id: "general", label: "General", icon: SettingsIcon },
+  { id: "appearance", label: "Appearance", icon: Palette },
+  { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "security", label: "Security", icon: Shield },
+  { id: "integrations", label: "Integrations", icon: Server },
+  { id: "backup", label: "Backup & Restore", icon: Database },
+  { id: "about", label: "About System", icon: Info }
+];
 
 export default function Settings() {
   const { showConfirm, showSuccess, showError } = useAlert();
@@ -62,34 +167,44 @@ export default function Settings() {
   };
 
   // Comprehensive System Settings State
-  const defaultSettings = {
+  const defaultSettings = useMemo(() => ({
     // General
-    siteName: "AngkorVerses Information System",
+    siteName: "AngkorVerses Smart Tourism Portal",
+    appName: "AngkorVerses",
     organizationName: "Ministry of Tourism & Culture Cambodia",
     siteDescription: "Official AngkorVerses Administration & Cultural Heritage Management Portal",
-    contactEmail: "admin@tourism.gov.kh",
+    contactEmail: "support@tourism.gov.kh",
     contactPhone: "+855 23 888 999",
-    defaultLanguage: "English",
+    emergencyPolice: "117",
+    emergencyTouristPolice: "+855 31 322 2117",
+    emergencyAmbulance: "119",
+    emergencyFire: "118",
+    defaultLanguage: "km",
+    defaultCurrency: "USD",
     timezone: "Asia/Phnom_Penh",
     dateFormat: "YYYY-MM-DD",
+    termsOfServiceUrl: "https://tourism.gov.kh/terms",
+    privacyPolicyUrl: "https://tourism.gov.kh/privacy",
+    maintenanceMode: false,
+    maintenanceMessage: "The AngkorVerses administrative portal is undergoing scheduled maintenance. Please check back shortly.",
     logoUrl: null,
+    logoFileName: "",
     faviconUrl: null,
+    faviconFileName: "",
 
     // Appearance
     theme: getInitialTheme(),
-    primaryColor: "#003E83",
-    sidebarStyle: getInitialSidebarStyle(),
-    compactSidebar: getInitialCompactSidebar(),
-    fontSize: getInitialFontSize(),
-    fontFamily: getInitialFontFamily(),
+    sidebarStyle: "brand",
 
     // Notifications
     pushNotifications: true,
     emailNotifications: true,
+    smsNotifications: false,
     newUserAlert: true,
     newReviewAlert: true,
     newEventAlert: true,
     deletionRequestAlert: true,
+    securityAlert: true,
 
     // Security
     twoFactorAuth: true,
@@ -99,89 +214,138 @@ export default function Settings() {
 
     // Integrations
     googleMapsApiKey: "",
-    firebaseApiKey: "",
-    firebaseAuthDomain: "",
-    firebaseProjectId: "",
-    firebaseStorageBucket: "",
-    smtpHost: "",
-    smtpPort: "587",
-    smtpEncryption: "tls",
-    smtpUsername: "",
-    smtpPassword: "",
+    mapboxApiKey: "",
     weatherApiKey: "",
     aiProvider: "gemini",
     aiApiKey: "",
+    smtpHost: "smtp.mailtrap.io",
+    smtpPort: "587",
+    smtpEncryption: "tls",
+    smtpUsername: "mailer@tourism.gov.kh",
+    smtpPassword: "",
 
     // Backup
     backupSchedule: "daily",
     backupRetention: "30"
-  };
+  }), []);
 
   const [settings, setSettings] = useState(defaultSettings);
 
-  const loadSettings = async () => {
-    try {
-      const res = await settingService.getSettings();
-      if (res.success && res.data && res.data.length > 0) {
-        const loaded = { ...defaultSettings };
-        res.data.forEach(item => {
-          const k = item.key || item.setting_key;
-          let v = item.value !== undefined ? item.value : item.setting_value;
-          if (k && v !== undefined && v !== null) {
-            if (v === "true") v = true;
-            if (v === "false") v = false;
-            loaded[k] = v;
-          }
-        });
-        setSettings(loaded);
-
-        // Apply any saved appearance settings loaded from backend
-        if (loaded.theme) applyTheme(loaded.theme);
-        if (loaded.sidebarStyle) applySidebarStyle(loaded.sidebarStyle);
-        if (loaded.compactSidebar !== undefined) applyCompactSidebar(loaded.compactSidebar);
-        if (loaded.fontSize) applyFontSize(loaded.fontSize);
-        if (loaded.fontFamily) applyFontFamily(loaded.fontFamily);
-      }
-    } catch (e) {
-      console.error("Failed to load settings from API:", e);
-    }
-  };
-
   useEffect(() => {
-    loadSettings();
-  }, []);
+    let isMounted = true;
+    const fetchSettings = async () => {
+      try {
+        const res = await settingService.getSettings();
+        if (isMounted && res.success && res.data && res.data.length > 0) {
+          const loaded = { ...defaultSettings };
+          res.data.forEach((item) => {
+            const rawKey = item.key || item.setting_key;
+            let val = item.value !== undefined ? item.value : item.setting_value;
+            if (rawKey && val !== undefined && val !== null) {
+              if (val === "true") val = true;
+              if (val === "false") val = false;
 
-  const tabs = [
-    { id: "general", label: "General", icon: SettingsIcon },
-    { id: "appearance", label: "Appearance", icon: Palette },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "security", label: "Security", icon: Shield },
-    { id: "integrations", label: "Integrations", icon: Server },
-    { id: "backup", label: "Backup & Restore", icon: Database },
-    { id: "about", label: "About System", icon: Info }
-  ];
+              if (Object.prototype.hasOwnProperty.call(loaded, rawKey)) {
+                loaded[rawKey] = val;
+              }
+              const camelKey = SNAKE_TO_CAMEL[rawKey];
+              if (camelKey && Object.prototype.hasOwnProperty.call(loaded, camelKey)) {
+                loaded[camelKey] = val;
+              }
+            }
+          });
+
+          loaded.theme = getInitialTheme();
+          setSettings(loaded);
+        }
+      } catch (e) {
+        console.error("Failed to load settings from API:", e);
+      }
+    };
+
+    fetchSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [defaultSettings]);
+
+  // Search Match Calculator
+  const searchMatchCounts = useMemo(() => {
+    if (!searchQuery.trim()) return {};
+    const q = searchQuery.toLowerCase();
+    const counts = {};
+
+    SETTING_TABS.forEach((tab) => {
+      let count = 0;
+      if (tab.label.toLowerCase().includes(q)) count += 1;
+
+      Object.entries(settings).forEach(([key, val]) => {
+        const group = KEY_GROUP_MAP[key];
+        if (group === tab.id) {
+          if (key.toLowerCase().includes(q) || String(val).toLowerCase().includes(q)) {
+            count += 1;
+          }
+        }
+      });
+
+      if (count > 0) counts[tab.id] = count;
+    });
+
+    return counts;
+  }, [searchQuery, settings]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const settingsArray = Object.keys(settings).map(key => ({
-        key,
-        value: typeof settings[key] === "object" && settings[key] !== null ? JSON.stringify(settings[key]) : String(settings[key] ?? ""),
-        group: activeTab,
-      }));
+      // Construct settings payload with proper group assignment
+      const settingsArray = [];
+
+      Object.keys(settings).forEach((key) => {
+        const group = KEY_GROUP_MAP[key] || 'general';
+        const rawVal = settings[key];
+        const valStr = typeof rawVal === "object" && rawVal !== null
+          ? JSON.stringify(rawVal)
+          : String(rawVal ?? "");
+
+        settingsArray.push({
+          key,
+          value: valStr,
+          group,
+        });
+      });
+
+      // Synchronize key pairs for public endpoint compatibility
+      const syncPairs = [
+        { key: 'site_name', val: settings.siteName, group: 'general' },
+        { key: 'app_name', val: settings.appName || settings.siteName, group: 'general' },
+        { key: 'support_email', val: settings.contactEmail, group: 'general' },
+        { key: 'support_phone', val: settings.contactPhone, group: 'general' },
+        { key: 'maintenance_mode', val: String(Boolean(settings.maintenanceMode)), group: 'general' },
+        { key: 'default_language', val: settings.defaultLanguage, group: 'general' },
+        { key: 'default_currency', val: settings.defaultCurrency, group: 'general' },
+        { key: 'terms_of_service_url', val: settings.termsOfServiceUrl, group: 'general' },
+        { key: 'privacy_policy_url', val: settings.privacyPolicyUrl, group: 'general' },
+      ];
+
+      syncPairs.forEach((pair) => {
+        if (!settingsArray.some((s) => s.key === pair.key)) {
+          settingsArray.push({
+            key: pair.key,
+            value: String(pair.val ?? ''),
+            group: pair.group,
+          });
+        }
+      });
 
       await settingService.updateSettings(settingsArray);
 
-      // Re-apply appearance settings on save
+      // Re-apply theme setting on save
       if (settings.theme) applyTheme(settings.theme);
-      if (settings.sidebarStyle) applySidebarStyle(settings.sidebarStyle);
-      if (settings.compactSidebar !== undefined) applyCompactSidebar(settings.compactSidebar);
-      if (settings.fontSize) applyFontSize(settings.fontSize);
-      if (settings.fontFamily) applyFontFamily(settings.fontFamily);
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-      showSuccess("Your system settings have been saved and applied successfully.", "Settings Saved");
+      showSuccess("System settings have been saved and applied successfully.", "Settings Saved");
     } catch (e) {
       showError(e.message || "Failed to save settings to backend.", "Save Failed");
     } finally {
@@ -191,19 +355,15 @@ export default function Settings() {
 
   const handleReset = async () => {
     const confirmed = await showConfirm({
-      title: "Reset Settings",
-      message: "Are you sure you want to reset all settings in this section to system defaults? Any unsaved modifications will be reverted.",
+      title: "Reset System Settings",
+      message: "Are you sure you want to restore default administrative settings? Unsaved changes will be discarded.",
       confirmText: "Reset to Default",
       type: "warning"
     });
     if (confirmed) {
       setSettings(defaultSettings);
       applyTheme('system');
-      applySidebarStyle('modern');
-      applyCompactSidebar(false);
-      applyFontSize('medium');
-      applyFontFamily('inter');
-      showSuccess("Settings have been restored to system defaults.", "Settings Reset");
+      showSuccess("Settings restored to system defaults.", "Settings Reset");
     }
   };
 
@@ -240,13 +400,17 @@ export default function Settings() {
         onSearchChange={setSearchQuery}
       />
 
+      {/* KPI Overview Summary Stats */}
+      <SettingsStats settings={settings} />
+
       {/* Main Settings Card */}
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col min-h-[550px]">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-xs border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex flex-col min-h-[550px]">
         {/* Top Header Navigation Tabs */}
         <SettingsTabs
-          tabs={tabs}
+          tabs={SETTING_TABS}
           activeTab={activeTab}
           onTabChange={handleTabChange}
+          searchMatchCounts={searchMatchCounts}
         />
 
         {/* Tab Content Body */}

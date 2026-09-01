@@ -67,8 +67,8 @@ export default function UserModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-lg w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-alert-backdrop">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
           <div className="flex items-center gap-2.5">
@@ -234,6 +234,7 @@ export default function UserModal({
                 >
                   <option value="User">User</option>
                   <option value="Guide / Editor">Guide / Editor</option>
+                  <option value="Business Owner">Business Owner</option>
                   <option value="Admin">Admin</option>
                   <option value="Super Admin">Super Admin</option>
                 </select>

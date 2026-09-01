@@ -1,6 +1,24 @@
 import api from './api';
 
-const ADMIN_ROLES = ['Super Admin', 'Admin', 'Guide / Editor'];
+export const normalizeRole = (role) => {
+  if (!role) return 'user';
+  const cleaned = String(role).toLowerCase().trim().replace(/[\s/-]+/g, '_');
+  if (['super_admin', 'superadmin'].includes(cleaned)) return 'super_admin';
+  if (['admin', 'administrator'].includes(cleaned)) return 'admin';
+  if (['guide_editor', 'guide', 'editor'].includes(cleaned)) return 'guide_editor';
+  if (['business_owner', 'business', 'owner'].includes(cleaned)) return 'business_owner';
+  return cleaned;
+};
+
+export const isAdminRole = (role) => {
+  const norm = normalizeRole(role);
+  return ['super_admin', 'admin', 'guide_editor'].includes(norm);
+};
+
+export const isFullAdminRole = (role) => {
+  const norm = normalizeRole(role);
+  return ['super_admin', 'admin'].includes(norm);
+};
 
 export const authService = {
   async login(credentials) {
@@ -9,7 +27,7 @@ export const authService = {
       const user = res.data.user;
       
       // Verify user has admin permissions
-      if (user && !ADMIN_ROLES.includes(user.role)) {
+      if (user && !isAdminRole(user.role)) {
         this.clearSession();
         return {
           success: false,
@@ -107,7 +125,7 @@ export const authService = {
   hasAdminRole() {
     const user = this.getCurrentUser();
     if (!user || !user.role) return false;
-    return ADMIN_ROLES.includes(user.role);
+    return isAdminRole(user.role);
   },
 
   getCurrentUser() {

@@ -108,58 +108,58 @@ export default function AlertModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 transition-opacity duration-150"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-alert-backdrop"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="alert-modal-title"
     >
       <div
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg max-w-md w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800"
+        className="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative border border-gray-100 dark:border-zinc-800 animate-alert-popup overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-3.5 top-3.5 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition-colors cursor-pointer"
+          className="absolute right-3.5 top-3.5 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all cursor-pointer"
           aria-label="Close dialog"
         >
           <X size={18} />
         </button>
 
         {/* Icon */}
-        <div className="flex justify-center mb-3">
+        <div className="flex justify-center mb-3.5 animate-alert-icon">
           {renderIcon()}
         </div>
 
         {/* Title */}
         {title && (
-          <h3 id="alert-modal-title" className="text-base font-bold text-gray-900 dark:text-zinc-100 text-center mb-1.5">
+          <h3 id="alert-modal-title" className="text-base sm:text-lg font-bold text-gray-900 dark:text-zinc-100 text-center mb-2 tracking-tight">
             {title}
           </h3>
         )}
 
         {/* Message */}
         {message && (
-          <p className="text-gray-600 dark:text-zinc-400 text-center mb-5 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+          <p className="text-gray-600 dark:text-zinc-400 text-center mb-6 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
             {message}
           </p>
         )}
 
         {/* Buttons */}
         {isConfirm ? (
-          <div className="flex gap-2.5">
+          <div className="flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 font-medium rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer text-xs sm:text-sm"
+              className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-[0.98] transition-all cursor-pointer text-xs sm:text-sm"
             >
               {cancelText}
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className={`flex-1 px-4 py-2 font-medium rounded-md transition-colors cursor-pointer text-xs sm:text-sm ${getConfirmButtonClass()}`}
+              className={`flex-1 px-4 py-2.5 font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer text-xs sm:text-sm ${getConfirmButtonClass()}`}
             >
               {finalConfirmText}
             </button>
@@ -169,7 +169,7 @@ export default function AlertModal({
             <button
               type="button"
               onClick={handleConfirm}
-              className={`w-full px-4 py-2 font-medium rounded-md transition-colors cursor-pointer text-xs sm:text-sm ${getConfirmButtonClass()}`}
+              className={`w-full px-4 py-2.5 font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer text-xs sm:text-sm ${getConfirmButtonClass()}`}
             >
               {finalConfirmText}
             </button>

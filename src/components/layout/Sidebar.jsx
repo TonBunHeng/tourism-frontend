@@ -4,9 +4,10 @@ import tourism_app_icon from "../../../public/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Images, CalendarDays,
   Star, Heart, Trash2, Settings, LogOut,
-  Users, User, X, FileText, ShieldCheck, ShieldAlert, Bell
+  Users, User, X, FileText, ShieldCheck, ShieldAlert, Bell, Globe
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
+import { isFullAdminRole, normalizeRole } from '../../services/authService';
 
 export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
@@ -50,14 +51,24 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
     setIsOpen(false);
   }, [location.pathname, setIsOpen]);
 
-  const userRole = user?.role || 'Admin';
-  const isPrivileged = userRole === 'Super Admin' || userRole === 'Admin';
+  const rawRole = user?.role || 'admin';
+  const normRole = normalizeRole(rawRole);
+  const isPrivileged = isFullAdminRole(rawRole);
+
+  const displayRole = (() => {
+    if (normRole === 'super_admin') return 'Super Admin';
+    if (normRole === 'admin') return 'Admin';
+    if (normRole === 'guide_editor') return 'Guide / Editor';
+    if (normRole === 'business_owner') return 'Business Owner';
+    return 'User';
+  })();
 
   // Navigation Items defined per role
   const managementItems = [
     { name: "Dashboard", icon: LayoutGrid, path: "/dashboard" },
     { name: "Categories", icon: Tags, path: "/categories" },
     { name: "Places", icon: MapPinned, path: "/place" },
+    { name: "Provinces", icon: Globe, path: "/provinces" },
     { name: "Galleries", icon: Images, path: "/galleries" },
     { name: "Events", icon: CalendarDays, path: "/events" },
   ];
@@ -229,13 +240,13 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
                 {userName}
               </span>
               <span className="text-[10px] truncate text-gray-500 dark:text-zinc-400">
-                {userRole}
+                {displayRole}
               </span>
             </div>
 
             {!isExpanded && (
               <div className="hidden md:block absolute left-full ml-3 px-2.5 py-1 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-md bg-gray-900 dark:bg-zinc-950 border border-gray-800 dark:border-zinc-800 text-white">
-                {userName} ({userRole})
+                {userName} ({displayRole})
               </div>
             )}
           </Link>

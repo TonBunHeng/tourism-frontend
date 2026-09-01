@@ -1,14 +1,19 @@
 import { Search, ChevronDown } from 'lucide-react';
 
 export default function ProvincesToolbar({
-  searchTerm,
-  onSearchChange,
-  selectedType,
-  onTypeChange,
-  provinceTypes,
-  viewMode,
-  onViewModeChange
+  searchTerm = '',
+  onSearchChange = () => {},
+  selectedType = 'All',
+  onTypeChange = () => {},
+  selectedStatus = 'All',
+  onStatusChange = () => {},
+  provinceTypes = ['All', 'Capital City', 'Province', 'Municipality'],
+  viewMode = 'list',
+  onViewModeChange = () => {}
 }) {
+  const typesList = Array.isArray(provinceTypes) ? provinceTypes : ['All', 'Capital City', 'Province', 'Municipality'];
+  const statusList = ['All', 'Active', 'Inactive'];
+
   return (
     <div className="px-4 md:px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -34,8 +39,22 @@ export default function ProvincesToolbar({
               onChange={(e) => onTypeChange(e.target.value)}
               className="appearance-none w-full pl-4 pr-10 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
             >
-              {provinceTypes.map(type => (
+              {typesList.map(type => (
                 <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+          </div>
+
+          {/* Status Filter */}
+          <div className="relative">
+            <select
+              value={selectedStatus}
+              onChange={(e) => onStatusChange(e.target.value)}
+              className="appearance-none w-full pl-4 pr-10 py-2 border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] focus:border-transparent bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] text-sm cursor-pointer"
+            >
+              {statusList.map(status => (
+                <option key={status} value={status}>{status}</option>
               ))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />

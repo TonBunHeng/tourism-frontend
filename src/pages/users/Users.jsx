@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import SimplePagination from "../../components/common/SimplePagination";
-import UsersHeader from "./UsersHeader";
-import UsersStats from "./UsersStats";
-import UsersToolbar from "./UsersToolbar";
-import UsersList from "./UsersList";
-import UserModal from "./UserModal";
-import UserDetailsModal from "./UserDetailsModal";
-import userService from "../../services/userService";
-import deletionRequestService from "../../services/deletionRequestService";
-import { useAlert } from "../../context/AlertContext";
+import { useState, useEffect } from 'react';
+import SimplePagination from '../../components/common/SimplePagination';
+import UsersHeader from './UsersHeader';
+import UsersStats from './UsersStats';
+import UsersToolbar from './UsersToolbar';
+import UsersList from './UsersList';
+import UserDetailsModal from './UserDetailsModal';
+import UserModal from './UserModal';
+import userService from '../../services/userService';
+import deletionRequestService from '../../services/deletionRequestService';
+import { useAlert } from '../../context/AlertContext';
 
 export default function Users() {
   const { showConfirm, showSuccess, showError } = useAlert();
@@ -28,8 +28,8 @@ export default function Users() {
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
-  const roles = ["All", "Super Admin", "Admin", "Guide / Editor", "User"];
-  const statuses = ["All", "Active", "Inactive", "Online", "Offline"];
+  const roles = ["All", "Super Admin", "Admin", "Business Owner", "Guide / Editor", "User"];
+  const statuses = ["All", "Active", "Inactive", "Suspended", "Online", "Offline"];
 
   const [formData, setFormData] = useState({
     name: "",
@@ -43,8 +43,11 @@ export default function Users() {
     avatar: ""
   });
 
-  const loadUsers = async () => {
-    setIsLoading(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const loadUsers = async (showLoadingState = true) => {
+    if (showLoadingState) setIsLoading(true);
+    setIsRefreshing(true);
     try {
       const params = {
         page: currentPage,
@@ -57,16 +60,24 @@ export default function Users() {
       }
 
       const res = await userService.getUsers(params);
-      if (res.success && res.data) {
-        let formatted = res.data.map(u => {
-          const isOnline = u.status === "Active" || u.is_online;
+      if (res && (res.success || Array.isArray(res.data) || res.data)) {
+        const rawList = Array.isArray(res.data)
+          ? res.data
+          : (Array.isArray(res.data?.data) ? res.data.data : (Array.isArray(res) ? res : []));
+
+        let formatted = rawList.map(u => {
+          const isOnline = Boolean(u.is_online);
+          const rawStatus = u.status || 'Active';
+          const capitalizedStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+
           return {
             ...u,
+            status: capitalizedStatus,
             onlineStatus: isOnline ? "Online" : "Offline",
             joinDate: u.created_at ? u.created_at.split("T")[0] : "2024-01-01",
-            lastActive: u.last_active_at ? u.last_active_at.replace("T", " ").substring(0, 16) : "Just now",
-            reviews: u.reviews_count || 0,
-            favorites: u.favorites_count || 0,
+            lastActive: u.last_active_human || (u.last_active_at ? u.last_active_at.replace("T", " ").substring(0, 16) : (isOnline ? "Online Now" : "Offline")),
+            reviews: u.reviews_count || u.reviews || 0,
+            favorites: u.favorites_count || u.favorites || 0,
             places: 0,
             reports: 0,
             twoFactorAuth: Boolean(u.two_factor_auth),
@@ -81,21 +92,36 @@ export default function Users() {
         }
 
         setUsers(formatted);
-        if (res.meta) {
-          setTotalRecords(res.meta.total || formatted.length);
-          setTotalPages(res.meta.last_page || Math.ceil((res.meta.total || formatted.length) / itemsPerPage) || 1);
+        const meta = res.meta || res.data?.meta;
+        if (meta) {
+          setTotalRecords(meta.total || formatted.length);
+          setTotalPages(meta.last_page || Math.ceil((meta.total || formatted.length) / itemsPerPage) || 1);
+        } else {
+          setTotalRecords(formatted.length);
+          setTotalPages(1);
         }
       }
     } catch (e) {
       console.error("Failed to load users from API", e);
     } finally {
-      setIsLoading(false);
+      if (showLoadingState) setIsLoading(false);
+      setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    loadUsers();
+    loadUsers(true);
+
+    const interval = setInterval(() => {
+      loadUsers(false);
+    }, 20000);
+
+    return () => clearInterval(interval);
   }, [currentPage, searchTerm, selectedRole, selectedStatus]);
+
+  const handleManualRefresh = () => {
+    loadUsers(false);
+  };
 
   const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
   const handleRoleChange = (val) => { setSelectedRole(val); setCurrentPage(1); };
@@ -162,7 +188,7 @@ export default function Users() {
       phone: user.phone || "",
       password: "",
       role: user.role,
-      status: user.status,
+      status: user.status || "Active",
       location: user.location || "",
       subscription: user.subscription || "Free",
       avatar: user.avatar || ""
@@ -204,7 +230,11 @@ export default function Users() {
   return (
     <div className="flex flex-col">
       {/* Header Section */}
-      <UsersHeader onOpenAddModal={openAddModal} />
+      <UsersHeader
+        onOpenAddModal={openAddModal}
+        onRefresh={handleManualRefresh}
+        isRefreshing={isRefreshing}
+      />
 
       {/* Stats Cards */}
       <UsersStats users={users} />

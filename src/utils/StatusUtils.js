@@ -70,21 +70,52 @@ export const renderStars = (rating, size = 'sm') => {
   );
 };
 
-export const getUserStatusColor = (status) => {
-  const colors = {
-    'Active': 'bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)] dark:bg-[var(--color-success-dark-bg)] dark:text-[var(--color-success-dark-text)] dark:border-[var(--color-success-dark-border)]',
-    'Inactive': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-neutral-badge-dark-border)]',
-    'Suspended': 'bg-[var(--color-danger-bg)] text-[var(--color-danger-text)] border-[var(--color-danger-border)] dark:bg-[var(--color-danger-dark-bg)] dark:text-[var(--color-danger-dark-text)] dark:border-[var(--color-danger-dark-border)]'
+export const getUserStatusColor = (status, isOnline = false) => {
+  const norm = String(status || '').toLowerCase().trim();
+  if (norm === 'suspended') {
+    return 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800';
+  }
+  if ((norm === 'active' || norm === 'online') && isOnline) {
+    return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800';
+  }
+  return 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700';
+};
+
+export const formatRoleLabel = (role) => {
+  if (!role) return 'User';
+  const norm = String(role).toLowerCase().trim().replace(/[\_\-\s]+/g, '_');
+  const roleMap = {
+    'business_owner': 'Business Owner',
+    'super_admin': 'Super Admin',
+    'admin': 'Admin',
+    'guide_editor': 'Guide / Editor',
+    'guide': 'Guide',
+    'editor': 'Editor',
+    'user': 'User'
   };
-  return colors[status] || colors['Inactive'];
+  if (roleMap[norm]) return roleMap[norm];
+
+  return String(role)
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
 };
 
 export const getRoleColor = (role) => {
-  const colors = {
-    'Admin': 'bg-[var(--color-purple-bg)] text-[var(--color-purple-text)] border-[var(--color-purple-border)] dark:bg-[var(--color-purple-dark-bg)] dark:text-[var(--color-purple-dark-text)] dark:border-[var(--color-purple-dark-border)]',
-    'User': 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-neutral-badge-dark-border)]'
-  };
-  return colors[role] || colors['User'];
+  const norm = String(role || '').toLowerCase().trim().replace(/[\_\-\s]+/g, '_');
+
+  if (norm === 'admin') {
+    return 'bg-[var(--color-purple-bg)] text-[var(--color-purple-text)] border-[var(--color-purple-border)] dark:bg-[var(--color-purple-dark-bg)] dark:text-[var(--color-purple-dark-text)] dark:border-[var(--color-purple-dark-border)]';
+  }
+  if (norm === 'super_admin') {
+    return 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800';
+  }
+  if (norm === 'business_owner') {
+    return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800';
+  }
+  if (norm === 'guide_editor' || norm === 'guide' || norm === 'editor') {
+    return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800';
+  }
+  return 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge-text)] border-[var(--color-neutral-badge-border)] dark:bg-[var(--color-neutral-badge-dark-bg)] dark:text-[var(--color-neutral-badge-dark-text)] dark:border-[var(--color-neutral-badge-dark-border)]';
 };
 
 export const getSubscriptionColor = (subscription) => {

@@ -1,4 +1,5 @@
 import { X, User, Check, Edit, MapPin } from "lucide-react";
+import { getUserStatusColor as getStatusColor, getRoleColor, formatRoleLabel } from '../../utils/StatusUtils';
 
 export default function UserDetailsModal({ isOpen, user, onClose, onEdit, onEditUser }) {
   if (!isOpen && !user) return null;
@@ -9,8 +10,8 @@ export default function UserDetailsModal({ isOpen, user, onClose, onEdit, onEdit
   const UserAvatar = typeof user.avatar === "function" ? user.avatar : User;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-lg w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-alert-backdrop">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
           <div className="flex items-center gap-3">
@@ -63,8 +64,12 @@ export default function UserDetailsModal({ isOpen, user, onClose, onEdit, onEdit
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Role & Status</span>
-              <p className="text-sm font-medium text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] mt-1 flex items-center gap-1.5">
-                {user.role} · <span className="text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]">{user.status}</span>
+              <p className="text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1 flex items-center gap-1.5 flex-wrap">
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getRoleColor(user.role)}`}>{formatRoleLabel(user.role)}</span> · 
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getStatusColor(user.status, Boolean(user.is_online || user.onlineStatus === 'Online'))}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${Boolean(user.is_online || user.onlineStatus === 'Online') ? 'bg-emerald-500 animate-pulse' : (String(user.status || '').toLowerCase() === 'suspended' ? 'bg-rose-500' : 'bg-slate-400 dark:bg-zinc-500')}`} />
+                  {user.status}
+                </span>
               </p>
             </div>
             <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-input-dark-bg)]/50 p-3.5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">

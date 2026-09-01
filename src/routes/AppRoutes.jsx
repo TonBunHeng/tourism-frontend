@@ -30,8 +30,8 @@ import Security from '../pages/security/Security';
 import AuditLogs from '../pages/audit/AuditLogs';
 
 // Role Groups
-const ALL_ADMIN_ROLES = ['Super Admin', 'Admin', 'Guide / Editor'];
-const PRIVILEGED_ADMIN_ROLES = ['Super Admin', 'Admin'];
+const ALL_ADMIN_ROLES = ['super_admin', 'admin', 'guide_editor', 'Super Admin', 'Admin', 'Guide / Editor'];
+const PRIVILEGED_ADMIN_ROLES = ['super_admin', 'admin', 'Super Admin', 'Admin'];
 
 const AppRoutes = () => {
   return (

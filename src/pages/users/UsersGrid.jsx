@@ -1,5 +1,5 @@
 import { Check, Eye, Edit, Trash2, Activity, Calendar, User as UserIcon } from 'lucide-react';
-import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor } from '../../utils/StatusUtils';
+import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor, formatRoleLabel } from '../../utils/StatusUtils';
 
 export default function UsersGrid({
   users = [],
@@ -20,7 +20,7 @@ export default function UsersGrid({
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:p-6">
       {safeUsers.length > 0 ? (
         safeUsers.map((user) => {
-          const isOnline = user.status === "Active" || user.onlineStatus === "Online";
+          const isOnline = Boolean(user.is_online || user.onlineStatus === "Online");
           return (
             <div
               key={user.id}
@@ -36,7 +36,7 @@ export default function UsersGrid({
                   ) : (
                     <UserIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
                   )}
-                  <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? "bg-emerald-500" : "bg-gray-400"}`} />
+                  <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? "bg-emerald-500 animate-pulse" : "bg-gray-400"}`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -47,11 +47,12 @@ export default function UsersGrid({
                   </div>
                   <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] truncate">{user.email}</p>
                   <div className="flex items-center gap-1 mt-1 flex-wrap">
-                    <span className={`text-xs px-2 py-0.5 rounded-md border ${getRoleColor(user.role)}`}>
-                      {user.role}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getRoleColor(user.role)}`}>
+                      {formatRoleLabel(user.role)}
                     </span>
-                    <span className={`text-xs px-2 py-0.5 rounded-md border ${getStatusColor(user.status)}`}>
-                      {user.status}
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getStatusColor(user.status, isOnline)}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : (String(user.status || '').toLowerCase() === 'suspended' ? 'bg-rose-500' : 'bg-slate-400 dark:bg-zinc-500')}`} />
+                      {user.status || 'Active'}
                     </span>
                   </div>
                 </div>
@@ -101,11 +102,11 @@ export default function UsersGrid({
               <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={`text-xs px-2 py-0.5 rounded-md border ${getSubscriptionColor(user.subscription)}`}>
-                    {user.subscription}
+                    {user.subscription || 'Free'}
                   </span>
                   <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">
                     <Activity className="w-3 h-3" />
-                    {user.activity}
+                    {user.activity || 'Medium'}
                   </span>
                 </div>
                 <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1">

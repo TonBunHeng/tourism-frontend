@@ -1,6 +1,6 @@
 import React from 'react';
-import { Check, Clock, Eye, Edit, Trash2, Phone, User as UserIcon } from 'lucide-react';
-import { getUserStatusColor as getStatusColor, getRoleColor } from '../../utils/StatusUtils';
+import { Clock, Eye, Edit, Trash2, User as UserIcon } from 'lucide-react';
+import { getUserStatusColor as getStatusColor, getRoleColor, formatRoleLabel } from '../../utils/StatusUtils';
 
 export default function UsersList({
   users = [],
@@ -20,87 +20,76 @@ export default function UsersList({
 
   return (
     <>
-      {/* Mobile Card List View */}
-      <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
+      {/* Mobile Card List View (sm:hidden) */}
+      <div className="sm:hidden divide-y divide-[var(--color-border-light)] dark:divide-[var(--color-border-dark)]">
         {safeUsers.length > 0 ? (
           safeUsers.map((user) => {
-            const isOnline = user.status === 'Active' || user.onlineStatus === 'Online';
+            const isActive = String(user.status || '').toLowerCase() === 'active';
+            const isOnline = isActive && Boolean(user.is_online || user.onlineStatus === 'Online');
             return (
-              <div
-                key={user.id}
-                onClick={() => handleView(user)}
-                className="p-4 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors cursor-pointer"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="relative w-10 h-10 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-slate-200 dark:border-zinc-700 overflow-hidden">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <UserIcon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
-                    )}
-                    <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`} />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1 min-w-0">
-                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">
+              <div key={user.id} className="p-4 flex flex-col gap-3 hover:bg-[var(--color-surface-hover-light)]/50 dark:hover:bg-[var(--color-surface-hover-dark)]/30 transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-10 h-10 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-slate-200 dark:border-zinc-700 overflow-hidden">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <UserIcon className="w-5 h-5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
+                      )}
+                      <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
                           {user.name}
                         </p>
                         {user.verified && (
-                          <span className="text-[9px] text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/40 px-1 rounded-full shrink-0">
+                          <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/40 px-1 rounded-full">
                             ✓
                           </span>
                         )}
                       </div>
-                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border shrink-0 ${getStatusColor(user.status)}`}>
-                        {user.status}
-                      </span>
+                      <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)]">
+                        {user.email}
+                      </p>
                     </div>
+                  </div>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getRoleColor(user.role)}`}>
+                    {formatRoleLabel(user.role)}
+                  </span>
+                </div>
 
-                    <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] truncate">
-                      {user.email}
-                    </p>
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-100 dark:border-zinc-800">
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getStatusColor(user.status, isOnline)}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : (String(user.status || '').toLowerCase() === 'suspended' ? 'bg-rose-500' : 'bg-slate-400 dark:bg-zinc-500')}`} />
+                    {user.status || 'Active'}
+                  </span>
 
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <span className={`text-[10px] font-semibold px-2 py-0.2 rounded-full border ${getRoleColor(user.role)}`}>
-                        {user.role}
-                      </span>
-                      <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center gap-1 font-mono">
-                        <Clock className="w-3 h-3" />
-                        {user.lastActive || 'Just now'}
-                      </span>
-                    </div>
-
-                    <div
-                      className="flex items-center justify-end gap-2 mt-3 pt-2 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
-                      onClick={(e) => e.stopPropagation()}
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleView(user)}
+                      className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                      title="View Details"
                     >
-                      <button
-                        type="button"
-                        onClick={() => handleView(user)}
-                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                        title="View Details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleEdit(user)}
-                        className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-colors cursor-pointer"
-                        title="Edit"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteItem(user.id)}
-                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(user)}
+                      className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-colors cursor-pointer"
+                      title="Edit"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteItem(user.id)}
+                      className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -119,15 +108,15 @@ export default function UsersList({
         )}
       </div>
 
-      {/* Desktop Responsive Table View */}
+      {/* Desktop Table View (hidden sm:block) */}
       <div className="hidden sm:block overflow-x-auto">
-        <table className="w-full text-left divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)] table-auto">
+        <table className="min-w-full divide-y divide-[var(--color-border-light)] dark:divide-[var(--color-border-dark)]">
           <thead className="bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/50">
             <tr>
-              <th className="pl-4 pr-2 py-3.5 text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider w-10 text-center">
+              <th className="pl-4 pr-2 py-3.5 text-center text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider w-12 whitespace-nowrap">
                 #
               </th>
-              <th className="px-4 py-3.5 text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider">
+              <th className="px-4 py-3.5 text-left text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider whitespace-nowrap">
                 User & Profile
               </th>
               <th className="px-3 py-3.5 text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] uppercase tracking-wider whitespace-nowrap w-28">
@@ -150,7 +139,8 @@ export default function UsersList({
           <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-light)] dark:divide-[var(--color-border-dark)]">
             {safeUsers.length > 0 ? (
               safeUsers.map((user, index) => {
-                const isOnline = user.status === 'Active' || user.onlineStatus === 'Online';
+                const isActive = String(user.status || '').toLowerCase() === 'active';
+                const isOnline = isActive && Boolean(user.is_online || user.onlineStatus === 'Online');
                 return (
                   <tr
                     key={user.id}
@@ -168,7 +158,7 @@ export default function UsersList({
                           ) : (
                             <UserIcon className="w-4 h-4 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)]" />
                           )}
-                          <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`} />
+                          <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5">
@@ -189,15 +179,15 @@ export default function UsersList({
                     </td>
 
                     <td className="px-3 py-3.5 whitespace-nowrap">
-                      <span className={`text-[10px] font-semibold px-2 py-0.2 rounded-full border ${getRoleColor(user.role)}`}>
-                        {user.role}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getRoleColor(user.role)}`}>
+                        {formatRoleLabel(user.role)}
                       </span>
                     </td>
 
                     <td className="px-3 py-3.5 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getStatusColor(user.status)}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-gray-400'}`} />
-                        {user.status === 'Active' ? 'Active' : user.status}
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getStatusColor(user.status, isOnline)}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : (String(user.status || '').toLowerCase() === 'suspended' ? 'bg-rose-500' : 'bg-slate-400 dark:bg-zinc-500')}`} />
+                        {user.status || 'Active'}
                       </span>
                     </td>
 

@@ -12,6 +12,8 @@ import provinceService from '../../services/provinceService';
 import deletionRequestService from '../../services/deletionRequestService';
 import { useAlert } from '../../context/AlertContext';
 
+const PROVINCE_TYPES = ['All', 'Capital City', 'Province', 'Municipality'];
+
 export default function Provinces() {
   const { showConfirm, showSuccess, showError } = useAlert();
   const [provinces, setProvinces] = useState([]);
@@ -54,18 +56,27 @@ export default function Provinces() {
       if (selectedStatus !== 'All') params.status = selectedStatus;
 
       const res = await provinceService.getProvinces(params);
-      if (res.success && res.data) {
-        const formatted = res.data.map(p => ({
+      if (res && (res.success || Array.isArray(res.data) || res.data)) {
+        const rawItems = Array.isArray(res.data)
+          ? res.data
+          : (Array.isArray(res.data?.data) ? res.data.data : (Array.isArray(res) ? res : []));
+
+        const formatted = rawItems.map(p => ({
           ...p,
-          districts: p.districts_count,
-          communes: p.communes_count,
-          places: p.places_count || 0,
+          districts: p.districts_count ?? p.districts ?? 0,
+          communes: p.communes_count ?? p.communes ?? 0,
+          places: p.places_count ?? p.places ?? 0,
           icon: Landmark,
         }));
         setProvinces(formatted);
-        if (res.meta) {
-          setTotalRecords(res.meta.total);
-          setTotalPages(res.meta.last_page);
+
+        const meta = res.meta || res.data?.meta;
+        if (meta) {
+          setTotalRecords(meta.total || formatted.length);
+          setTotalPages(meta.last_page || 1);
+        } else {
+          setTotalRecords(formatted.length);
+          setTotalPages(1);
         }
       }
     } catch (e) {
@@ -84,15 +95,17 @@ export default function Provinces() {
   const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
 
   const handleView = (id) => {
-    const provToView = provinces.find(prov => prov.id === id);
+    const targetId = typeof id === 'object' ? id.id : id;
+    const provToView = provinces.find(prov => prov.id === targetId);
     if (provToView) {
       setViewingProvince(provToView);
     }
   };
 
   const handleDelete = async (id) => {
-    const province = provinces.find(p => p.id === id);
-    const provName = province?.name || `Province #${id}`;
+    const targetId = typeof id === 'object' ? id.id : id;
+    const province = provinces.find(p => p.id === targetId);
+    const provName = province?.name || `Province #${targetId}`;
     const confirmed = await showConfirm({
       title: 'Submit Deletion Request',
       message: `Are you sure you want to submit a deletion request for province "${provName}"?\n\nThis will be sent to Deletion Requests for review and approval.`,
@@ -109,7 +122,7 @@ export default function Provinces() {
         urgency: 'high',
         items: [{
           item_type: 'province',
-          item_id: id,
+          item_id: targetId,
           item_name: provName,
           category: 'Province'
         }]
@@ -136,16 +149,19 @@ export default function Provinces() {
   };
 
   const openEditModal = (province) => {
-    setEditingProvince(province);
+    const provObj = typeof province === 'object' ? province : provinces.find(p => p.id === province);
+    if (!provObj) return;
+
+    setEditingProvince(provObj);
     setFormData({
-      name: province.name,
-      type: province.type,
-      population: province.population || '',
-      area: province.area || '',
-      districts_count: province.districts || 0,
-      communes_count: province.communes || 0,
-      status: province.status,
-      description: province.description || ''
+      name: provObj.name || '',
+      type: provObj.type || 'Province',
+      population: provObj.population || '',
+      area: provObj.area || '',
+      districts_count: provObj.districts || provObj.districts_count || 0,
+      communes_count: provObj.communes || provObj.communes_count || 0,
+      status: provObj.status || 'Active',
+      description: provObj.description || ''
     });
     setIsAddModalOpen(true);
   };
@@ -199,6 +215,7 @@ export default function Provinces() {
           onTypeChange={handleTypeChange}
           selectedStatus={selectedStatus}
           onStatusChange={handleStatusChange}
+          provinceTypes={PROVINCE_TYPES}
         />
 
         {isLoading ? (
@@ -249,6 +266,7 @@ export default function Provinces() {
         formData={formData}
         onFormChange={handleFormChange}
         onSubmit={handleSubmit}
+        provinceTypes={PROVINCE_TYPES}
       />
     </div>
   );

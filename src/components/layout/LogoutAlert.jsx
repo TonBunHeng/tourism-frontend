@@ -39,49 +39,49 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 transition-opacity duration-150"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-alert-backdrop"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="logout-modal-title"
     >
       <div 
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg max-w-md w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800"
+        className="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative border border-gray-100 dark:border-zinc-800 animate-alert-popup overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-3.5 top-3.5 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition-colors cursor-pointer"
+          className="absolute right-3.5 top-3.5 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all cursor-pointer"
           aria-label="Close dialog"
         >
           <X size={18} />
         </button>
 
         {/* Icon */}
-        <div className="flex justify-center mb-3">
+        <div className="flex justify-center mb-3.5 animate-alert-icon">
           <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center">
             <LogOut size={22} />
           </div>
         </div>
 
         {/* Title */}
-        <h3 id="logout-modal-title" className="text-base font-bold text-gray-900 dark:text-zinc-100 text-center mb-1.5">
+        <h3 id="logout-modal-title" className="text-base sm:text-lg font-bold text-gray-900 dark:text-zinc-100 text-center mb-2 tracking-tight">
           Confirm Sign Out
         </h3>
 
         {/* Message */}
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400 text-center mb-5 leading-relaxed">
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400 text-center mb-6 leading-relaxed">
           Are you sure you want to log out? Your current administrative session will be terminated.
         </p>
 
         {/* Buttons */}
-        <div className="flex gap-2.5">
+        <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoggingOut}
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 font-medium rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50 text-xs sm:text-sm"
+            className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 text-xs sm:text-sm"
           >
             Cancel
           </button>
@@ -89,7 +89,7 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
             type="button"
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
+            className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
           >
             {isLoggingOut ? 'Signing out...' : 'Sign Out'}
           </button>

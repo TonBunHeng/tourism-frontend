@@ -1,25 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import authService from '../services/authService';
+import authService, { normalizeRole, isFullAdminRole } from '../services/authService';
 import Forbidden from '../pages/error/Forbidden';
 
 /**
  * ProtectedRoute Guard
  * 
  * Enforces frontend authentication and role-based access.
- * If unauthenticated: redirects to /login with return location state.
- * If authenticated but lacks role permission: renders 403 Forbidden page.
- * 
- * Note: Frontend guards ensure UI navigation security. Real authorization
- * must always be enforced independently on the backend API.
+ * Super Admin and Admin have full All Access to all protected routes.
  */
-export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin', 'Guide / Editor'] }) {
+export default function ProtectedRoute({ allowedRoles = ['super_admin', 'admin', 'guide_editor', 'Super Admin', 'Admin', 'Guide / Editor'] }) {
   const location = useLocation();
   const [isVerifying, setIsVerifying] = useState(true);
   const [authStatus, setAuthStatus] = useState({
     isAuthenticated: false,
     isAllowedRole: false,
   });
+
+  const checkRolePermission = (role) => {
+    if (!role) return false;
+    const userNorm = normalizeRole(role);
+    // Super Admin and Admin get Full All Access to all protected routes
+    if (isFullAdminRole(userNorm)) return true;
+
+    const normalizedAllowed = (Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles])
+      .map(r => normalizeRole(r));
+    return normalizedAllowed.includes(userNorm);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -37,7 +44,7 @@ export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin',
       // Check current cached user first for quick responsiveness
       const currentUser = authService.getCurrentUser();
       if (currentUser?.role) {
-        const isAllowed = allowedRoles.includes(currentUser.role);
+        const isAllowed = checkRolePermission(currentUser.role);
         if (isMounted) {
           setAuthStatus({
             isAuthenticated: true,
@@ -52,7 +59,7 @@ export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin',
         if (isMounted) {
           const user = res?.data?.user || res?.data;
           if (res?.success && user) {
-            const isAllowed = allowedRoles.includes(user.role);
+            const isAllowed = checkRolePermission(user.role);
             setAuthStatus({
               isAuthenticated: true,
               isAllowedRole: isAllowed,
@@ -64,7 +71,6 @@ export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin',
         }
       } catch (err) {
         if (isMounted) {
-          // If server rejects token as invalid (401), session is cleared
           if (!authService.getToken()) {
             setAuthStatus({ isAuthenticated: false, isAllowedRole: false });
           }
@@ -87,7 +93,7 @@ export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin',
         if (u) {
           setAuthStatus({
             isAuthenticated: true,
-            isAllowedRole: allowedRoles.includes(u.role),
+            isAllowedRole: checkRolePermission(u.role),
           });
         }
       }
@@ -103,12 +109,10 @@ export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin',
     };
   }, [location.pathname, allowedRoles]);
 
-  // Initial check: if no token exists, redirect to /login immediately
   if (!authService.getToken()) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Simple, clean verification screen while validating session
   if (isVerifying && !authStatus.isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-950">
@@ -120,12 +124,10 @@ export default function ProtectedRoute({ allowedRoles = ['Super Admin', 'Admin',
     );
   }
 
-  // Not authenticated -> redirect to login
   if (!authStatus.isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Authenticated, but unauthorized for this specific role -> render 403 Forbidden
   if (!authStatus.isAllowedRole) {
     return <Forbidden />;
   }

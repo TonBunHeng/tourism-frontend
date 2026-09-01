@@ -409,7 +409,7 @@ export default function Header({ toggleSidebar, isSidebarOpen, isExpanded, toggl
                     </Link>
                     {(() => {
                       const role = JSON.parse(localStorage.getItem('user') || '{}')?.role;
-                      if (role === 'Super Admin' || role === 'Admin') {
+                      if (['super_admin', 'admin', 'Super Admin', 'Admin', 'administrator', 'superadmin'].includes(String(role).toLowerCase().trim().replace(/ /g, '_')) || ['Super Admin', 'Admin'].includes(role)) {
                         return (
                           <Link to="/settings" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition-colors">
                             <Settings size={16} className="text-gray-400" />

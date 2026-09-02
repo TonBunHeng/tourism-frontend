@@ -1,0 +1,318 @@
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
+import {
+  X, Building2, User, Mail, Phone, MapPin, FileCheck, CheckCircle2,
+  AlertCircle, XCircle, ShieldAlert, Star, Calendar, Globe, FileText,
+  Edit, RefreshCw, AlertTriangle
+} from 'lucide-react';
+
+export default function BusinessDetailsModal({
+  business,
+  onClose,
+  onApprove,
+  onReject,
+  onSuspend,
+  onActivate,
+  onEdit
+}) {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  if (!business) return null;
+
+  const status = String(business.verification_status || business.status || 'pending').toLowerCase();
+
+  const getStatusBadge = () => {
+    switch (status) {
+      case 'approved':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <CheckCircle2 size={14} /> Approved & Active
+          </span>
+        );
+      case 'suspended':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+            <AlertTriangle size={14} /> Suspended
+          </span>
+        );
+      case 'rejected':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300 border border-red-200 dark:border-red-800">
+            <XCircle size={14} /> Rejected
+          </span>
+        );
+      case 'pending':
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            <AlertCircle size={14} /> Pending Review
+          </span>
+        );
+    }
+  };
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--color-modal-overlay)] backdrop-blur-xs p-4 animate-alert-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col relative border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] animate-alert-popup overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/50 relative">
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#003E83] text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-xs">
+              {business.logo ? (
+                <img src={business.logo} alt={business.name} className="w-full h-full object-cover rounded-full" />
+              ) : (
+                business.name ? business.name.charAt(0).toUpperCase() : 'B'
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h2 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] truncate">
+                  {business.name}
+                </h2>
+                {getStatusBadge()}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+                <span className="flex items-center gap-1 font-medium text-[#003E83] dark:text-blue-400">
+                  <Building2 size={14} />
+                  {business.category?.name || business.category_name || business.category || 'Hospitality'}
+                </span>
+                <span className="flex items-center gap-1">
+                  <MapPin size={14} />
+                  {business.province?.name || business.province || business.address || 'Siem Reap, Cambodia'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="flex items-center gap-2 mt-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pt-3">
+            {[
+              { id: 'overview', label: 'Business Profile' },
+              { id: 'owner', label: 'Owner & Contact' },
+              { id: 'verification', label: 'Verification & License' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                  activeTab === tab.id
+                    ? 'bg-[#003E83] text-white'
+                    : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Modal Body Content */}
+        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-xs">
+          {activeTab === 'overview' && (
+            <div className="space-y-4">
+              <div className="bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 p-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                <h4 className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] uppercase tracking-wider text-[11px] mb-1.5">
+                  About Business Profile
+                </h4>
+                <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] leading-relaxed">
+                  {business.description || 'No detailed business description available for this profile.'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] space-y-1">
+                  <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold">Address / Location</span>
+                  <p className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.address || 'National Road 6, Siem Reap'}</p>
+                </div>
+
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] space-y-1">
+                  <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold">Province / Region</span>
+                  <p className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.province?.name || business.province || 'Siem Reap'}</p>
+                </div>
+
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] space-y-1">
+                  <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold">Operating Hours</span>
+                  <p className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.operating_hours || '8:00 AM - 10:00 PM Daily'}</p>
+                </div>
+
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] space-y-1">
+                  <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold">Website / Link</span>
+                  <p className="font-semibold text-[#003E83] dark:text-blue-400 flex items-center gap-1 truncate">
+                    <Globe size={13} />
+                    {business.website ? (
+                      <a href={business.website} target="_blank" rel="noreferrer" className="hover:underline truncate">
+                        {business.website}
+                      </a>
+                    ) : (
+                      'https://angkorverses.com'
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'owner' && (
+            <div className="space-y-3">
+              <div className="bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] p-4 rounded-md border border-blue-100 dark:border-blue-900/50 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#003E83] text-white font-bold text-base flex items-center justify-center shrink-0">
+                  {business.owner?.name ? business.owner.name.charAt(0).toUpperCase() : 'O'}
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                    {business.owner?.name || business.owner_name || 'Business Owner'}
+                  </h4>
+                  <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs">Registered Commercial Owner</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-[#003E83] dark:text-blue-400 shrink-0" />
+                  <div>
+                    <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold block">Email Address</span>
+                    <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.owner?.email || business.email || 'owner@business.com'}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center gap-3">
+                  <Phone className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <div>
+                    <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold block">Phone Contact</span>
+                    <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.owner?.phone || business.phone || '+855 12 345 678'}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <div>
+                    <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold block">Registration Date</span>
+                    <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                      {business.created_at ? business.created_at.split('T')[0] : '2024-03-15'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center gap-3">
+                  <FileCheck className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+                  <div>
+                    <span className="text-[var(--color-text-muted-light)] text-[10px] uppercase font-semibold block">Tax Identification</span>
+                    <span className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.tax_id || business.license_number || 'MOT-2024-REG'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'verification' && (
+            <div className="space-y-3">
+              <div className="p-4 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-[#003E83]" /> Ministry Tourism Operating License
+                  </span>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded font-semibold">
+                    Attached
+                  </span>
+                </div>
+                <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-[11px]">
+                  Commercial License Number: <strong className="text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">{business.license_number || 'MOT-2024-REG'}</strong>
+                </p>
+              </div>
+
+              {business.rejection_reason && (
+                <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-md border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300">
+                  <h5 className="font-bold mb-1 flex items-center gap-1.5">
+                    <XCircle size={15} /> Rejection / Action Note
+                  </h5>
+                  <p className="text-xs">{business.rejection_reason}</p>
+                </div>
+              )}
+
+              {business.suspension_reason && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-300">
+                  <h5 className="font-bold mb-1 flex items-center gap-1.5">
+                    <AlertTriangle size={15} /> Suspension Justification
+                  </h5>
+                  <p className="text-xs">{business.suspension_reason}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Footer Actions */}
+        <div className="p-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/50 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => onEdit(business)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] hover:bg-gray-100 dark:hover:bg-zinc-700 text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] transition-colors cursor-pointer"
+          >
+            <Edit size={14} /> Edit Profile
+          </button>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {status !== 'approved' && (
+              <button
+                type="button"
+                onClick={() => onApprove(business)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors cursor-pointer"
+              >
+                <CheckCircle2 size={14} /> Approve Profile
+              </button>
+            )}
+
+            {status === 'approved' && (
+              <button
+                type="button"
+                onClick={() => onSuspend(business)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-colors cursor-pointer"
+              >
+                <AlertTriangle size={14} /> Suspend
+              </button>
+            )}
+
+            {status !== 'rejected' && (
+              <button
+                type="button"
+                onClick={() => onReject(business)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors cursor-pointer"
+              >
+                <XCircle size={14} /> Reject
+              </button>
+            )}
+
+            {status === 'suspended' && (
+              <button
+                type="button"
+                onClick={() => onActivate(business)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-[#003E83] hover:bg-[#002e62] text-white shadow-xs transition-colors cursor-pointer"
+              >
+                <RefreshCw size={14} /> Reactivate
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}

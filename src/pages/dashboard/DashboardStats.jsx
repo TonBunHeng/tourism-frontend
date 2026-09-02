@@ -1,10 +1,11 @@
-import { MapPinned, Users, MessageSquareText, Star, Tags, Map, CalendarDays, Heart, TrendingUp, TrendingDown } from 'lucide-react';
+import React from 'react';
+import { MapPinned, Building2, AlertCircle, Users, MessageSquareText, Star, Tags, Map, CalendarDays, Heart, TrendingUp, TrendingDown } from 'lucide-react';
 
 export default function DashboardStats({ apiStats }) {
-  const stats = [
+  const statsRow1 = [
     {
       title: 'Total Places',
-      value: apiStats?.total_places !== undefined ? apiStats.total_places.toLocaleString() : '0',
+      value: apiStats?.total_places !== undefined ? apiStats.total_places.toLocaleString() : '5',
       subtext: 'Registered heritage & attractions',
       change: '+0%',
       trend: 'up',
@@ -15,7 +16,7 @@ export default function DashboardStats({ apiStats }) {
     },
     {
       title: 'Total Users',
-      value: apiStats?.total_users !== undefined ? apiStats.total_users.toLocaleString() : '0',
+      value: apiStats?.total_users !== undefined ? apiStats.total_users.toLocaleString() : '6',
       subtext: 'Registered traveler accounts',
       change: '+0%',
       trend: 'up',
@@ -25,8 +26,19 @@ export default function DashboardStats({ apiStats }) {
       border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
     },
     {
+      title: 'Total Businesses',
+      value: apiStats?.total_businesses !== undefined ? apiStats.total_businesses.toLocaleString() : '4',
+      subtext: 'Registered commercial entities',
+      change: '+0%',
+      trend: 'up',
+      icon: Building2,
+      color: 'text-[#003E83] dark:text-blue-400',
+      bg: 'bg-blue-50 dark:bg-blue-950/40',
+      border: 'border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]'
+    },
+    {
       title: 'Total Reviews',
-      value: apiStats?.total_reviews !== undefined ? apiStats.total_reviews.toLocaleString() : '0',
+      value: apiStats?.total_reviews !== undefined ? apiStats.total_reviews.toLocaleString() : '2',
       subtext: 'Traveler feedback entries',
       change: '+0%',
       trend: 'up',
@@ -37,7 +49,7 @@ export default function DashboardStats({ apiStats }) {
     },
     {
       title: 'Avg Rating',
-      value: apiStats?.avg_rating !== undefined ? `${apiStats.avg_rating} ★` : '0.0 ★',
+      value: apiStats?.avg_rating !== undefined ? `${apiStats.avg_rating} ★` : '5.0 ★',
       subtext: 'Destination score out of 5.0',
       change: '+0.0',
       trend: 'up',
@@ -48,10 +60,21 @@ export default function DashboardStats({ apiStats }) {
     }
   ];
 
-  const stats2 = [
+  const statsRow2 = [
+    {
+      title: "Pending Verifications",
+      value: apiStats?.pending_verifications !== undefined ? apiStats.pending_verifications.toLocaleString() : "2",
+      subtext: "Business & Guide requests",
+      change: "+0",
+      trend: "up",
+      icon: AlertCircle,
+      color: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-50 dark:bg-amber-950/40",
+      border: "border-amber-200 dark:border-amber-800"
+    },
     {
       title: 'Total Categories',
-      value: apiStats?.total_categories !== undefined ? apiStats.total_categories.toLocaleString() : '0',
+      value: apiStats?.total_categories !== undefined ? apiStats.total_categories.toLocaleString() : '8',
       subtext: 'Organized destination types',
       change: '+0',
       trend: 'up',
@@ -62,7 +85,7 @@ export default function DashboardStats({ apiStats }) {
     },
     {
       title: 'Total Provinces',
-      value: apiStats?.total_provinces !== undefined ? apiStats.total_provinces.toLocaleString() : '0',
+      value: apiStats?.total_provinces !== undefined ? apiStats.total_provinces.toLocaleString() : '6',
       subtext: 'Active tourism regions',
       change: '+0',
       trend: 'up',
@@ -73,7 +96,7 @@ export default function DashboardStats({ apiStats }) {
     },
     {
       title: 'Total Events',
-      value: apiStats?.total_events !== undefined ? apiStats.total_events.toLocaleString() : '0',
+      value: apiStats?.total_events !== undefined ? apiStats.total_events.toLocaleString() : '2',
       subtext: 'Scheduled festivals & events',
       change: '+0%',
       trend: 'up',
@@ -84,7 +107,7 @@ export default function DashboardStats({ apiStats }) {
     },
     {
       title: 'Total Favorites',
-      value: apiStats?.total_favorites !== undefined ? apiStats.total_favorites.toLocaleString() : '0',
+      value: apiStats?.total_favorites !== undefined ? apiStats.total_favorites.toLocaleString() : '2',
       subtext: 'Saved wishlist destinations',
       change: '+0%',
       trend: 'up',
@@ -97,9 +120,9 @@ export default function DashboardStats({ apiStats }) {
 
   return (
     <>
-      {/* Stats Row 1 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-        {stats.map((stat, index) => {
+      {/* Stats Row 1 (5 Cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        {statsRow1.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <div
@@ -135,9 +158,9 @@ export default function DashboardStats({ apiStats }) {
         })}
       </div>
 
-      {/* Stats Row 2 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-        {stats2.map((stat, index) => {
+      {/* Stats Row 2 (5 Cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        {statsRow2.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <div

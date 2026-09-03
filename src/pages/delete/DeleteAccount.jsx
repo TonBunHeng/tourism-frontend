@@ -8,7 +8,6 @@ import DeletionToolbar from "./DeletionToolbar";
 import DeletionList from "./DeletionList";
 import DeletionDetailsModal from "./DeletionDetailsModal";
 import DeletionConfirmModal from "./DeletionConfirmModal";
-import DeletionAnalyticsModal from "./DeletionAnalyticsModal";
 import deletionRequestService from "../../services/deletionRequestService";
 import { useAlert } from "../../context/AlertContext";
 
@@ -31,7 +30,6 @@ export default function DeleteAccount() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmType, setConfirmType] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
@@ -199,7 +197,7 @@ export default function DeleteAccount() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <DeletionHeader onReset={handleReset} onOpenAnalytics={() => setIsAnalyticsOpen(true)} />
+      <DeletionHeader />
 
       {/* Stats Cards */}
       <DeletionStats requests={requests} />
@@ -236,6 +234,7 @@ export default function DeleteAccount() {
         ) : (
           <DeletionList
             requests={paginatedRequests}
+            startIndex={startIndex}
             onViewDetails={handleViewDetails}
             onApprove={handleApprove}
             onReject={handleReject}
@@ -279,13 +278,6 @@ export default function DeleteAccount() {
           setConfirmAction(null);
         }}
         onConfirm={confirmDecision}
-      />
-
-      {/* Analytics Overview Modal */}
-      <DeletionAnalyticsModal
-        isOpen={isAnalyticsOpen}
-        onClose={() => setIsAnalyticsOpen(false)}
-        requests={requests}
       />
     </div>
   );

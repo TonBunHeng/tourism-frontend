@@ -145,6 +145,7 @@ export default function Favorites() {
             status: isVisited ? "Visited" : "To Visit",
             saved_date: fav.saved_date || (fav.created_at ? new Date(fav.created_at).toISOString().split('T')[0] : "Recently"),
             dateAdded: fav.saved_date || (fav.created_at ? new Date(fav.created_at).toISOString().split('T')[0] : "Recently"),
+            created_at: fav.created_at || fav.saved_date,
             bestTime: place.best_time || place.bestTime || fav.best_time || "Morning",
             duration: place.duration || fav.duration || "2-3 Hours",
             price: place.price || fav.price || "Free",

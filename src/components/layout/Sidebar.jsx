@@ -4,7 +4,7 @@ import tourism_app_icon from "../../../public/tourism_app_icon.png";
 import {
   LayoutGrid, MapPinned, Tags, Images, CalendarDays,
   Star, Heart, Trash2, Settings, LogOut,
-  Users, User, X, FileText, ShieldCheck, ShieldAlert, Bell, Globe
+  Users, User, X, FileText, ShieldCheck, Bell, Globe
 } from "lucide-react";
 import LogoutAlert from './LogoutAlert';
 import { isFullAdminRole, normalizeRole } from '../../services/authService';
@@ -79,7 +79,6 @@ export default function Sidebar({ isOpen, setIsOpen, isExpanded }) {
     { name: "Notifications", icon: Bell, path: "/notifications" },
     ...(isPrivileged ? [
       { name: "Reports", icon: FileText, path: "/reports" },
-      { name: "Audit Logs", icon: ShieldAlert, path: "/audit-logs" },
       { name: "Security Alerts", icon: ShieldCheck, path: "/security" },
       { name: "Deletion Requests", icon: Trash2, path: "/deletion-requests" },
     ] : []),

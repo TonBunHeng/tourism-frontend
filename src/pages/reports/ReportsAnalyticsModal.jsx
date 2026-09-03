@@ -1,19 +1,21 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   X,
-  TrendingUp,
   Database,
   Download,
-  BarChart2,
-  Calendar,
-  Award,
   CheckCircle2,
-  Filter,
-  RotateCcw,
-  Layers,
-  Activity
+  Award
 } from 'lucide-react';
-import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 import reportService from '../../services/reportService';
 
 export default function ReportsAnalyticsModal({
@@ -26,432 +28,460 @@ export default function ReportsAnalyticsModal({
   const [timeframe, setTimeframe] = useState('2026');
   const [selectedDataset, setSelectedDataset] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [selectedDate, setSelectedDate] = useState('');
   const [apiAnalytics, setApiAnalytics] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const dateInputRef = useRef(null);
 
-  const fetchAnalytics = async () => {
-    setIsLoading(true);
-    try {
-      const res = await reportService.getAnalytics({
-        timeframe,
-        dataset: selectedDataset,
-        status: statusFilter
-      });
-      if (res.success && res.data) {
-        setApiAnalytics(res.data);
-      }
-    } catch (e) {
-      console.warn('Could not fetch remote reports analytics, using local datasets:', e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const places = useMemo(() => (Array.isArray(datasets.places) ? datasets.places : []), [datasets.places]);
+  const events = useMemo(() => (Array.isArray(datasets.events) ? datasets.events : []), [datasets.events]);
+  const users = useMemo(() => (Array.isArray(datasets.users) ? datasets.users : []), [datasets.users]);
+  const reviews = useMemo(() => (Array.isArray(datasets.reviews) ? datasets.reviews : []), [datasets.reviews]);
+  const categories = useMemo(() => (Array.isArray(datasets.categories) ? datasets.categories : []), [datasets.categories]);
 
   useEffect(() => {
     if (isOpen) {
-      fetchAnalytics();
+      reportService.getAnalytics({
+        timeframe,
+        dataset: selectedDataset,
+        status: statusFilter
+      })
+        .then(res => {
+          if (res?.success && res?.data) {
+            setApiAnalytics(res.data);
+          }
+        })
+        .catch(() => {
+          // Fallback to local dataset calculations
+        });
     }
   }, [isOpen, timeframe, selectedDataset, statusFilter]);
 
-  const handleOpenDatePicker = () => {
-    if (dateInputRef.current) {
-      if (typeof dateInputRef.current.showPicker === 'function') {
-        try {
-          dateInputRef.current.showPicker();
-        } catch {
-          dateInputRef.current.focus();
-        }
-      } else {
-        dateInputRef.current.focus();
-      }
+  // Total records calculation based on selected dataset
+  const currentDatasetItems = useMemo(() => {
+    switch (selectedDataset) {
+      case 'places': return places;
+      case 'events': return events;
+      case 'users': return users;
+      case 'reviews': return reviews;
+      case 'categories': return categories;
+      default: return [...places, ...events, ...users, ...reviews, ...categories];
     }
-  };
+  }, [selectedDataset, places, events, users, reviews, categories]);
 
-  // Live Counts from API Datasets / Backend
-  const livePlacesCount = apiAnalytics?.overview?.total_places ?? (datasets.places?.length || 0);
-  const liveEventsCount = apiAnalytics?.overview?.total_events ?? (datasets.events?.length || 0);
-  const liveUsersCount = apiAnalytics?.overview?.total_users ?? (datasets.users?.length || 0);
-  const liveReviewsCount = apiAnalytics?.overview?.total_reviews ?? (datasets.reviews?.length || 0);
-  const liveCategoriesCount = apiAnalytics?.overview?.total_categories ?? (datasets.categories?.length || 0);
-  const liveGalleriesCount = apiAnalytics?.overview?.total_galleries ?? 3;
+  // Filter items by status if statusFilter is active
+  const filteredItems = useMemo(() => {
+    if (statusFilter === 'ALL') return currentDatasetItems;
+    return currentDatasetItems.filter(item => {
+      const s = (item.status || '').toLowerCase();
+      if (statusFilter === 'Active') return s === 'active' || s === 'published' || s === 'approved';
+      if (statusFilter === 'Pending') return s === 'pending' || s === 'upcoming';
+      if (statusFilter === 'Archived') return s === 'archived' || s === 'inactive' || s === 'completed';
+      return true;
+    });
+  }, [currentDatasetItems, statusFilter]);
 
-  const liveTotalIngested = apiAnalytics?.overview?.total_ingested ?? (livePlacesCount + liveEventsCount + liveUsersCount + liveReviewsCount + liveCategoriesCount + liveGalleriesCount);
+  const totalRecords = filteredItems.length;
+  const globalTotalRecords = places.length + events.length + users.length + reviews.length + categories.length;
 
-  // Compute analytics dynamically from Backend or local datasets
-  const analyticsData = useMemo(() => {
-    const finalIngested = liveTotalIngested;
-    const finalExports = Math.max(totalExports, 1);
-    const activePct = apiAnalytics?.overview?.active_percentage ?? 98.8;
-    const qualityIdx = apiAnalytics?.overview?.quality_index ?? 4.92;
-
-    let monthlyData = apiAnalytics?.monthly_trends || [];
-    if (monthlyData.length === 0) {
-      monthlyData = [
-        { month: 'Jan', recordsIngested: Math.round(finalIngested * 0.4), exportActivity: 12 },
-        { month: 'Feb', recordsIngested: Math.round(finalIngested * 0.5), exportActivity: 16 },
-        { month: 'Mar', recordsIngested: Math.round(finalIngested * 0.6), exportActivity: 20 },
-        { month: 'Apr', recordsIngested: Math.round(finalIngested * 0.7), exportActivity: 24 },
-        { month: 'May', recordsIngested: Math.round(finalIngested * 0.8), exportActivity: 28 },
-        { month: 'Jun', recordsIngested: Math.round(finalIngested * 0.85), exportActivity: 32 },
-        { month: 'Jul', recordsIngested: Math.round(finalIngested * 0.9), exportActivity: 36 },
-        { month: 'Aug', recordsIngested: finalIngested, exportActivity: 40 },
-        { month: 'Sep', recordsIngested: 0, exportActivity: 0 },
-        { month: 'Oct', recordsIngested: 0, exportActivity: 0 },
-        { month: 'Nov', recordsIngested: 0, exportActivity: 0 },
-        { month: 'Dec', recordsIngested: 0, exportActivity: 0 }
-      ];
-    }
-
-    let distribution = [];
-    if (selectedDataset === 'ALL') {
-      distribution = apiAnalytics?.distribution?.all || [
-        { name: 'Places & Attractions', count: livePlacesCount, percentage: Math.round((livePlacesCount / Math.max(finalIngested, 1)) * 100), color: 'bg-blue-500' },
-        { name: 'Events & Festivals', count: liveEventsCount, percentage: Math.round((liveEventsCount / Math.max(finalIngested, 1)) * 100), color: 'bg-purple-500' },
-        { name: 'Users & Accounts', count: liveUsersCount, percentage: Math.round((liveUsersCount / Math.max(finalIngested, 1)) * 100), color: 'bg-emerald-500' },
-        { name: 'Ratings & Reviews', count: liveReviewsCount, percentage: Math.round((liveReviewsCount / Math.max(finalIngested, 1)) * 100), color: 'bg-amber-500' },
-        { name: 'Media Gallery', count: liveGalleriesCount, percentage: Math.round((liveGalleriesCount / Math.max(finalIngested, 1)) * 100), color: 'bg-rose-500' },
-        { name: 'Categories & Types', count: liveCategoriesCount, percentage: Math.round((liveCategoriesCount / Math.max(finalIngested, 1)) * 100), color: 'bg-cyan-500' }
-      ];
-    } else if (selectedDataset === 'places') {
-      distribution = apiAnalytics?.distribution?.places || [
-        { name: 'Temples & Heritage', count: 2, percentage: 50, color: 'bg-blue-500' },
-        { name: 'Palaces & Monuments', count: 1, percentage: 25, color: 'bg-emerald-500' },
-        { name: 'Nature & Mountains', count: 1, percentage: 25, color: 'bg-amber-500' }
-      ];
-    } else if (selectedDataset === 'users') {
-      distribution = apiAnalytics?.distribution?.users || [
-        { name: 'User Accounts', count: 2, percentage: 50, color: 'bg-emerald-500' },
-        { name: 'Super Admin Accounts', count: 1, percentage: 25, color: 'bg-blue-500' },
-        { name: 'Guide / Editor Accounts', count: 1, percentage: 25, color: 'bg-purple-500' }
-      ];
-    } else if (selectedDataset === 'reviews') {
-      distribution = apiAnalytics?.distribution?.reviews || [
-        { name: '5-Star Ratings', count: 1, percentage: 100, color: 'bg-emerald-500' }
-      ];
-    } else {
-      distribution = [
-        { name: 'Cultural & Heritage', count: Math.round(finalIngested * 0.6), percentage: 60, color: 'bg-blue-500' },
-        { name: 'Festivals & Activities', count: Math.round(finalIngested * 0.4), percentage: 40, color: 'bg-purple-500' }
-      ];
-    }
-
-    const statusBreakdownData = apiAnalytics?.status_breakdown || [
-      { label: 'Active / Published', count: Math.round(finalIngested * 0.85), percentage: 85, color: 'bg-emerald-500' },
-      { label: 'Pending / Upcoming', count: Math.round(finalIngested * 0.12), percentage: 12, color: 'bg-amber-500' },
-      { label: 'Completed / Archived', count: Math.round(finalIngested * 0.03), percentage: 3, color: 'bg-gray-400' }
-    ];
-
+  // Active items calculation
+  const { activeCount, activePct } = useMemo(() => {
+    const itemsToCheck = currentDatasetItems;
+    if (itemsToCheck.length === 0) return { activeCount: 0, activePct: 100 };
+    const active = itemsToCheck.filter(item => {
+      const s = (item.status || 'active').toLowerCase();
+      return s === 'active' || s === 'published' || s === 'approved' || s === 'upcoming';
+    }).length;
     return {
-      finalIngested,
-      finalExports,
-      activePct,
-      qualityIdx,
-      growthText: '+24.5% database volume',
-      exportRateText: `+${totalExports} exports generated`,
-      monthlyData,
-      distribution,
-      statusBreakdownData
+      activeCount: active,
+      activePct: Math.round((active / itemsToCheck.length) * 100)
     };
-  }, [apiAnalytics, liveTotalIngested, livePlacesCount, liveEventsCount, liveUsersCount, liveReviewsCount, liveCategoriesCount, liveGalleriesCount, totalExports, selectedDataset]);
+  }, [currentDatasetItems]);
+
+  // Quality & Rating score
+  const avgScore = useMemo(() => {
+    const rated = [
+      ...places.map(p => Number(p.rating)),
+      ...reviews.map(r => Number(r.rating))
+    ].filter(r => !isNaN(r) && r > 0);
+    return rated.length > 0
+      ? (rated.reduce((sum, r) => sum + r, 0) / rated.length).toFixed(1)
+      : '5.0';
+  }, [places, reviews]);
+
+  // Real Monthly Ingestion Trends
+  const monthlyData = useMemo(() => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const targetYear = timeframe === '2025' ? 2025 : timeframe === '2026' ? 2026 : null;
+    const monthCounts = new Array(12).fill(0);
+
+    const dates = [];
+    currentDatasetItems.forEach(item => {
+      const dStr = item.createdAt || item.startDate || item.joinedDate || item.date || item.created_at;
+      if (dStr) dates.push(dStr);
+    });
+
+    dates.forEach(dStr => {
+      const d = new Date(dStr);
+      if (!isNaN(d.getTime())) {
+        if (!targetYear || d.getFullYear() === targetYear) {
+          monthCounts[d.getMonth()] += 1;
+          return;
+        }
+      }
+      // If no valid date or matches current year
+      const currentYear = new Date().getFullYear();
+      if (!targetYear || targetYear === currentYear) {
+        monthCounts[new Date().getMonth()] += 1;
+      }
+    });
+
+    let runningIngested = 0;
+    return months.map((month, idx) => {
+      const count = monthCounts[idx];
+      runningIngested += count;
+      return {
+        month,
+        recordsIngested: count,
+        cumulative: runningIngested
+      };
+    });
+  }, [currentDatasetItems, timeframe]);
+
+  // Composition Breakdown
+  const compositionData = useMemo(() => {
+    const palette = ['bg-[#003E83]', 'bg-rose-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-cyan-500'];
+
+    if (selectedDataset === 'ALL') {
+      const total = globalTotalRecords || 1;
+      return [
+        { name: 'Places & Attractions', count: places.length, percentage: Math.round((places.length / total) * 100), color: palette[0] },
+        { name: 'Events & Festivals', count: events.length, percentage: Math.round((events.length / total) * 100), color: palette[1] },
+        { name: 'Users & Accounts', count: users.length, percentage: Math.round((users.length / total) * 100), color: palette[2] },
+        { name: 'Ratings & Reviews', count: reviews.length, percentage: Math.round((reviews.length / total) * 100), color: palette[3] },
+        { name: 'Categories', count: categories.length, percentage: Math.round((categories.length / total) * 100), color: palette[4] }
+      ].filter(item => item.count > 0);
+    }
+
+    // Specific dataset breakdown
+    const map = {};
+    if (selectedDataset === 'places') {
+      places.forEach(p => {
+        const key = p.category || 'General';
+        map[key] = (map[key] || 0) + 1;
+      });
+    } else if (selectedDataset === 'events') {
+      events.forEach(e => {
+        const key = e.status || 'Upcoming';
+        map[key] = (map[key] || 0) + 1;
+      });
+    } else if (selectedDataset === 'users') {
+      users.forEach(u => {
+        const key = u.role || 'User';
+        map[key] = (map[key] || 0) + 1;
+      });
+    } else if (selectedDataset === 'reviews') {
+      reviews.forEach(r => {
+        const key = `${r.rating || 5} Stars`;
+        map[key] = (map[key] || 0) + 1;
+      });
+    } else if (selectedDataset === 'categories') {
+      categories.forEach(c => {
+        const key = c.name || 'Category';
+        map[key] = (map[key] || 0) + 1;
+      });
+    }
+
+    const total = currentDatasetItems.length || 1;
+    return Object.entries(map).map(([name, count], idx) => ({
+      name,
+      count,
+      percentage: Math.round((count / total) * 100),
+      color: palette[idx % palette.length]
+    }));
+  }, [selectedDataset, globalTotalRecords, places, events, users, reviews, categories, currentDatasetItems]);
+
+  // Real Status Breakdown
+  const statusBreakdownData = useMemo(() => {
+    let active = 0;
+    let pending = 0;
+    let archived = 0;
+
+    currentDatasetItems.forEach(item => {
+      const s = (item.status || 'active').toLowerCase();
+      if (s === 'active' || s === 'published' || s === 'approved') {
+        active += 1;
+      } else if (s === 'pending' || s === 'upcoming') {
+        pending += 1;
+      } else {
+        archived += 1;
+      }
+    });
+
+    const total = currentDatasetItems.length || 1;
+    return [
+      { label: 'Active / Published', count: active, percentage: Math.round((active / total) * 100), color: 'bg-emerald-500' },
+      { label: 'Pending / Upcoming', count: pending, percentage: Math.round((pending / total) * 100), color: 'bg-amber-500' },
+      { label: 'Archived / Inactive', count: archived, percentage: Math.round((archived / total) * 100), color: 'bg-gray-400' }
+    ];
+  }, [currentDatasetItems]);
+
+  const isFilterActive = timeframe !== '2026' || selectedDataset !== 'ALL' || statusFilter !== 'ALL';
+
+  const handleReset = () => {
+    setTimeframe('2026');
+    setSelectedDataset('ALL');
+    setStatusFilter('ALL');
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg max-w-5xl w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[92vh]">
-        {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between bg-slate-50/50 dark:bg-zinc-800/40">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-md bg-[#003E83] text-white">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                  Reports & Database Analytics Overview
-                </h2>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
-                  LIVE
-                </span>
-              </div>
-              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                Real-time insights across attractions, events, users, reviews, and export metrics
-              </p>
-            </div>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 transition-opacity duration-150">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg max-w-4xl w-full max-h-[90vh] shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col">
+        
+        {/* Simple Modal Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
+          <div>
+            <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">
+              Reports & Database Analytics Overview
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+              Live record volume, status composition, and data distribution
+            </p>
           </div>
-
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors cursor-pointer"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
+        {/* Filter Controls Bar */}
+        <div className="px-6 py-3 border-b border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Dataset Selector */}
+            <select
+              value={selectedDataset}
+              onChange={(e) => setSelectedDataset(e.target.value)}
+              className="px-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-gray-700 dark:text-zinc-200 text-xs focus:outline-none focus:ring-1 focus:ring-[#003E83] cursor-pointer"
+            >
+              <option value="ALL">All Datasets (Global)</option>
+              <option value="places">Places & Attractions</option>
+              <option value="events">Events & Festivals</option>
+              <option value="users">Users & Accounts</option>
+              <option value="reviews">Ratings & Reviews</option>
+              <option value="categories">Categories</option>
+            </select>
+
+            {/* Status Selector */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-gray-700 dark:text-zinc-200 text-xs focus:outline-none focus:ring-1 focus:ring-[#003E83] cursor-pointer"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="Active">Active / Published</option>
+              <option value="Pending">Pending / Upcoming</option>
+              <option value="Archived">Archived / Inactive</option>
+            </select>
+
+            {/* Timeframe Selector */}
+            <div className="inline-flex rounded-md border border-gray-300 dark:border-zinc-700 overflow-hidden bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]">
+              {['2026', '2025', 'ALL'].map((tf) => (
+                <button
+                  key={tf}
+                  type="button"
+                  onClick={() => setTimeframe(tf)}
+                  className={`px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                    timeframe === tf
+                      ? 'bg-[#003E83] text-white'
+                      : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                  }`}
+                >
+                  {tf}
+                </button>
+              ))}
+            </div>
+
+            {isFilterActive && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="text-xs text-rose-600 hover:text-rose-700 font-medium px-2 py-1 cursor-pointer"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Modal Body */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1">
-          {/* Interactive Filters Bar */}
-          <div className="bg-[var(--color-surface-hover-light)]/60 dark:bg-[var(--color-input-dark-bg)]/60 p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-              <Filter className="w-4 h-4 text-[var(--color-primary)]" />
-              <span>Analytics Controls:</span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              {/* Dataset selector */}
-              <div className="flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
-                <select
-                  value={selectedDataset}
-                  onChange={(e) => setSelectedDataset(e.target.value)}
-                  className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-2.5 py-1.5 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] cursor-pointer"
-                >
-                  <option value="ALL">All Datasets (Global)</option>
-                  <option value="places">Places & Attractions</option>
-                  <option value="events">Events & Festivals</option>
-                  <option value="users">Users & Roles</option>
-                  <option value="reviews">Ratings & Reviews</option>
-                  <option value="categories">Categories</option>
-                </select>
-              </div>
-
-              {/* Status Selector */}
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-2.5 py-1.5 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] cursor-pointer"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="Active">Active / Approved</option>
-                <option value="Pending">Pending / Upcoming</option>
-                <option value="Archived">Archived / Inactive</option>
-              </select>
-
-              {/* Timeframe Selector */}
-              <div className="flex items-center bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md p-0.5">
-                {['2026', '2025', '6M', '30D', 'ALL'].map((tf) => (
-                  <button
-                    key={tf}
-                    onClick={() => setTimeframe(tf)}
-                    className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors cursor-pointer ${
-                      timeframe === tf
-                        ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                        : 'text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)]'
-                    }`}
-                  >
-                    {tf}
-                  </button>
-                ))}
-              </div>
-
-              {/* Reset Controls Button */}
-              <button
-                onClick={() => {
-                  setTimeframe('2026');
-                  setSelectedDataset('ALL');
-                  setStatusFilter('ALL');
-                  setSelectedDate('');
-                }}
-                className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-zinc-800 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] transition-colors cursor-pointer"
-                title="Reset Analytics Filters"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Key Metrics KPIs Row */}
+          
+          {/* Top 4 KPI Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Total Ingested */}
-            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  Total DB Records
-                </span>
-                <div className="p-2 rounded-md bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400">
-                  <Database className="w-4 h-4" />
-                </div>
+            {/* Card 1: Total DB Records */}
+            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                <span>Total Records</span>
+                <Database className="w-4 h-4 text-blue-500" />
               </div>
-              <p className="text-2xl font-extrabold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                {analyticsData.finalIngested.toLocaleString()}
+              <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100 mt-2">
+                {totalRecords}
               </p>
-              <div className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
-                {analyticsData.growthText}
-              </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+                {selectedDataset === 'ALL' ? `${globalTotalRecords} across all datasets` : `${selectedDataset} entries`}
+              </p>
             </div>
 
-            {/* Total Exports */}
-            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  Exports Generated
-                </span>
-                <div className="p-2 rounded-md bg-purple-50 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400">
-                  <Download className="w-4 h-4" />
-                </div>
+            {/* Card 2: Exports Generated */}
+            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                <span>Exports Generated</span>
+                <Download className="w-4 h-4 text-purple-500" />
               </div>
-              <p className="text-2xl font-extrabold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                {analyticsData.finalExports.toLocaleString()}
+              <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100 mt-2">
+                {totalExports}
               </p>
-              <div className="text-xs text-purple-600 dark:text-purple-400 mt-1 font-medium">
-                {analyticsData.exportRateText}
-              </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+                PDF & Excel downloads
+              </p>
             </div>
 
-            {/* Active & Verified */}
-            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  Active / Verified Rate
-                </span>
-                <div className="p-2 rounded-md bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">
-                  <CheckCircle2 className="w-4 h-4" />
-                </div>
+            {/* Card 3: Active / Verified Rate */}
+            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                <span>Active Rate</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               </div>
-              <p className="text-2xl font-extrabold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                {analyticsData.activePct}%
+              <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100 mt-2">
+                {activePct}%
               </p>
-              <div className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
-                Verified database items
-              </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+                {activeCount} active records
+              </p>
             </div>
 
-            {/* Quality Index */}
-            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  Quality & Rating Score
-                </span>
-                <div className="p-2 rounded-md bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400">
-                  <Award className="w-4 h-4" />
-                </div>
+            {/* Card 4: Quality & Rating Score */}
+            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                <span>Average Rating</span>
+                <Award className="w-4 h-4 text-amber-500" />
               </div>
-              <p className="text-2xl font-extrabold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-                {analyticsData.qualityIdx} <span className="text-sm font-normal text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">/ 5.0</span>
+              <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100 mt-2">
+                {avgScore} ★
               </p>
-              <div className="text-xs text-amber-600 dark:text-amber-400 mt-1 font-medium">
-                Average destination satisfaction
-              </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+                Destination review satisfaction
+              </p>
             </div>
           </div>
 
-          {/* Interactive Trends Chart */}
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          {/* Monthly Ingestion Chart */}
+          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+            <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
-                  <BarChart2 className="w-4 h-4 text-[var(--color-primary)]" />
-                  <span>Data Ingestion & Export Activity Trends ({timeframe})</span>
-                </h3>
-                <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">
-                  Comparison between incoming database records and report exports
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">
+                  Record Ingestion Activity ({timeframe})
+                </h4>
+                <p className="text-xs text-gray-500 dark:text-zinc-400">
+                  Monthly new records and cumulative database volume
                 </p>
               </div>
-
-              <div className="flex items-center gap-4 text-xs">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded bg-[var(--color-primary)]" />
-                  <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Ingested Records</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Exports Generated</span>
-                </div>
+              <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-zinc-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#003E83]" />
+                  New Records
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 bg-emerald-500" />
+                  Cumulative Total
+                </span>
               </div>
             </div>
 
-            <div className="w-full h-64">
+            <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={analyticsData.monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(150,150,150,0.15)" vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: 'currentColor' }}
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]"
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11, fill: 'currentColor' }}
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]"
-                  />
+                <ComposedChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                  <XAxis dataKey="month" stroke="currentColor" fontSize={11} className="text-gray-400" />
+                  <YAxis stroke="currentColor" fontSize={11} className="text-gray-400" allowDecimals={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'rgba(24, 24, 27, 0.95)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '8px',
-                      color: '#fff',
-                      fontSize: '12px'
+                      backgroundColor: 'var(--color-bg-dark-modal, #18181b)',
+                      border: '1px solid var(--color-border-dark, #27272a)',
+                      borderRadius: '0.375rem',
+                      fontSize: '12px',
+                      color: '#fff'
                     }}
                   />
-                  <Bar
-                    dataKey="recordsIngested"
-                    name="Ingested Records"
-                    fill="var(--color-primary)"
-                    radius={[4, 4, 0, 0]}
-                    barSize={20}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="exportActivity"
-                    name="Exports Generated"
-                    stroke="#10b981"
-                    strokeWidth={2.5}
-                    dot={{ r: 3, fill: '#10b981' }}
-                  />
+                  <Bar dataKey="recordsIngested" fill="#003E83" radius={[3, 3, 0, 0]} name="New Records" barSize={16} />
+                  <Line type="monotone" dataKey="cumulative" stroke="#10B981" strokeWidth={2} dot={{ r: 2 }} name="Cumulative Total" />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Dataset Distribution & Health Status Breakdown Grid */}
+          {/* Breakdown Section: Composition & Status */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Distribution Card */}
-            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-              <h3 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-3">
-                Dataset Composition Breakdown ({selectedDataset.toUpperCase()})
-              </h3>
-              <div className="space-y-3">
-                {analyticsData.distribution.map((item, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] font-medium">
-                        {item.name}
-                      </span>
-                      <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                        {item.count.toLocaleString()} items ({item.percentage}%)
-                      </span>
+            {/* Composition Breakdown Card */}
+            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-1">
+                Dataset Composition ({selectedDataset === 'ALL' ? 'Global' : selectedDataset})
+              </h4>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">
+                Distribution by entity type
+              </p>
+
+              {compositionData.length === 0 ? (
+                <p className="text-xs text-gray-400 text-center py-6">No records found</p>
+              ) : (
+                <div className="space-y-2.5">
+                  {compositionData.map((item) => (
+                    <div key={item.name} className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="font-medium text-gray-700 dark:text-zinc-300 truncate max-w-[180px]">
+                          {item.name}
+                        </span>
+                        <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                          {item.count} ({item.percentage}%)
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${item.color} rounded-full transition-all duration-300`}
+                          style={{ width: `${item.percentage}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-zinc-800 overflow-hidden">
-                      <div
-                        className={`h-full ${item.color} rounded-full transition-all duration-500`}
-                        style={{ width: `${item.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Health & Status Breakdown Card */}
-            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] p-5 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-              <h3 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mb-3">
-                Operational Status & Verification
-              </h3>
-              <div className="space-y-3">
-                {analyticsData.statusBreakdownData.map((item, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] font-medium">
+            {/* Status Breakdown Card */}
+            <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg p-4 border border-gray-200 dark:border-zinc-800 shadow-xs">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-1">
+                Operational Status Breakdown
+              </h4>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mb-3">
+                Publication and workflow state
+              </p>
+
+              <div className="space-y-2.5">
+                {statusBreakdownData.map((item) => (
+                  <div key={item.label} className="space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-medium text-gray-700 dark:text-zinc-300 truncate max-w-[180px]">
                         {item.label}
                       </span>
-                      <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                        {item.count.toLocaleString()} records ({item.percentage}%)
+                      <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                        {item.count} ({item.percentage}%)
                       </span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-zinc-800 overflow-hidden">
+                    <div className="h-1.5 w-full bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${item.color} rounded-full transition-all duration-500`}
+                        className={`h-full ${item.color} rounded-full transition-all duration-300`}
                         style={{ width: `${item.percentage}%` }}
                       />
                     </div>
@@ -460,20 +490,23 @@ export default function ReportsAnalyticsModal({
               </div>
             </div>
           </div>
+
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3.5 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] flex items-center justify-between bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-input-dark-bg)]/50">
-          <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-            Live database sync: <strong className="text-emerald-600 dark:text-emerald-400">Connected to MySQL</strong>
+        <div className="px-6 py-3.5 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex items-center justify-between shrink-0">
+          <span className="text-xs text-gray-500 dark:text-zinc-400">
+            Total {totalRecords} {totalRecords === 1 ? 'record' : 'records'} analyzed
           </span>
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold rounded-lg shadow-sm transition-colors cursor-pointer"
+            className="py-2 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-xs sm:text-sm transition-colors cursor-pointer"
           >
-            Close Analytics
+            Close
           </button>
         </div>
+
       </div>
     </div>
   );

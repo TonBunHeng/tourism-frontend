@@ -27,7 +27,6 @@ import Profile from '../pages/profiles/Profile';
 import Reports from '../pages/reports/Reports';
 import Notifications from '../pages/notifications/Notifications';
 import Security from '../pages/security/Security';
-import AuditLogs from '../pages/audit/AuditLogs';
 
 // Role Groups
 const ALL_ADMIN_ROLES = ['super_admin', 'admin', 'guide_editor', 'Super Admin', 'Admin', 'Guide / Editor'];
@@ -71,8 +70,6 @@ const AppRoutes = () => {
               <Route path="/user" element={<Navigate to="/users" replace />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/deletion-requests" element={<DeletionRequests />} />
-              <Route path="/audit-logs" element={<AuditLogs />} />
-              <Route path="/audit" element={<AuditLogs />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/security" element={<Security />} />
             </Route>

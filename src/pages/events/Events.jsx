@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import SimplePagination from '../../components/common/SimplePagination';
 import EventsHeader from './EventsHeader';
 import EventsStats from './EventsStats';
@@ -173,6 +174,13 @@ export default function Events() {
     });
     setIsAddModalOpen(true);
   };
+
+  useEffect(() => {
+    if (location.state?.openAdd) {
+      openAddModal();
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const openEditModal = (idOrEvent) => {
     const event = typeof idOrEvent === 'object'

@@ -40,12 +40,19 @@ export default function SecurityDetailsModal({
     ? (() => { try { return JSON.parse(alert.data); } catch { return {}; } })()
     : (alert.data || {});
 
-  const formattedDate = alert.created_at
-    ? new Date(alert.created_at).toLocaleString(undefined, {
+  const formattedDate = (() => {
+    if (!alert.created_at) return 'Recent';
+    try {
+      const d = new Date(alert.created_at);
+      if (isNaN(d.getTime())) return String(alert.created_at);
+      return d.toLocaleString(undefined, {
         dateStyle: 'full',
         timeStyle: 'medium'
-      })
-    : 'Recent';
+      });
+    } catch {
+      return String(alert.created_at);
+    }
+  })();
 
   const isHighRisk = (alert.attempts || 0) >= 6;
   const isBlocked = !!alert.is_ip_blocked;

@@ -8,33 +8,54 @@ export default function ProfileHeader({
   onDeleteImage,
   setIsEditing
 }) {
+  const formatRole = (role) => {
+    if (!role) return 'User';
+    return role.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
   return (
     <div className="flex flex-col sm:flex-row items-start gap-6">
       <div className="flex items-start gap-4 sm:gap-6 w-full sm:w-auto">
         <div className="relative flex-shrink-0 group">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#181c24] dark:bg-[#181c24] border border-[#2d3442] flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#181c24] dark:bg-[#181c24] border-2 border-white dark:border-zinc-800 flex items-center justify-center overflow-hidden shadow-md relative">
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               <User className="w-10 h-10 sm:w-12 sm:h-12 text-gray-200" />
             )}
+
+            {/* Clean hover overlay with quick actions */}
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 z-10">
+              {fileInputRef && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-1.5 bg-white/20 hover:bg-white/40 text-white rounded-full transition-colors cursor-pointer"
+                  title="Change photo"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                </button>
+              )}
+              {profileImage && onDeleteImage && (
+                <button
+                  type="button"
+                  onClick={onDeleteImage}
+                  className="p-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-full transition-colors cursor-pointer"
+                  title="Remove photo"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
-          {profileImage && onDeleteImage && (
-            <button
-              type="button"
-              onClick={onDeleteImage}
-              className="absolute top-0 right-0 p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full shadow transition-colors cursor-pointer z-10"
-              title="Delete picture"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          )}
+
+          {/* Floating Camera Button with ring outline */}
           {fileInputRef && (
             <>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 p-2 bg-[#003E83] hover:bg-[#002e62] text-white rounded-full shadow transition-colors cursor-pointer"
+                className="absolute -bottom-1 -right-1 p-2 bg-[#003E83] hover:bg-[#002e62] text-white rounded-full shadow-md ring-2 ring-[var(--color-white)] dark:ring-zinc-900 transition-transform active:scale-95 cursor-pointer z-10"
                 title="Change & crop profile picture"
               >
                 <Camera className="w-3.5 h-3.5" />
@@ -61,8 +82,8 @@ export default function ProfileHeader({
                 Verified
               </span>
             )}
-            <span className="text-xs px-2 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)]">
-              {userData.role || 'User'}
+            <span className="text-xs px-2 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)] font-medium">
+              {formatRole(userData.role)}
             </span>
           </div>
         </div>
@@ -77,7 +98,7 @@ export default function ProfileHeader({
             </span>
           )}
           <span className="text-xs px-2.5 py-0.5 bg-[var(--color-purple-badge-bg)] dark:bg-[var(--color-purple-badge-dark-bg)] text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] rounded-full border border-[var(--color-purple-badge-border)] dark:border-[var(--color-purple-badge-dark-border)] font-medium">
-            {userData.role || 'User'}
+            {formatRole(userData.role)}
           </span>
         </div>
 

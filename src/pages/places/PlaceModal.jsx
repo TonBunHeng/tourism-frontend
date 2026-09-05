@@ -1,5 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, ChevronDown, MapPin, ExternalLink, MousePointerClick, Map as MapIcon, Image as ImageIcon, Upload, Trash2, AlertCircle } from 'lucide-react';
+import {
+  Landmark,
+  ChevronDown,
+  MapPin,
+  ExternalLink,
+  MousePointerClick,
+  Map as MapIcon,
+  Image as ImageIcon,
+  Upload,
+  Trash2,
+  AlertCircle,
+  Clock,
+  Star,
+  Layers,
+  CheckCircle2,
+  DollarSign,
+  FileText,
+  Plus,
+  Check
+} from 'lucide-react';
 import uploadService from '../../services/uploadService';
 import { validateImageFile } from '../../utils/fileValidation';
 
@@ -169,29 +188,31 @@ export default function PlaceModal({
       aria-modal="true"
     >
       <div
-        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-2xl w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup flex flex-col max-h-[90vh]"
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] rounded-xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-alert-popup"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
-          <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">
-            {editingPlace ? 'Edit Place Details' : 'Add New Place'}
-          </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all active:scale-90 cursor-pointer"
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
+        <div className="px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/30 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-[#003E83]/10 dark:bg-blue-500/10 flex items-center justify-center text-[#003E83] dark:text-blue-400 shrink-0">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                {editingPlace ? 'Edit Place Details' : 'Add New Place'}
+              </h3>
+              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">
+                {editingPlace ? 'Update destination details, pricing and location.' : 'Fill in attraction details and assign location coordinates below.'}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleFormSubmit}>
-          <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-6 space-y-4 overflow-y-auto flex-1">
             {fileValidationError && (
-              <div className="p-3 rounded bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center gap-2 text-xs text-red-700 dark:text-red-400 font-medium">
+              <div className="p-3 rounded-md bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center gap-2 text-xs text-red-700 dark:text-red-400 font-medium">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{fileValidationError}</span>
               </div>
@@ -199,15 +220,20 @@ export default function PlaceModal({
 
             {/* Place Name */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Place Name *</label>
-              <input
-                type="text"
-                value={safeFormData.name || ''}
-                onChange={(e) => updateField('name', e.target.value)}
-                placeholder="e.g. Angkor Wat, Royal Palace, Bokor Mountain"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-gray-300 dark:border-zinc-700 rounded-lg px-3.5 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-1 focus:ring-[#003E83] transition-colors"
-                required
-              />
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                Place Name *
+              </label>
+              <div className="relative">
+                <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={safeFormData.name || ''}
+                  onChange={(e) => updateField('name', e.target.value)}
+                  placeholder="e.g. Angkor Wat, Royal Palace, Bokor Mountain"
+                  className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                  required
+                />
+              </div>
             </div>
 
             {/* Place Image Upload */}
@@ -217,20 +243,20 @@ export default function PlaceModal({
               </label>
 
               {safeFormData.image_url ? (
-                <div className="relative w-full h-36 rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700 group mb-2">
+                <div className="relative w-full h-36 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] group mb-2 shadow-xs">
                   <img src={safeFormData.image_url} alt="Place Preview" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-1.5 bg-[#003E83] hover:bg-[#002e62] text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                      className="px-3 py-1.5 bg-[#003E83] hover:bg-[#002e62] text-white rounded-md text-xs font-medium transition-colors cursor-pointer"
                     >
                       Change Photo
                     </button>
                     <button
                       type="button"
                       onClick={() => updateField('image_url', '')}
-                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs flex items-center gap-1 font-medium transition-colors cursor-pointer"
+                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs flex items-center gap-1 font-medium transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       Remove
@@ -240,7 +266,7 @@ export default function PlaceModal({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/40 rounded-lg p-4 text-center hover:border-[#003E83] transition-colors cursor-pointer mb-2"
+                  className="border-2 border-dashed border-gray-300 dark:border-zinc-700 hover:border-[#003E83] dark:hover:border-[#003E83] bg-gray-50/70 dark:bg-zinc-800/40 rounded-lg p-4 text-center transition-colors cursor-pointer mb-2"
                 >
                   <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
                   <p className="text-gray-800 dark:text-zinc-200 font-medium text-xs">
@@ -258,121 +284,160 @@ export default function PlaceModal({
                 onChange={handleImageFileChange}
               />
 
-              <input
-                type="text"
-                value={safeFormData.image_url || ''}
-                onChange={(e) => updateField('image_url', e.target.value)}
-                placeholder="Or paste image URL (https://...)"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-1 focus:ring-[#003E83] transition-colors"
-              />
+              <div className="relative">
+                <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={safeFormData.image_url || ''}
+                  onChange={(e) => updateField('image_url', e.target.value)}
+                  placeholder="Or paste image URL (https://...)"
+                  className="w-full pl-9 pr-4 py-2 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                />
+              </div>
             </div>
 
             {/* Category & Status */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                  Category *
+                </label>
                 <div className="relative">
+                  <Layers className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <select
                     value={safeFormData.category || safeCategories[0] || 'Temple'}
                     onChange={(e) => updateField('category', e.target.value)}
-                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-9 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] cursor-pointer"
                   >
                     {safeCategories.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Status</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                  Status *
+                </label>
                 <div className="relative">
+                  <CheckCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   <select
                     value={safeFormData.status || 'Active'}
                     onChange={(e) => updateField('status', e.target.value)}
-                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-9 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] cursor-pointer"
                   >
                     {safeStatuses.map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>
             </div>
 
             {/* Address */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Address *</label>
-              <textarea
-                value={safeFormData.address || ''}
-                onChange={(e) => updateField('address', e.target.value)}
-                placeholder="Enter full address or select location preset below"
-                rows={2}
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
-                required
-              />
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                Address *
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
+                <textarea
+                  value={safeFormData.address || ''}
+                  onChange={(e) => updateField('address', e.target.value)}
+                  placeholder="Enter full address or select location preset below"
+                  rows={2}
+                  className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] resize-none transition-all"
+                  required
+                />
+              </div>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Description</label>
-              <textarea
-                value={safeFormData.description || ''}
-                onChange={(e) => updateField('description', e.target.value)}
-                placeholder="Enter attraction history, highlights, and tourist details..."
-                rows={3}
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
-              />
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                Description
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
+                <textarea
+                  value={safeFormData.description || ''}
+                  onChange={(e) => updateField('description', e.target.value)}
+                  placeholder="Enter attraction history, highlights, and tourist details..."
+                  rows={3}
+                  className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] resize-none transition-all"
+                />
+              </div>
             </div>
 
             {/* Best Time & Duration */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Best Time to Visit</label>
-                <input
-                  type="text"
-                  value={safeFormData.best_time || ''}
-                  onChange={(e) => updateField('best_time', e.target.value)}
-                  placeholder="e.g. Sunrise (5:30 AM - 7:00 AM)"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                  Best Time to Visit
+                </label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={safeFormData.best_time || ''}
+                    onChange={(e) => updateField('best_time', e.target.value)}
+                    placeholder="e.g. Sunrise (5:30 AM - 7:00 AM)"
+                    className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                  />
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Suggested Duration</label>
-                <input
-                  type="text"
-                  value={safeFormData.duration || ''}
-                  onChange={(e) => updateField('duration', e.target.value)}
-                  placeholder="e.g. 2 - 3 Hours"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                  Suggested Duration
+                </label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={safeFormData.duration || ''}
+                    onChange={(e) => updateField('duration', e.target.value)}
+                    placeholder="e.g. 2 - 3 Hours"
+                    className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Price & Rating */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Ticket Price / Entry Fee</label>
-                <input
-                  type="text"
-                  value={safeFormData.price || ''}
-                  onChange={(e) => updateField('price', e.target.value)}
-                  placeholder="e.g. Free, $37 USD, $5 USD"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                  Ticket Price / Entry Fee
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={safeFormData.price || ''}
+                    onChange={(e) => updateField('price', e.target.value)}
+                    placeholder="e.g. Free, $37 USD, $5 USD"
+                    className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                  />
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Initial Rating Score</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="1"
-                  max="5"
-                  value={safeFormData.rating || 5.0}
-                  onChange={(e) => updateField('rating', parseFloat(e.target.value) || 5.0)}
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
+                  Initial Rating Score
+                </label>
+                <div className="relative">
+                  <Star className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500 fill-amber-500 pointer-events-none" />
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="5"
+                    value={safeFormData.rating || 5.0}
+                    onChange={(e) => updateField('rating', parseFloat(e.target.value) || 5.0)}
+                    className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                  />
+                </div>
               </div>
             </div>
 
@@ -387,7 +452,7 @@ export default function PlaceModal({
                   <button
                     type="button"
                     onClick={() => setMapMode('interactive')}
-                    className={`px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${mapMode === 'interactive' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
+                    className={`px-2 py-0.5 text-xs rounded-md transition-colors flex items-center gap-1 cursor-pointer ${mapMode === 'interactive' ? 'bg-[#003E83] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
                   >
                     <MousePointerClick className="w-3 h-3" />
                     Interactive Pick
@@ -395,7 +460,7 @@ export default function PlaceModal({
                   <button
                     type="button"
                     onClick={() => setMapMode('google')}
-                    className={`px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1 cursor-pointer ${mapMode === 'google' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
+                    className={`px-2 py-0.5 text-xs rounded-md transition-colors flex items-center gap-1 cursor-pointer ${mapMode === 'google' ? 'bg-[#003E83] text-white font-semibold' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}
                   >
                     <MapIcon className="w-3 h-3" />
                     Google View
@@ -424,7 +489,7 @@ export default function PlaceModal({
                           updateField('name', loc.label);
                         }
                       }}
-                      className="text-xs px-2.5 py-1 rounded-lg bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[var(--color-primary)] hover:text-white dark:hover:bg-[var(--color-primary)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] transition-colors cursor-pointer"
+                      className="text-xs px-2.5 py-1 rounded-md bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] hover:bg-[#003E83] hover:text-white dark:hover:bg-[#003E83] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] transition-colors cursor-pointer"
                     >
                       📍 {loc.label}
                     </button>
@@ -434,14 +499,14 @@ export default function PlaceModal({
 
               {/* Interactive Map vs Google Maps Mode */}
               {mapMode === 'interactive' ? (
-                <div className="relative w-full h-52 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[#0f172a] shadow-sm">
+                <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[#0f172a] shadow-xs">
                   <div className="absolute top-2 left-2 z-10 bg-black/85 text-white text-[11px] px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-white/15">
                     <MousePointerClick className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Click anywhere on map to pick location pin</span>
                   </div>
 
                   {pickedCoords && (
-                    <div className="absolute bottom-2 right-2 z-10 bg-emerald-600 text-white text-[11px] font-medium px-2.5 py-1 rounded-lg shadow-md">
+                    <div className="absolute bottom-2 right-2 z-10 bg-emerald-600 text-white text-[11px] font-medium px-2.5 py-1 rounded-md shadow-md">
                       ✓ Pin Selected ({pickedCoords.lat.toFixed(4)}, {pickedCoords.lng.toFixed(4)})
                     </div>
                   )}
@@ -455,7 +520,7 @@ export default function PlaceModal({
                   ></iframe>
                 </div>
               ) : (
-                <div className="relative w-full h-52 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] shadow-sm">
+                <div className="relative w-full h-48 rounded-lg overflow-hidden border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] shadow-xs">
                   <iframe
                     title="Google Maps Location View"
                     width="100%"
@@ -468,7 +533,7 @@ export default function PlaceModal({
                 </div>
               )}
 
-              <div className="mt-1 flex items-center justify-between">
+              <div className="mt-1.5 flex items-center justify-between">
                 <span className="text-[11px] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                   Move map and click any point to set address
                 </span>
@@ -486,20 +551,30 @@ export default function PlaceModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3 px-6 py-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)]">
+          <div className="flex items-center gap-3 px-6 py-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-surface-hover-dark)]/20 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!safeFormData?.name?.trim() || !safeFormData?.address?.trim() || isUploadingImage}
-              className="flex-1 py-2.5 px-4 rounded-lg bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] active:scale-[0.98] text-white font-medium text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
             >
-              {editingPlace ? 'Update Place' : 'Add Place'}
+              {editingPlace ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Update Place</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>Add Place</span>
+                </>
+              )}
             </button>
           </div>
         </form>

@@ -19,11 +19,15 @@ import EditProfileModal from './EditProfileModal';
 import ImageCropModal from './ImageCropModal';
 import authService from '../../services/authService';
 import dashboardService from '../../services/dashboardService';
+import placeService from '../../services/placeService';
+import reviewService from '../../services/reviewService';
+import favoriteService from '../../services/favoriteService';
+import galleryService from '../../services/galleryService';
 import { useAlert } from '../../context/AlertContext';
 import { validateImageFile } from '../../utils/fileValidation';
 
 export default function Profile() {
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const [userData, setUserData] = useState({
     name: 'Admin User',
     email: 'admin@tourism.gov.kh',
@@ -46,10 +50,10 @@ export default function Profile() {
 
   // Live stats & activity
   const [statsData, setStatsData] = useState({
-    totalPlaces: 10,
-    totalReviews: 8,
-    totalFavorites: 2,
-    totalPhotos: 4
+    totalPlaces: 0,
+    totalReviews: 0,
+    totalFavorites: 0,
+    totalPhotos: 0
   });
   const [recentActivities, setRecentActivities] = useState([]);
 
@@ -111,17 +115,52 @@ export default function Profile() {
 
   const loadLiveStats = async () => {
     try {
-      const res = await dashboardService.getStats();
-      if (res.success && res.data) {
-        const d = res.data;
-        setStatsData({
-          totalPlaces: d.total_places || 10,
-          totalReviews: d.total_reviews || 8,
-          totalFavorites: d.total_favorites || 2,
-          totalPhotos: d.total_galleries || 4
-        });
-        if (d.recent_activity && Array.isArray(d.recent_activity)) {
-          setRecentActivities(d.recent_activity.map((act, idx) => ({
+      // Query direct database endpoints and aggregated dashboard stats concurrently
+      const [dashRes, placesRes, reviewsRes, favoritesRes, galleryRes] = await Promise.allSettled([
+        dashboardService.getStats(),
+        placeService.getPlaces({ per_page: 1 }),
+        reviewService.getReviews({ per_page: 1 }),
+        favoriteService.getFavorites({ per_page: 1 }),
+        galleryService.getMedia({ per_page: 1 })
+      ]);
+
+      let placesCount = null;
+      let reviewsCount = null;
+      let favoritesCount = null;
+      let photosCount = null;
+
+      // Extract exact totals from database pagination metadata
+      if (placesRes.status === 'fulfilled' && placesRes.value?.success) {
+        placesCount = placesRes.value.meta?.total ?? placesRes.value.data?.length;
+      }
+      if (reviewsRes.status === 'fulfilled' && reviewsRes.value?.success) {
+        reviewsCount = reviewsRes.value.meta?.total ?? reviewsRes.value.data?.length;
+      }
+      if (favoritesRes.status === 'fulfilled' && favoritesRes.value?.success) {
+        favoritesCount = favoritesRes.value.meta?.total ?? favoritesRes.value.data?.length;
+      }
+      if (galleryRes.status === 'fulfilled' && galleryRes.value?.success) {
+        photosCount = galleryRes.value.meta?.total ?? galleryRes.value.data?.length;
+      }
+
+      // Check aggregated dashboard stats object for any counts or activity
+      if (dashRes.status === 'fulfilled' && dashRes.value?.success && dashRes.value?.data) {
+        const stats = dashRes.value.data.stats || dashRes.value.data;
+        if (placesCount === null || placesCount === undefined) {
+          placesCount = stats.total_places;
+        }
+        if (reviewsCount === null || reviewsCount === undefined) {
+          reviewsCount = stats.total_reviews;
+        }
+        if (favoritesCount === null || favoritesCount === undefined) {
+          favoritesCount = stats.total_favorites;
+        }
+        if (photosCount === null || photosCount === undefined) {
+          photosCount = stats.total_photos ?? stats.total_galleries;
+        }
+
+        if (dashRes.value.data.recent_activity && Array.isArray(dashRes.value.data.recent_activity)) {
+          setRecentActivities(dashRes.value.data.recent_activity.map((act, idx) => ({
             id: act.id || idx,
             action: act.title || act.action || 'Activity on',
             target: act.subtitle || act.target || 'Destination',
@@ -130,8 +169,15 @@ export default function Profile() {
           })));
         }
       }
+
+      setStatsData({
+        totalPlaces: Number(placesCount ?? 0),
+        totalReviews: Number(reviewsCount ?? 0),
+        totalFavorites: Number(favoritesCount ?? 0),
+        totalPhotos: Number(photosCount ?? 0)
+      });
     } catch (e) {
-      console.warn('Dashboard stats fallback:', e);
+      console.warn('Live stats fetch error:', e);
     }
   };
 
@@ -162,12 +208,42 @@ export default function Profile() {
   ];
 
   const achievements = [
-    { name: 'Explorer', description: 'Visited 50+ places', icon: Globe, unlocked: true },
-    { name: 'Photographer', description: 'Uploaded 100+ photos', icon: Image, unlocked: true },
-    { name: 'Reviewer', description: 'Written 50+ reviews', icon: FileText, unlocked: true },
-    { name: 'Event Creator', description: 'Created 10+ events', icon: CalendarDays, unlocked: false },
-    { name: 'Guide', description: 'Helped 100+ travelers', icon: Compass, unlocked: false },
-    { name: 'Ambassador', description: 'Invited 50+ friends', icon: Sparkles, unlocked: false }
+    {
+      name: 'Explorer',
+      description: 'Created 5+ places',
+      icon: Globe,
+      unlocked: Number(statsData.totalPlaces || 0) >= 5
+    },
+    {
+      name: 'Reviewer',
+      description: 'Written 5+ reviews',
+      icon: FileText,
+      unlocked: Number(statsData.totalReviews || 0) >= 5
+    },
+    {
+      name: 'Photographer',
+      description: 'Uploaded 3+ photos',
+      icon: Image,
+      unlocked: Number(statsData.totalPhotos || 0) >= 3
+    },
+    {
+      name: 'Curator',
+      description: 'Saved 2+ favorites',
+      icon: Heart,
+      unlocked: Number(statsData.totalFavorites || 0) >= 2
+    },
+    {
+      name: 'Event Host',
+      description: 'Host 5+ events',
+      icon: CalendarDays,
+      unlocked: false
+    },
+    {
+      name: 'Ambassador',
+      description: 'Verified Admin',
+      icon: Sparkles,
+      unlocked: Boolean(userData.verified)
+    }
   ];
 
   const handleImageUpload = (event) => {
@@ -208,6 +284,11 @@ export default function Profile() {
           populateUserData(res.data);
         }
       }
+      showAlert({
+        type: 'success',
+        title: 'Avatar Updated',
+        message: 'Your profile picture has been updated successfully.'
+      });
     } catch (err) {
       console.error('Avatar DB update error:', err);
     }
@@ -224,6 +305,13 @@ export default function Profile() {
   };
 
   const handleDeleteImage = async () => {
+    const confirmed = await showConfirm({
+      title: 'Remove Profile Photo',
+      message: 'Are you sure you want to remove your profile picture?',
+      confirmText: 'Remove'
+    });
+    if (!confirmed) return;
+
     setProfileImage(null);
     updateUserStorage({ image: null, avatar: null, profile_photo_url: null });
     try {
@@ -233,6 +321,11 @@ export default function Profile() {
           populateUserData(res.data);
         }
       }
+      showAlert({
+        type: 'success',
+        title: 'Photo Removed',
+        message: 'Your profile photo has been removed.'
+      });
     } catch (e) {
       console.error('Error clearing avatar:', e);
     }
@@ -278,10 +371,20 @@ export default function Profile() {
         });
         if (res.success && res.data) {
           populateUserData(res.data);
+          showAlert({
+            type: 'success',
+            title: 'Profile Saved',
+            message: 'Your profile details have been saved successfully.'
+          });
         }
       }
     } catch (e) {
       console.error('DB profile save error:', e);
+      showAlert({
+        type: 'error',
+        title: 'Update Failed',
+        message: e?.message || 'Failed to update profile.'
+      });
     }
   };
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, AlertTriangle, Check, Trash2 } from 'lucide-react';
+import { X, AlertTriangle, Check } from 'lucide-react';
 
 export default function DeletionConfirmModal({
   isOpen,
@@ -46,7 +46,7 @@ export default function DeletionConfirmModal({
             </div>
           ) : (
             <div className="w-14 h-14 rounded-full bg-red-500/10 text-red-500 dark:text-red-400 flex items-center justify-center">
-              <Trash2 size={24} />
+              <X size={24} />
             </div>
           )}
         </div>

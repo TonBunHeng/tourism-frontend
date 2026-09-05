@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Database,
   Download,
@@ -8,8 +9,7 @@ import {
   AlertTriangle,
   RefreshCw,
   FileSpreadsheet,
-  Zap,
-  X
+  Zap
 } from 'lucide-react';
 import { useAlert } from '../../context/AlertContext';
 
@@ -50,6 +50,22 @@ export default function BackupTab({ settings, setSettings }) {
   const [restoreModalOpen, setRestoreModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [restoring, setRestoring] = useState(false);
+
+  useEffect(() => {
+    if (restoreModalOpen) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') setRestoreModalOpen(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = 'unset';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [restoreModalOpen]);
 
   const handleChange = (field, value) => {
     setSettings((prev) => ({
@@ -178,13 +194,13 @@ export default function BackupTab({ settings, setSettings }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
               Automated Snapshot Frequency
             </label>
             <select
               value={settings.backupSchedule || 'daily'}
               onChange={(e) => handleChange('backupSchedule', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+              className="w-full h-10 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             >
               <option value="daily">Daily at 02:00 AM (ICT)</option>
               <option value="weekly">Weekly (Sunday Midnight)</option>
@@ -194,13 +210,13 @@ export default function BackupTab({ settings, setSettings }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
               Snapshot Retention Policy
             </label>
             <select
               value={settings.backupRetention || '30'}
               onChange={(e) => handleChange('backupRetention', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
+              className="w-full h-10 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)]"
             >
               <option value="7">Retain last 7 days</option>
               <option value="14">Retain last 14 days</option>
@@ -343,47 +359,65 @@ export default function BackupTab({ settings, setSettings }) {
         </div>
       </div>
 
-      {/* Restore Warning Modal */}
-      {restoreModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150">
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-md w-full border border-gray-200 dark:border-zinc-800 shadow-lg space-y-4">
-            <div className="flex justify-between items-center pb-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-              <h4 className="text-sm font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)]" /> Restore Database File
-              </h4>
-              <button
-                type="button"
-                onClick={() => setRestoreModalOpen(false)}
-                className="text-[var(--color-text-muted-light)] hover:text-[var(--color-text-secondary-light)] dark:hover:text-[var(--color-text-secondary-dark)] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      {/* Restore Warning Alert Modal */}
+      {restoreModalOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-alert-backdrop"
+          onClick={() => setRestoreModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="restore-modal-title"
+        >
+          <div
+            className="bg-white dark:bg-[#18181b] rounded-lg shadow-2xl max-w-sm sm:max-w-md w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800 animate-alert-popup overflow-hidden text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Centered Warning Icon Badge */}
+            <div className="flex justify-center mb-5 animate-alert-icon">
+              <div className="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <AlertTriangle size={24} />
+              </div>
             </div>
 
-            <div className="p-3 bg-[var(--color-warning-bg)] dark:bg-[var(--color-warning-dark-bg)] border border-[var(--color-warning-border)] dark:border-[var(--color-warning-dark-border)] rounded-md text-xs text-[var(--color-warning-text)] dark:text-[var(--color-warning-dark-text)] space-y-1">
-              <span className="font-bold block">⚠️ Caution: Irreversible Database Overwrite</span>
-              <p className="text-[11px] leading-relaxed">
-                Restoring a snapshot will replace all active tourist records, review submissions, and media references with the data from the chosen dump file.
+            {/* Modal Title */}
+            <h3 id="restore-modal-title" className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2 tracking-tight">
+              Restore Database File
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm text-gray-500 dark:text-zinc-400 text-center mb-4 leading-relaxed px-1">
+              Select a valid SQL database dump file to restore the system state.
+            </p>
+
+            {/* Caution Callout Box */}
+            <div className="p-3.5 bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/50 rounded-lg text-left text-xs mb-5 space-y-1">
+              <span className="font-bold text-amber-900 dark:text-amber-200 block text-xs">
+                ⚠️ Caution: Irreversible Database Overwrite
+              </span>
+              <p className="text-xs leading-relaxed text-amber-800/90 dark:text-amber-300/90">
+                Restoring a snapshot will replace all active tourist records, review submissions, and media references with the chosen dump file data.
               </p>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
-                Select Database Dump File (.sql)
+            {/* File Selector */}
+            <div className="text-left mb-6">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
+                Database Dump File (.sql, .gz)
               </label>
               <input
                 type="file"
                 accept=".sql,.dump,.gz"
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                className="w-full text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[var(--color-neutral-badge-bg)] file:text-[var(--color-neutral-badge-text)] dark:file:bg-[var(--color-surface-hover-dark)] dark:file:text-[var(--color-white)] hover:file:bg-[var(--color-surface-hover-light)]"
+                className="w-full text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] file:mr-3 file:py-2 file:px-3.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#003E83]/10 file:text-[#003E83] dark:file:bg-blue-900/40 dark:file:text-blue-300 hover:file:bg-[#003E83]/20 cursor-pointer"
               />
             </div>
 
-            <div className="flex justify-end space-x-2 pt-2">
+            {/* Action Buttons */}
+            <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setRestoreModalOpen(false)}
-                className="px-4 py-2 bg-[var(--color-neutral-badge-bg)] hover:bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-xs font-semibold rounded-md border border-transparent text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] transition-all cursor-pointer"
+                className="flex-1 py-2.5 px-4 border border-gray-300 dark:border-zinc-800 bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800/80 text-gray-700 dark:text-zinc-300 font-medium rounded-lg transition-colors cursor-pointer text-sm"
               >
                 Cancel
               </button>
@@ -391,14 +425,15 @@ export default function BackupTab({ settings, setSettings }) {
                 type="button"
                 onClick={handleRestoreSubmit}
                 disabled={!selectedFile || restoring}
-                className="px-4 py-2 bg-[var(--color-warning-text)] dark:bg-[var(--color-warning-dark-text)] hover:opacity-90 disabled:opacity-50 text-white text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                className="flex-1 py-2.5 px-4 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white font-medium rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-sm shadow-xs active:scale-[0.98]"
               >
                 {restoring ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                <span>{restoring ? 'Restoring Database...' : 'Confirm & Restore'}</span>
+                <span>{restoring ? 'Restoring...' : 'Confirm Restore'}</span>
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

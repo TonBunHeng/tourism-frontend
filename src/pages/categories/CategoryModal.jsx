@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { Tag, CheckCircle2, ChevronDown, FileText, Palette, Plus, Check } from 'lucide-react';
 
 export default function CategoryModal({
   isOpen,
@@ -27,20 +27,25 @@ export default function CategoryModal({
   if (!isOpen) return null;
 
   const data = formData || {};
+  const colors = [
+    "#3B82F6", "#10B981", "#F59E0B", "#EF4444", 
+    "#8B5CF6", "#EC4899", "#06B6D4", "#F97316"
+  ];
 
-  const updateForm = (updated) => {
+  const updateForm = (newData) => {
     if (onFormDataChange) {
-      onFormDataChange(updated);
+      onFormDataChange(newData);
     } else if (onFormChange) {
-      onFormChange(updated);
+      onFormChange(newData);
     }
   };
 
-  const colors = ["#8B5CF6", "#EC4899", "#3B82F6", "#F59E0B", "#10B981", "#EF4444", "#6366F1", "#14B8A6"];
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit(e);
+    if (!data?.name?.trim()) return;
+    if (onSubmit) {
+      onSubmit(e);
+    }
   };
 
   return (
@@ -51,68 +56,83 @@ export default function CategoryModal({
       aria-modal="true"
     >
       <div
-        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup flex flex-col max-h-[90vh]"
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] overflow-hidden animate-alert-popup flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
-          <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">
-            {editingCategory ? "Edit Category" : "Add New Category"}
-          </h3>
-          <button 
-            type="button"
-            onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all active:scale-90 cursor-pointer"
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
+        <div className="px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/30 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-[#003E83]/10 dark:bg-blue-500/10 flex items-center justify-center text-[#003E83] dark:text-blue-400 shrink-0">
+              <Tag className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                {editingCategory ? "Edit Category" : "Add New Category"}
+              </h3>
+              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">
+                {editingCategory ? "Update category information and color badge" : "Create a new classification for places and attractions"}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Modal Form */}
-        <form onSubmit={handleFormSubmit}>
-          <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-6 space-y-4 overflow-y-auto flex-1">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Category Name *</label>
-              <input
-                type="text"
-                value={data.name || ''}
-                onChange={(e) => updateForm({ ...data, name: e.target.value })}
-                placeholder="e.g. Temple, Beach, Mountain, Waterfall"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
-                required
-              />
+              <div className="relative">
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={data.name || ''}
+                  onChange={(e) => updateForm({ ...data, name: e.target.value })}
+                  placeholder="e.g. Temple, Beach, Mountain, Waterfall"
+                  className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+                  required
+                />
+              </div>
             </div>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Status</label>
-              <select
-                value={data.status || 'Active'}
-                onChange={(e) => updateForm({ ...data, status: e.target.value })}
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all cursor-pointer"
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+              <div className="relative">
+                <CheckCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <select
+                  value={data.status || 'Active'}
+                  onChange={(e) => updateForm({ ...data, status: e.target.value })}
+                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-9 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all cursor-pointer"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
             </div>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Description</label>
-              <textarea
-                value={data.description || ''}
-                onChange={(e) => updateForm({ ...data, description: e.target.value })}
-                placeholder="Enter description for this category..."
-                rows="3"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] dark:placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
-              />
+              <div className="relative">
+                <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
+                <textarea
+                  value={data.description || ''}
+                  onChange={(e) => updateForm({ ...data, description: e.target.value })}
+                  placeholder="Enter description for this category..."
+                  rows="3"
+                  className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] resize-none transition-all"
+                />
+              </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">Color Theme</label>
-              <div className="flex gap-2 flex-wrap pt-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5 flex items-center gap-1.5">
+                <Palette className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+                <span>Color Theme</span>
+              </label>
+              <div className="flex gap-2.5 flex-wrap pt-1">
                 {colors.map((color) => (
                   <button
                     key={color}
                     type="button"
                     onClick={() => updateForm({ ...data, color })}
-                    className={`w-7 h-7 rounded-full border-2 transition-colors cursor-pointer ${data.color === color ? "border-[#003E83] dark:border-white ring-2 ring-[#003E83]/40" : "border-transparent"}`}
+                    className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${data.color === color ? "border-[#003E83] dark:border-white ring-2 ring-[#003E83]/40 scale-110 shadow-xs" : "border-transparent hover:scale-105"}`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
@@ -121,20 +141,30 @@ export default function CategoryModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)]">
+          <div className="flex items-center gap-2.5 px-6 py-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-surface-hover-light)]/40 dark:bg-[var(--color-surface-hover-dark)]/20 shrink-0">
             <button 
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 px-4 rounded-md border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 font-medium text-sm transition-colors text-center cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
             >
               Cancel
             </button>
             <button 
               type="submit"
               disabled={!data?.name?.trim()}
-              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] active:scale-[0.98] text-white font-medium text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
             >
-              {editingCategory ? "Update Category" : "Add Category"}
+              {editingCategory ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Update Category</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>Add Category</span>
+                </>
+              )}
             </button>
           </div>
         </form>

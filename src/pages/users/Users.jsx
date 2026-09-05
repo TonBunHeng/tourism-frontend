@@ -63,7 +63,7 @@ export default function Users() {
       if (quickFilter === 'admins') {
         params.role = 'admin';
       } else if (selectedRole !== "All") {
-        params.role = selectedRole;
+        params.role = normalizeRole(selectedRole);
       }
 
       if (selectedStatus !== "All" && selectedStatus !== "Online" && selectedStatus !== "Offline") {
@@ -194,7 +194,7 @@ export default function Users() {
       email: "",
       phone: "",
       password: "",
-      role: "User",
+      role: "user",
       status: "Active",
       location: "",
       subscription: "Free",
@@ -216,7 +216,7 @@ export default function Users() {
       email: user.email,
       phone: user.phone || "",
       password: "",
-      role: user.role,
+      role: normalizeRole(user.role),
       status: user.status || "Active",
       location: user.location || "",
       subscription: user.subscription || "Free",
@@ -242,13 +242,17 @@ export default function Users() {
     }
 
     try {
+      const payload = {
+        ...formData,
+        role: normalizeRole(formData.role)
+      };
+
       if (editingUser) {
-        const payload = { ...formData };
         if (!payload.password) delete payload.password;
         await userService.updateUser(editingUser.id, payload);
         showSuccess(`User account "${formData.name}" updated successfully.`, 'User Updated');
       } else {
-        await userService.createUser(formData);
+        await userService.createUser(payload);
         showSuccess(`User account "${formData.name}" created successfully.`, 'User Created');
       }
       closeModal();

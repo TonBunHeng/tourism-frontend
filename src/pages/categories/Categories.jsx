@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Landmark } from "lucide-react";
 import SimplePagination from "../../components/common/SimplePagination";
 import CategoriesHeader from "./CategoriesHeader";
@@ -13,6 +14,7 @@ import deletionRequestService from "../../services/deletionRequestService";
 import { useAlert } from "../../context/AlertContext";
 
 export default function Categories() {
+  const location = useLocation();
   const { showConfirm, showSuccess, showError } = useAlert();
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -118,6 +120,13 @@ export default function Categories() {
     setFormData({ name: "", description: "", status: "Active", color: "#8B5CF6" });
     setIsAddModalOpen(true);
   };
+
+  useEffect(() => {
+    if (location.state?.openAdd) {
+      openAddModal();
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const openEditModal = (category) => {
     setEditingCategory(category);

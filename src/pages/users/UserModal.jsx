@@ -1,5 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-import { X, User, Mail, Phone, MapPin, Camera, Trash2, ChevronDown, AlertCircle, Lock, ShieldAlert } from "lucide-react";
+import {
+  X,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Camera,
+  Trash2,
+  ChevronDown,
+  AlertCircle,
+  Lock,
+  ShieldAlert,
+  UserPlus,
+  Shield,
+  CheckCircle2,
+  Plus,
+  Check
+} from "lucide-react";
 import uploadService from "../../services/uploadService";
 import { validateImageFile } from "../../utils/fileValidation";
 import authService, { normalizeRole } from "../../services/authService";
@@ -85,9 +102,13 @@ export default function UserModal({
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const availableRoles = isSuperAdmin
-    ? ["User", "Guide / Editor", "Business Owner", "Admin", "Super Admin"]
-    : ["User", "Guide / Editor", "Business Owner", "Admin"];
+  const availableRoles = [
+    { value: "user", label: "User" },
+    { value: "guide_editor", label: "Guide / Editor" },
+    { value: "business_owner", label: "Business Owner" },
+    { value: "admin", label: "Admin" },
+    ...(isSuperAdmin ? [{ value: "super_admin", label: "Super Admin" }] : [])
+  ];
 
   return (
     <div
@@ -102,23 +123,20 @@ export default function UserModal({
       >
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/30 shrink-0">
-          <div>
-            <h3 className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
-              {editingUser ? "Edit User Account" : "Create New User Account"}
-            </h3>
-            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-              {editingUser ? "Update system role, profile details and permissions." : "Add a new user with assigned system role."}
-            </p>
+        <div className="px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)] bg-[var(--color-surface-hover-light)]/50 dark:bg-[var(--color-surface-hover-dark)]/30 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-[#003E83]/10 dark:bg-blue-500/10 flex items-center justify-center text-[#003E83] dark:text-blue-400 shrink-0">
+              <UserPlus className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)]">
+                {editingUser ? "Edit User Account" : "Create New User Account"}
+              </h3>
+              <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+                {editingUser ? "Update system role, profile details and permissions." : "Add a new user with assigned system role."}
+              </p>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all active:scale-90 cursor-pointer"
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Content Body */}
@@ -289,14 +307,15 @@ export default function UserModal({
                 System Role *
               </label>
               <div className="relative">
+                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 <select
-                  value={data.role || "User"}
+                  value={normalizeRole(data.role) || "user"}
                   onChange={(e) => handleChange("role", e.target.value)}
                   disabled={isBlockedFromEditing}
-                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-4 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] cursor-pointer disabled:opacity-50"
+                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-9 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] cursor-pointer disabled:opacity-50"
                 >
                   {availableRoles.map(role => (
-                    <option key={role} value={role}>{role}</option>
+                    <option key={role.value} value={role.value}>{role.label}</option>
                   ))}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -308,11 +327,12 @@ export default function UserModal({
                 Account Status *
               </label>
               <div className="relative">
+                <CheckCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 <select
                   value={data.status || "Active"}
                   onChange={(e) => handleChange("status", e.target.value)}
                   disabled={isBlockedFromEditing}
-                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-4 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] cursor-pointer disabled:opacity-50"
+                  className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-input-dark-bg)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]/70 rounded-md pl-9 pr-9 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] cursor-pointer disabled:opacity-50"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
@@ -335,9 +355,21 @@ export default function UserModal({
             <button
               type="submit"
               disabled={isUploading || isBlockedFromEditing}
-              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors text-center cursor-pointer disabled:opacity-50"
+              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] active:scale-[0.98] text-white font-medium text-sm transition-all text-center cursor-pointer disabled:opacity-50 shadow-xs flex items-center justify-center gap-1.5"
             >
-              {isUploading ? "Uploading..." : editingUser ? "Save Changes" : "Create User"}
+              {isUploading ? (
+                "Uploading..."
+              ) : editingUser ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Save Changes</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>Create User</span>
+                </>
+              )}
             </button>
           </div>
         </form>

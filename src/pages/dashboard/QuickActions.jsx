@@ -58,7 +58,7 @@ export default function QuickActions() {
           return (
             <button
               key={index}
-              onClick={() => navigate(action.path)}
+              onClick={() => navigate(action.path, (action.label === 'Add New Place' || action.label === 'Create Event') ? { state: { openAdd: true } } : undefined)}
               className={`p-3 ${action.bg} rounded-md hover:brightness-95 transition-colors text-center cursor-pointer flex flex-col items-center justify-center`}
             >
               <Icon className={`w-4 h-4 ${action.color} mb-1`} />

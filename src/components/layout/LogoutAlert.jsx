@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, X } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import authService from '../../services/authService';
@@ -57,7 +57,7 @@ export default function LogoutAlert({ isOpen, onClose, onLogout }) {
         {/* Icon */}
         <div className="flex justify-center mb-5 animate-alert-icon">
           <div className="w-14 h-14 rounded-full bg-red-500/10 text-red-500 dark:text-red-400 flex items-center justify-center">
-            <Trash2 size={24} />
+            <LogOut size={24} />
           </div>
         </div>
 

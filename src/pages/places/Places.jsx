@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Eye,
   Edit,
@@ -24,6 +25,7 @@ import deletionRequestService from '../../services/deletionRequestService';
 import { useAlert } from '../../context/AlertContext';
 
 export default function Places() {
+  const location = useLocation();
   const { showConfirm, showSuccess, showError } = useAlert();
   const [places, setPlaces] = useState([]);
   const [categoriesList, setCategoriesList] = useState(['All', 'Temple', 'Palace', 'Beach', 'Nature', 'Market', 'Farm']);
@@ -220,6 +222,13 @@ export default function Places() {
     });
     setIsAddModalOpen(true);
   };
+
+  useEffect(() => {
+    if (location.state?.openAdd) {
+      openAddModal();
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const openEditModal = (place) => {
     setEditingPlace(place);

@@ -62,8 +62,8 @@ export default function DeletionDetailsModal({
         <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">User</span>
-            <p className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{request.user.name}</p>
-            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">{request.user.email} • {request.user.phone}</p>
+            <p className="text-base font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] mt-1">{request.user?.name || request.user_name || 'User'}</p>
+            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mt-0.5">{request.user?.email || 'N/A'}{request.user?.phone ? ` • ${request.user.phone}` : ''}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

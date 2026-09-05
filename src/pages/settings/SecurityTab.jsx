@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Shield,
   Clock,
   Smartphone,
-  X,
   ShieldCheck,
-  Monitor
+  Monitor,
+  Info
 } from 'lucide-react';
 import { useAlert } from '../../context/AlertContext';
 
@@ -32,6 +33,22 @@ export default function SecurityTab({ settings, setSettings }) {
       lastActive: '2 hours ago'
     }
   ]);
+
+  useEffect(() => {
+    if (show2FAModal) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') setShow2FAModal(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = 'unset';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [show2FAModal]);
 
   const handleChange = (field, value) => {
     setSettings((prev) => ({
@@ -117,47 +134,46 @@ export default function SecurityTab({ settings, setSettings }) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
               Admin Session Timeout
             </label>
             <select
               value={settings.sessionTimeout || '30'}
               onChange={(e) => handleChange('sessionTimeout', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+              className="w-full h-10 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
             >
               <option value="15">15 Minutes (High Security)</option>
               <option value="30">30 Minutes (Recommended)</option>
               <option value="60">1 Hour</option>
               <option value="240">4 Hours</option>
-              <option value="480">8 Hours (Full Shift)</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
               Password Complexity Level
             </label>
             <select
               value={settings.passwordPolicy || 'strong'}
               onChange={(e) => handleChange('passwordPolicy', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+              className="w-full h-10 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
             >
-              <option value="standard">Standard (8+ characters)</option>
+              <option value="standard">Standard (8+ chars)</option>
               <option value="strong">Strong (8+ chars, numbers & symbols)</option>
-              <option value="strict">Strict (12+ chars, mixed cases, special chars)</option>
+              <option value="strict">Strict (12+ chars, mixed case, symbols)</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1">
+            <label className="block text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-1.5">
               Max Failed Logins (Lockout)
             </label>
             <select
               value={settings.loginAttempts || '5'}
               onChange={(e) => handleChange('loginAttempts', e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
+              className="w-full h-10 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-input)] transition-all"
             >
-              <option value="3">3 Attempts (Strict Protection)</option>
+              <option value="3">3 Attempts (Strict)</option>
               <option value="5">5 Attempts (Standard)</option>
               <option value="10">10 Attempts (Relaxed)</option>
             </select>
@@ -165,28 +181,30 @@ export default function SecurityTab({ settings, setSettings }) {
         </div>
       </div>
 
-      {/* Card 3: Active Administrator Sessions */}
+      {/* Card 3: Active Administrative Sessions */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] p-5 shadow-xs space-y-4">
-        <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
-          <Shield className="w-4 h-4 text-[var(--color-primary)]" />
-          Active Administrator Sessions
-        </h3>
+        <div className="flex items-center justify-between border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] pb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
+            <Monitor className="w-4 h-4 text-[var(--color-primary)]" />
+            Active Administrator Sessions
+          </h3>
+          <span className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-medium">
+            {sessions.length} Authorized Devices
+          </span>
+        </div>
 
-        <div className="space-y-3">
+        <div className="divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
           {sessions.map((sess) => (
-            <div
-              key={sess.id}
-              className="flex items-center justify-between gap-4 p-3.5 bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)]/50 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="p-2 rounded-md bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
-                  <Monitor className="w-4 h-4 text-[var(--color-primary)]" />
+            <div key={sess.id} className="py-3.5 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${sess.isCurrent ? 'bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] text-[var(--color-primary)]' : 'bg-[var(--color-surface-hover-light)] dark:bg-[var(--color-surface-hover-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]'}`}>
+                  <Shield className="w-4 h-4" />
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs sm:text-sm font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
+                <div>
+                  <p className="text-xs sm:text-sm font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] flex items-center gap-2">
                     {sess.device}
                     {sess.isCurrent && (
-                      <span className="text-[10px] px-2 py-0.5 bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)] rounded-full font-bold">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--color-success-bg)] dark:bg-[var(--color-success-dark-bg)] text-[var(--color-success-text)] dark:text-[var(--color-success-dark-text)]">
                         Current Session
                       </span>
                     )}
@@ -211,40 +229,60 @@ export default function SecurityTab({ settings, setSettings }) {
         </div>
       </div>
 
-      {/* 2FA Guide Modal */}
-      {show2FAModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150">
-          <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg p-6 max-w-md w-full border border-gray-200 dark:border-zinc-800 shadow-lg space-y-4">
-            <div className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-zinc-800">
-              <h4 className="text-sm font-bold text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#003E83]" /> Two-Factor Authentication Setup
-              </h4>
-              <button
-                onClick={() => setShow2FAModal(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      {/* 2FA Guide Alert Modal */}
+      {show2FAModal && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-alert-backdrop"
+          onClick={() => setShow2FAModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="twofa-modal-title"
+        >
+          <div
+            className="bg-white dark:bg-[#18181b] rounded-lg shadow-2xl max-w-sm sm:max-w-md w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800 animate-alert-popup overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Centered Soft-Tinted Icon Badge */}
+            <div className="flex justify-center mb-5 animate-alert-icon">
+              <div className="w-14 h-14 rounded-full bg-blue-500/10 text-[#003E83] dark:text-blue-400 flex items-center justify-center">
+                <ShieldCheck size={24} />
+              </div>
             </div>
-            <p className="text-xs text-gray-600 dark:text-zinc-400 leading-relaxed">
+
+            {/* Modal Title */}
+            <h3 id="twofa-modal-title" className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2 tracking-tight">
+              Two-Factor Authentication Setup
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm text-gray-500 dark:text-zinc-400 text-center mb-5 leading-relaxed px-1">
               When 2FA Enforcement is turned on, administrators must scan a QR code using standard authenticator apps (Google Authenticator, Microsoft Authenticator, or 1Password) upon logging in.
             </p>
 
-            <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded border border-blue-200 dark:border-blue-900 text-xs text-blue-800 dark:text-blue-300 space-y-1">
-              <p className="font-semibold">Security Tip:</p>
-              <p className="text-[11px] leading-relaxed">
-                Ensure emergency backup codes are stored securely in case an administrator device is lost or replaced.
+            {/* Security Tip Callout Card */}
+            <div className="p-3.5 bg-blue-50/80 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-900 text-xs text-blue-800 dark:text-blue-300 space-y-1 mb-5 text-left">
+              <p className="font-semibold flex items-center gap-1.5 text-blue-900 dark:text-blue-200 text-xs">
+                <Info className="w-3.5 h-3.5 text-[#003E83] dark:text-blue-400 shrink-0" />
+                Security Tip
+              </p>
+              <p className="text-xs leading-relaxed text-blue-700 dark:text-blue-300/90 pl-5">
+                Ensure emergency backup recovery codes are stored securely offline in case an administrator device is lost or replaced.
               </p>
             </div>
 
-            <button
-              onClick={() => setShow2FAModal(false)}
-              className="w-full py-2 bg-[#003E83] hover:bg-[#002e62] text-white text-xs font-semibold rounded-md transition-colors cursor-pointer"
-            >
-              Understood
-            </button>
+            {/* Confirm Button */}
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setShow2FAModal(false)}
+                className="w-full py-2.5 px-4 font-medium rounded-lg bg-[#003E83] hover:bg-[#002e62] text-white transition-colors cursor-pointer text-sm shadow-xs"
+              >
+                Understood
+              </button>
+            </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

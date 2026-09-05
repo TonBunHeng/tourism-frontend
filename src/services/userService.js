@@ -17,6 +17,14 @@ export const userService = {
     return await api.put(`/users/${id}`, data);
   },
 
+  async updateUserStatus(id, status) {
+    return await api.put(`/users/${id}/status`, { status });
+  },
+
+  async getActiveStatusMetrics() {
+    return await api.get('/users/active-status');
+  },
+
   async deleteUser(id) {
     return await api.delete(`/users/${id}`);
   }

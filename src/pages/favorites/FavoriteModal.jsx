@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronDown, Plus, Search, MapPin, Check, BookmarkPlus, Sparkles } from 'lucide-react';
 
 export default function FavoriteModal({
@@ -13,6 +13,20 @@ export default function FavoriteModal({
   onAddExisting
 }) {
   const [activeTab, setActiveTab] = useState('existing'); // 'existing' | 'custom'
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
   const [placeSearch, setPlaceSearch] = useState('');
   const [markVisitedOnAdd, setMarkVisitedOnAdd] = useState(false);
 
@@ -28,10 +42,18 @@ export default function FavoriteModal({
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-lg w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-alert-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh] animate-alert-popup"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)]">
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]">
               <BookmarkPlus className="w-5 h-5" />
@@ -48,7 +70,8 @@ export default function FavoriteModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-white)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-full transition-all active:scale-90 cursor-pointer"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>

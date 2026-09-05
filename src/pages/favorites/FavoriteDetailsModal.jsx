@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   X,
   MapPin,
@@ -14,7 +14,8 @@ import {
   Calendar,
   Mail,
   Phone,
-  ShieldCheck
+  ShieldCheck,
+  Heart
 } from 'lucide-react';
 import { renderStars } from '../../utils/StatusUtils';
 
@@ -26,6 +27,20 @@ export default function FavoriteDetailsModal({
   onToggleStatus,
   onDelete
 }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    if (isOpen && favorite) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, favorite, onClose]);
+
   if (!isOpen || !favorite) return null;
 
   const IconComponent = favorite.icon || Landmark;
@@ -53,8 +68,16 @@ export default function FavoriteDetailsModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg max-w-2xl w-full max-h-[90vh] shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-alert-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-xl max-w-2xl w-full max-h-[90vh] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col animate-alert-popup"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] shrink-0">

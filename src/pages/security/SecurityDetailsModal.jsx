@@ -52,11 +52,13 @@ export default function SecurityDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-opacity duration-150"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-alert-backdrop"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
     >
       <div
-        className="w-full max-w-xl bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark-modal)] border border-gray-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden flex flex-col max-h-[90vh]"
+        className="w-full max-w-xl bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark-modal)] border border-gray-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-alert-popup"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}

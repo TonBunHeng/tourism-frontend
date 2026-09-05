@@ -37,6 +37,20 @@ export default function ReportsAnalyticsModal({
   const categories = useMemo(() => (Array.isArray(datasets.categories) ? datasets.categories : []), [datasets.categories]);
 
   useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
     if (isOpen) {
       reportService.getAnalytics({
         timeframe,
@@ -234,8 +248,8 @@ export default function ReportsAnalyticsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg max-w-4xl w-full max-h-[90vh] shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 transition-opacity duration-150 animate-alert-backdrop">
+      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] rounded-lg max-w-4xl w-full max-h-[90vh] shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col animate-alert-popup">
         
         {/* Simple Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
@@ -402,10 +416,26 @@ export default function ReportsAnalyticsModal({
 
             <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <ComposedChart data={monthlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-                  <XAxis dataKey="month" stroke="currentColor" fontSize={11} className="text-gray-400" />
-                  <YAxis stroke="currentColor" fontSize={11} className="text-gray-400" allowDecimals={false} />
+                  <XAxis 
+                    dataKey="month" 
+                    stroke="#9CA3AF" 
+                    fontSize={11} 
+                    tick={{ fontSize: 11, fill: '#9CA3AF' }}
+                    tickLine={false}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                  />
+                  <YAxis 
+                    stroke="#9CA3AF" 
+                    fontSize={11} 
+                    tick={{ fontSize: 11, fill: '#9CA3AF' }}
+                    tickLine={false}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                    domain={[0, (dataMax) => (Number.isFinite(dataMax) && dataMax > 5 ? Math.ceil(dataMax * 1.1) : 5)]}
+                    allowDecimals={false} 
+                    width={32}
+                  />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'var(--color-bg-dark-modal, #18181b)',

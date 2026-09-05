@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { FileText, FileSpreadsheet } from 'lucide-react';
 import ReportsHeader from './ReportsHeader';
 import ReportsStats from './ReportsStats';
 import ReportsTable from './ReportsTable';
 import ReportsAnalyticsModal from './ReportsAnalyticsModal';
-import ExportAlertModal from './ExportAlertModal';
 import { exportToPDF, exportToExcel } from '../../utils/exportReports';
+import { useAlert } from '../../context/AlertContext';
 import placeService from '../../services/placeService';
 import eventService from '../../services/eventService';
 import userService from '../../services/userService';
@@ -29,10 +30,9 @@ export default function Reports() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const { showConfirm, showSuccess, showError } = useAlert();
   const [totalExports, setTotalExports] = useState(14);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [exportFormat, setExportFormat] = useState('pdf');
   const [isLoading, setIsLoading] = useState(true);
 
   const [datasets, setDatasets] = useState({
@@ -187,20 +187,27 @@ export default function Reports() {
     loadAllReportsData();
   };
 
-  const handleOpenExportPDF = () => {
-    setExportFormat('pdf');
-    setIsExportModalOpen(true);
-  };
+  const handleOpenExportPDF = async () => {
+    const tabName = activeTab ? (activeTab.charAt(0).toUpperCase() + activeTab.slice(1)) : 'Data';
+    const recordCount = filteredData.length;
 
-  const handleOpenExportExcel = () => {
-    setExportFormat('excel');
-    setIsExportModalOpen(true);
-  };
+    const confirmed = await showConfirm({
+      title: 'Export PDF Confirmation',
+      message: `Are you sure you want to export the "${tabName}" dataset (${recordCount} items) as a PDF file?`,
+      confirmText: 'Export PDF',
+      cancelText: 'Cancel',
+      type: 'danger',
+      customIcon: (
+        <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 ring-8 ring-red-50/70 dark:ring-red-950/30 flex items-center justify-center shadow-xs">
+          <FileText size={30} />
+        </div>
+      )
+    });
 
-  const handleConfirmExport = () => {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    if (!confirmed) return;
 
-    if (exportFormat === 'pdf') {
+    try {
+      const todayStr = new Date().toISOString().slice(0, 10);
       let headers = [];
       let rows = [];
 
@@ -231,8 +238,36 @@ export default function Reports() {
 
       if (result.success) {
         setTotalExports(prev => prev + 1);
+        showSuccess(`The "${tabName}" dataset (${recordCount} items) has been exported to PDF successfully.`, 'PDF Exported Successfully');
+      } else {
+        showError(result.error || 'Failed to generate PDF report document.', 'Export Failed');
       }
-    } else {
+    } catch (e) {
+      showError(e.message || 'An unexpected error occurred during PDF export.', 'Export Failed');
+    }
+  };
+
+  const handleOpenExportExcel = async () => {
+    const tabName = activeTab ? (activeTab.charAt(0).toUpperCase() + activeTab.slice(1)) : 'Data';
+    const recordCount = filteredData.length;
+
+    const confirmed = await showConfirm({
+      title: 'Export Excel Confirmation',
+      message: `Are you sure you want to export the "${tabName}" dataset (${recordCount} items) as an Excel spreadsheet?`,
+      confirmText: 'Export Excel',
+      cancelText: 'Cancel',
+      type: 'success',
+      customIcon: (
+        <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 ring-8 ring-emerald-50/70 dark:ring-emerald-950/30 flex items-center justify-center shadow-xs">
+          <FileSpreadsheet size={30} />
+        </div>
+      )
+    });
+
+    if (!confirmed) return;
+
+    try {
+      const todayStr = new Date().toISOString().slice(0, 10);
       const result = exportToExcel({
         data: filteredData,
         sheetName: `${activeTab.toUpperCase()} Report`,
@@ -241,7 +276,12 @@ export default function Reports() {
 
       if (result.success) {
         setTotalExports(prev => prev + 1);
+        showSuccess(`The "${tabName}" dataset (${recordCount} items) has been exported to Excel successfully.`, 'Excel Exported Successfully');
+      } else {
+        showError(result.error || 'Failed to generate Excel spreadsheet.', 'Export Failed');
       }
+    } catch (e) {
+      showError(e.message || 'An unexpected error occurred during Excel export.', 'Export Failed');
     }
   };
 
@@ -254,14 +294,6 @@ export default function Reports() {
 
   return (
     <div className="flex flex-col space-y-6">
-      <ExportAlertModal
-        isOpen={isExportModalOpen}
-        format={exportFormat}
-        activeTab={activeTab}
-        recordCount={filteredData.length}
-        onClose={() => setIsExportModalOpen(false)}
-        onConfirm={handleConfirmExport}
-      />
 
       <ReportsHeader
         selectedDay={selectedDay}

@@ -9,7 +9,7 @@ export default function ProvincesGrid({ provinces, onViewProvince, onEditProvinc
           return (
             <div
               key={province.id}
-              onClick={() => onViewProvince(province.id)}
+              onClick={() => onViewProvince(province)}
               className="group relative bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)]/50 border border-gray-200 dark:border-zinc-800 rounded-md p-4 hover:border-gray-400 dark:hover:border-zinc-600 shadow-xs transition-colors cursor-pointer"
             >
               <div className="flex items-start justify-between gap-2 mb-3">
@@ -23,24 +23,24 @@ export default function ProvincesGrid({ provinces, onViewProvince, onEditProvinc
                 <div className="flex gap-1 flex-shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); onViewProvince(province.id); }}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
-                    title="View"
+                    onClick={(e) => { e.stopPropagation(); onViewProvince(province); }}
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
+                    title="View Details"
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); onEditProvince(province); }}
-                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                     title="Edit"
                   >
                     <Edit className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); onDeleteProvince(province.id); }}
-                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); onDeleteProvince(province.id || province); }}
+                    className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                     title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

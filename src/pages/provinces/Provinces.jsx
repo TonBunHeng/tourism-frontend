@@ -94,9 +94,14 @@ export default function Provinces() {
   const handleTypeChange = (val) => { setSelectedType(val); setCurrentPage(1); };
   const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
 
-  const handleView = (id) => {
-    const targetId = typeof id === 'object' ? id.id : id;
-    const provToView = provinces.find(prov => prov.id === targetId);
+  const handleView = (provinceOrId) => {
+    if (!provinceOrId) return;
+    if (typeof provinceOrId === 'object' && provinceOrId.name) {
+      setViewingProvince(provinceOrId);
+      return;
+    }
+    const targetId = typeof provinceOrId === 'object' ? provinceOrId.id : provinceOrId;
+    const provToView = provinces.find(prov => String(prov.id) === String(targetId)) || (typeof provinceOrId === 'object' ? provinceOrId : null);
     if (provToView) {
       setViewingProvince(provToView);
     }
@@ -104,7 +109,7 @@ export default function Provinces() {
 
   const handleDelete = async (id) => {
     const targetId = typeof id === 'object' ? id.id : id;
-    const province = provinces.find(p => p.id === targetId);
+    const province = provinces.find(p => String(p.id) === String(targetId)) || (typeof id === 'object' ? id : null);
     const provName = province?.name || `Province #${targetId}`;
     const confirmed = await showConfirm({
       title: 'Submit Deletion Request',
@@ -149,7 +154,10 @@ export default function Provinces() {
   };
 
   const openEditModal = (province) => {
-    const provObj = typeof province === 'object' ? province : provinces.find(p => p.id === province);
+    if (!province) return;
+    const provObj = (typeof province === 'object' && province.name)
+      ? province
+      : provinces.find(p => String(p.id) === String(typeof province === 'object' ? province.id : province));
     if (!provObj) return;
 
     setEditingProvince(provObj);

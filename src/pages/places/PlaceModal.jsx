@@ -63,6 +63,20 @@ export default function PlaceModal({
     return () => window.removeEventListener('message', handleMessage);
   }, [onFormChange, onFormDataChange]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') onClose?.();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = 'unset';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, onClose]);
+
   const handleImageFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -100,8 +114,6 @@ export default function PlaceModal({
     e.preventDefault();
     if (onSubmit) onSubmit(e);
   };
-
-  if (!isOpen) return null;
 
   // Interactive OpenStreetMap HTML Doc
   const interactiveMapSrcDoc = `
@@ -147,18 +159,29 @@ export default function PlaceModal({
     </html>
   `;
 
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-2xl w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-alert-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-2xl w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup flex flex-col max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800 shrink-0">
           <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">
             {editingPlace ? 'Edit Place Details' : 'Add New Place'}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all active:scale-90 cursor-pointer"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -182,7 +205,7 @@ export default function PlaceModal({
                 value={safeFormData.name || ''}
                 onChange={(e) => updateField('name', e.target.value)}
                 placeholder="e.g. Angkor Wat, Royal Palace, Bokor Mountain"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-gray-300 dark:border-zinc-700 rounded-md px-3.5 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-1 focus:ring-[#003E83] transition-colors"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-gray-300 dark:border-zinc-700 rounded-lg px-3.5 py-2.5 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-1 focus:ring-[#003E83] transition-colors"
                 required
               />
             </div>
@@ -194,20 +217,20 @@ export default function PlaceModal({
               </label>
 
               {safeFormData.image_url ? (
-                <div className="relative w-full h-36 rounded-md overflow-hidden border border-gray-200 dark:border-zinc-700 group mb-2">
+                <div className="relative w-full h-36 rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700 group mb-2">
                   <img src={safeFormData.image_url} alt="Place Preview" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-1.5 bg-[#003E83] hover:bg-[#002e62] text-white rounded text-xs font-medium transition-colors cursor-pointer"
+                      className="px-3 py-1.5 bg-[#003E83] hover:bg-[#002e62] text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
                     >
                       Change Photo
                     </button>
                     <button
                       type="button"
                       onClick={() => updateField('image_url', '')}
-                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs flex items-center gap-1 font-medium transition-colors cursor-pointer"
+                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs flex items-center gap-1 font-medium transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       Remove
@@ -217,7 +240,7 @@ export default function PlaceModal({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/40 rounded-md p-4 text-center hover:border-[#003E83] transition-colors cursor-pointer mb-2"
+                  className="border-2 border-dashed border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/40 rounded-lg p-4 text-center hover:border-[#003E83] transition-colors cursor-pointer mb-2"
                 >
                   <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
                   <p className="text-gray-800 dark:text-zinc-200 font-medium text-xs">
@@ -240,7 +263,7 @@ export default function PlaceModal({
                 value={safeFormData.image_url || ''}
                 onChange={(e) => updateField('image_url', e.target.value)}
                 placeholder="Or paste image URL (https://...)"
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-gray-300 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-1 focus:ring-[#003E83] transition-colors"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-xs text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-1 focus:ring-[#003E83] transition-colors"
               />
             </div>
 
@@ -252,7 +275,7 @@ export default function PlaceModal({
                   <select
                     value={safeFormData.category || safeCategories[0] || 'Temple'}
                     onChange={(e) => updateField('category', e.target.value)}
-                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
                   >
                     {safeCategories.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
@@ -267,7 +290,7 @@ export default function PlaceModal({
                   <select
                     value={safeFormData.status || 'Active'}
                     onChange={(e) => updateField('status', e.target.value)}
-                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
+                    className="appearance-none w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent cursor-pointer"
                   >
                     {safeStatuses.map(s => (
                       <option key={s} value={s}>{s}</option>
@@ -286,7 +309,7 @@ export default function PlaceModal({
                 onChange={(e) => updateField('address', e.target.value)}
                 placeholder="Enter full address or select location preset below"
                 rows={2}
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
                 required
               />
             </div>
@@ -299,7 +322,7 @@ export default function PlaceModal({
                 onChange={(e) => updateField('description', e.target.value)}
                 placeholder="Enter attraction history, highlights, and tourist details..."
                 rows={3}
-                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
+                className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
               />
             </div>
 
@@ -312,7 +335,7 @@ export default function PlaceModal({
                   value={safeFormData.best_time || ''}
                   onChange={(e) => updateField('best_time', e.target.value)}
                   placeholder="e.g. Sunrise (5:30 AM - 7:00 AM)"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
                 />
               </div>
               <div>
@@ -322,7 +345,7 @@ export default function PlaceModal({
                   value={safeFormData.duration || ''}
                   onChange={(e) => updateField('duration', e.target.value)}
                   placeholder="e.g. 2 - 3 Hours"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
                 />
               </div>
             </div>
@@ -336,7 +359,7 @@ export default function PlaceModal({
                   value={safeFormData.price || ''}
                   onChange={(e) => updateField('price', e.target.value)}
                   placeholder="e.g. Free, $37 USD, $5 USD"
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] placeholder-[var(--color-text-muted-light)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
                 />
               </div>
               <div>
@@ -348,7 +371,7 @@ export default function PlaceModal({
                   max="5"
                   value={safeFormData.rating || 5.0}
                   onChange={(e) => updateField('rating', parseFloat(e.target.value) || 5.0)}
-                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-md px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
+                  className="w-full bg-[var(--color-bg-light)] dark:bg-[var(--color-bg-dark)] border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] rounded-lg px-4 py-3 text-sm text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all"
                 />
               </div>
             </div>
@@ -467,14 +490,14 @@ export default function PlaceModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
+              className="flex-1 py-3 px-4 rounded-lg border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] font-medium text-sm transition-colors text-center cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!safeFormData?.name?.trim() || !safeFormData?.address?.trim() || isUploadingImage}
-              className="flex-1 py-2.5 px-4 rounded-md bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-lg bg-[#003E83] hover:bg-[#002e62] text-white font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-center cursor-pointer"
             >
               {editingPlace ? 'Update Place' : 'Add Place'}
             </button>

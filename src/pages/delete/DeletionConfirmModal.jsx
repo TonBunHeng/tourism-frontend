@@ -1,4 +1,5 @@
-import { X, AlertTriangle, Check } from 'lucide-react';
+import { useEffect } from 'react';
+import { X, AlertTriangle, Check, Trash2 } from 'lucide-react';
 
 export default function DeletionConfirmModal({
   isOpen,
@@ -8,48 +9,82 @@ export default function DeletionConfirmModal({
   onClose,
   onConfirm
 }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    if (isOpen && request) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, request, onClose]);
+
   if (!isOpen || !request) return null;
 
+  const isApprove = confirmAction === 'approve';
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-150">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-lg max-w-md w-full shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
-          <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100">Confirm {confirmType}</h3>
-          <button 
-            onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 rounded transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-gray-600 dark:text-zinc-300">
-            Are you sure you want to <strong className="text-gray-900 dark:text-white">{confirmAction}</strong> this {confirmType.toLowerCase()} request for <strong className="text-gray-900 dark:text-white">{request.user.name}</strong>?
-          </p>
-          {confirmAction === 'approve' && (
-            <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 rounded-md text-xs text-red-700 dark:text-red-300 flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>This action will permanently execute the deletion. This cannot be undone.</span>
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-alert-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-white dark:bg-[#18181b] rounded-lg shadow-2xl max-w-sm w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800 animate-alert-popup overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Icon */}
+        <div className="flex justify-center mb-5 animate-alert-icon">
+          {isApprove ? (
+            <div className="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <Check size={24} />
+            </div>
+          ) : (
+            <div className="w-14 h-14 rounded-full bg-red-500/10 text-red-500 dark:text-red-400 flex items-center justify-center">
+              <Trash2 size={24} />
             </div>
           )}
         </div>
-        <div className="flex items-center gap-2.5 px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)]">
+
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2 tracking-tight">
+          Confirm {confirmType}
+        </h3>
+
+        <p className="text-sm text-gray-500 dark:text-zinc-400 text-center mb-4 leading-relaxed whitespace-pre-line px-1">
+          Are you sure you want to <strong className="text-gray-900 dark:text-white capitalize">{confirmAction}</strong> this {confirmType.toLowerCase()} request for <strong className="text-gray-900 dark:text-white">{request.user?.name || 'User'}</strong>?
+        </p>
+
+        {isApprove && (
+          <div className="p-3 mb-5 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-600 dark:text-red-400 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>This action will permanently execute the deletion. This cannot be undone.</span>
+          </div>
+        )}
+
+        <div className="flex gap-3">
           <button 
+            type="button"
             onClick={onClose}
-            className="flex-1 py-2.5 px-4 rounded-md border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 font-medium text-sm transition-colors text-center cursor-pointer"
+            className="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 dark:border-zinc-800 bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800/80 text-gray-700 dark:text-zinc-300 font-medium text-sm transition-colors text-center cursor-pointer"
           >
             Cancel
           </button>
           <button 
+            type="button"
             onClick={onConfirm}
-            className={`flex-1 py-2.5 px-4 rounded-md text-white font-medium text-sm transition-colors text-center flex items-center justify-center gap-2 cursor-pointer ${
-              confirmAction === 'approve'
-                ? 'bg-emerald-600 hover:bg-emerald-700'
-                : 'bg-red-600 hover:bg-red-700'
+            className={`flex-1 py-2.5 px-4 rounded-lg text-white font-medium text-sm transition-colors text-center flex items-center justify-center gap-2 cursor-pointer ${
+              isApprove
+                ? 'bg-emerald-500 hover:bg-emerald-600'
+                : 'bg-red-500 hover:bg-red-600'
             }`}
           >
-            {confirmAction === 'approve' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-            Confirm {confirmAction === 'approve' ? 'Approve' : 'Reject'}
+            {isApprove ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+            Confirm {isApprove ? 'Approve' : 'Reject'}
           </button>
         </div>
       </div>

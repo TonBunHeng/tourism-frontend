@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, Sun, Moon, ShieldCheck, ArrowRight, Ban, AlertTriangle } from "lucide-react";
-import logo from "../../assets/images/tourism_logo.png";
+import { Mail, Lock, Eye, EyeOff, Sun, Moon, ArrowRight, Ban, AlertTriangle } from "lucide-react";
 import { getInitialTheme, applyTheme, isDarkTheme, THEME_CHANGE_EVENT } from "../../utils/Theme";
 import authService from "../../services/authService";
 import { useAlert } from "../../context/AlertContext";
@@ -82,66 +81,26 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 transition-colors duration-150">
       {/* Clean, professional container */}
-      <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow-sm overflow-hidden grid md:grid-cols-12">
+      <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow-sm overflow-hidden p-6 sm:p-8 relative">
+        <button
+          type="button"
+          onClick={handleToggleTheme}
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-800 transition-colors cursor-pointer"
+          title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          aria-label="Toggle theme"
+        >
+          {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-gray-600" />}
+        </button>
 
-        {/* Left Section - Solid Brand Identity */}
-        <div className="md:col-span-5 bg-[#003E83] text-white p-6 sm:p-8 flex flex-col justify-between">
-          <div>
-            <div className="w-16 h-16 mb-4 bg-white/10 rounded-md p-2 flex items-center justify-center">
-              <img
-                src={logo}
-                alt="AngkorVerses Logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <h1 className="text-xl font-bold tracking-tight text-white">
-              AngkorVerses
-            </h1>
-            <p className="text-blue-100/80 text-xs font-normal mt-1">
-              Admin & Management Portal
+        <div>
+          <div className="text-center mb-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-zinc-100">
+              Administrator Sign In
+            </h2>
+            <p className="text-gray-500 dark:text-zinc-400 text-xs mt-0.5">
+              Enter your credentials to access the management portal
             </p>
           </div>
-
-          {/* Simple Info List */}
-          <div className="mt-8 mb-6 hidden md:block space-y-3">
-            <div className="flex items-center gap-2.5 text-xs text-blue-100/90 bg-white/10 px-3 py-2 rounded">
-              <ShieldCheck className="w-4 h-4 text-blue-200 shrink-0" />
-              <span>Role-Based Access Control</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-xs text-blue-100/90 bg-white/10 px-3 py-2 rounded">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-              <span>Tourism Management System</span>
-            </div>
-          </div>
-
-          <div className="text-[11px] text-blue-200/70">
-            © {new Date().getFullYear()} AngkorVerses. All rights reserved.
-          </div>
-        </div>
-
-        {/* Right Section - Login Form */}
-        <div className="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between bg-white dark:bg-zinc-900">
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-zinc-100">
-                  Administrator Sign In
-                </h2>
-                <p className="text-gray-500 dark:text-zinc-400 text-xs mt-0.5">
-                  Enter your credentials to access the management portal
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleToggleTheme}
-                className="p-2 rounded text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-800 transition-colors cursor-pointer"
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                aria-label="Toggle theme"
-              >
-                {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-gray-600" />}
-              </button>
-            </div>
 
             {/* Error / IP Blocked Notice */}
             {errorMessage && (
@@ -264,8 +223,6 @@ export default function Login() {
             </form>
           </div>
         </div>
-
       </div>
-    </div>
-  );
+    );
 }

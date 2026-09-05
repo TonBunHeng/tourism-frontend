@@ -24,7 +24,11 @@ export default function ProvincesList({
       <div className="sm:hidden divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
         {safeProvinces.length > 0 ? (
           safeProvinces.map((province) => (
-            <div key={province.id} className="p-4 flex flex-col gap-3 hover:bg-[var(--color-surface-hover-light)]/50 dark:hover:bg-[var(--color-surface-hover-dark)]/30 transition-colors">
+            <div
+              key={province.id}
+              onClick={() => handleView(province)}
+              className="p-4 flex flex-col gap-3 hover:bg-[var(--color-surface-hover-light)]/50 dark:hover:bg-[var(--color-surface-hover-dark)]/30 transition-colors cursor-pointer"
+            >
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-1.5">
@@ -59,27 +63,27 @@ export default function ProvincesList({
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-1 pt-1">
+              <div className="flex items-center justify-end gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
                 <button
                   type="button"
-                  onClick={() => handleView(province.id || province)}
-                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                  onClick={() => handleView(province)}
+                  className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                   title="View Details"
                 >
                   <Eye className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleEdit(province.id || province)}
-                  className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                  onClick={() => handleEdit(province)}
+                  className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                   title="Edit"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleDeleteItem(province.id)}
-                  className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                  onClick={() => handleDeleteItem(province.id || province)}
+                  className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                   title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -113,7 +117,11 @@ export default function ProvincesList({
           <tbody className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] divide-y divide-[var(--color-border-subtle-light)] dark:divide-[var(--color-border-dark)]">
             {safeProvinces.length > 0 ? (
               safeProvinces.map((province, index) => (
-                <tr key={province.id} className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group">
+                <tr
+                  key={province.id}
+                  onClick={() => handleView(province)}
+                  className="hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)]/50 transition-colors group cursor-pointer"
+                >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] font-mono">
                     {startIndex + index + 1}
                   </td>
@@ -142,28 +150,28 @@ export default function ProvincesList({
                       {province.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => handleView(province.id || province)}
-                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                        onClick={() => handleView(province)}
+                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleEdit(province.id || province)}
-                        className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                        onClick={() => handleEdit(province)}
+                        className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleDeleteItem(province.id)}
-                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                        onClick={() => handleDeleteItem(province.id || province)}
+                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />

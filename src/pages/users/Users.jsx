@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import SimplePagination from '../../components/common/SimplePagination';
 import UsersHeader from './UsersHeader';
 import UsersStats from './UsersStats';
 import UsersToolbar from './UsersToolbar';
 import UsersList from './UsersList';
-import UserDetailsModal from './UserDetailsModal';
+import UsersGrid from './UsersGrid';
 import UserModal from './UserModal';
+import UserDetailsModal from './UserDetailsModal';
 import userService from '../../services/userService';
-import deletionRequestService from '../../services/deletionRequestService';
+import authService, { normalizeRole } from '../../services/authService';
 import { useAlert } from '../../context/AlertContext';
 
 export default function Users() {
@@ -18,6 +18,8 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [quickFilter, setQuickFilter] = useState("all");
+  const [viewMode, setViewMode] = useState("list");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -26,7 +28,10 @@ export default function Users() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
+
+  const currentUser = authService.getCurrentUser();
+  const isSuperAdmin = normalizeRole(currentUser?.role) === 'super_admin';
 
   const roles = ["All", "Super Admin", "Admin", "Business Owner", "Guide / Editor", "User"];
   const statuses = ["All", "Active", "Inactive", "Suspended", "Online", "Offline"];
@@ -54,7 +59,13 @@ export default function Users() {
         per_page: itemsPerPage,
       };
       if (searchTerm) params.search = searchTerm;
-      if (selectedRole !== "All") params.role = selectedRole;
+
+      if (quickFilter === 'admins') {
+        params.role = 'admin';
+      } else if (selectedRole !== "All") {
+        params.role = selectedRole;
+      }
+
       if (selectedStatus !== "All" && selectedStatus !== "Online" && selectedStatus !== "Offline") {
         params.status = selectedStatus;
       }
@@ -85,6 +96,10 @@ export default function Users() {
           };
         });
 
+        if (quickFilter === 'admins') {
+          formatted = formatted.filter(u => ['super_admin', 'admin'].includes(normalizeRole(u.role)));
+        }
+
         if (selectedStatus === "Online") {
           formatted = formatted.filter(u => u.onlineStatus === "Online");
         } else if (selectedStatus === "Offline") {
@@ -114,10 +129,10 @@ export default function Users() {
 
     const interval = setInterval(() => {
       loadUsers(false);
-    }, 20000);
+    }, 30000);
 
     return () => clearInterval(interval);
-  }, [currentPage, searchTerm, selectedRole, selectedStatus]);
+  }, [currentPage, searchTerm, selectedRole, selectedStatus, quickFilter]);
 
   const handleManualRefresh = () => {
     loadUsers(false);
@@ -126,6 +141,7 @@ export default function Users() {
   const handleSearchChange = (val) => { setSearchTerm(val); setCurrentPage(1); };
   const handleRoleChange = (val) => { setSelectedRole(val); setCurrentPage(1); };
   const handleStatusChange = (val) => { setSelectedStatus(val); setCurrentPage(1); };
+  const handleQuickFilterChange = (val) => { setQuickFilter(val); setCurrentPage(1); };
 
   const handleView = (userOrId) => {
     const userToView = typeof userOrId === "object" ? userOrId : users.find(u => u.id === userOrId);
@@ -135,32 +151,39 @@ export default function Users() {
   };
 
   const handleDelete = async (id) => {
-    const user = users.find(u => u.id === id);
-    const userName = user?.name || `User #${id}`;
+    const targetUser = users.find(u => u.id === id);
+    if (!targetUser) return;
+
+    if (currentUser && Number(currentUser.id) === Number(id)) {
+      showError("You cannot delete your own logged-in account.", "Action Blocked");
+      return;
+    }
+
+    const isTargetSuperAdmin = normalizeRole(targetUser.role) === 'super_admin';
+    if (isTargetSuperAdmin && !isSuperAdmin) {
+      showError("Only Super Administrators can delete Super Admin accounts.", "Access Denied");
+      return;
+    }
+
     const confirmed = await showConfirm({
-      title: 'Submit Deletion Request',
-      message: `Are you sure you want to submit a deletion request for user account "${userName}"?\n\nThis will be sent to Deletion Requests for review and approval.`,
-      confirmText: 'Submit Deletion',
+      title: 'Delete User Account',
+      message: `Are you sure you want to permanently delete user account "${targetUser.name}" (${targetUser.email})?\n\nThis action cannot be undone.`,
+      confirmText: 'Delete User',
       type: 'danger'
     });
 
     if (!confirmed) return;
 
     try {
-      await deletionRequestService.createRequest({
-        request_type: 'account',
-        reason: `Request to delete user account: ${userName}`,
-        urgency: 'high',
-        items: [{
-          item_type: 'user',
-          item_id: id,
-          item_name: userName,
-          category: user?.role || 'User'
-        }]
-      });
-      showSuccess(`Deletion request for user "${userName}" has been submitted to Deletion Requests.`, 'Request Submitted');
+      const res = await userService.deleteUser(id);
+      if (res?.success !== false) {
+        showSuccess(`User account "${targetUser.name}" has been deleted successfully.`, 'User Deleted');
+        loadUsers();
+      } else {
+        showError(res.message || "Failed to delete user.", 'Delete Failed');
+      }
     } catch (e) {
-      showError(e.message || "Failed to submit deletion request.", 'Submission Failed');
+      showError(e.message || "Failed to delete user.", 'Delete Failed');
     }
   };
 
@@ -181,6 +204,12 @@ export default function Users() {
   };
 
   const openEditModal = (user) => {
+    const isTargetSuperAdmin = normalizeRole(user.role) === 'super_admin';
+    if (isTargetSuperAdmin && !isSuperAdmin) {
+      showError("Only Super Administrators can modify Super Admin accounts.", "Access Denied");
+      return;
+    }
+
     setEditingUser(user);
     setFormData({
       name: user.name,
@@ -201,21 +230,26 @@ export default function Users() {
     setEditingUser(null);
   };
 
-  const handleFormChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleFormChange = (updatedData) => {
+    setFormData(updatedData);
   };
 
   const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim()) return;
+    if (!formData.name.trim() || !formData.email.trim()) {
+      showError("Please enter full name and email address.", "Validation Failed");
+      return;
+    }
 
     try {
       if (editingUser) {
-        await userService.updateUser(editingUser.id, formData);
-        showSuccess(`User account "${formData.name}" has been updated successfully.`, 'User Updated');
+        const payload = { ...formData };
+        if (!payload.password) delete payload.password;
+        await userService.updateUser(editingUser.id, payload);
+        showSuccess(`User account "${formData.name}" updated successfully.`, 'User Updated');
       } else {
         await userService.createUser(formData);
-        showSuccess(`User account "${formData.name}" has been created successfully.`, 'User Created');
+        showSuccess(`User account "${formData.name}" created successfully.`, 'User Created');
       }
       closeModal();
       loadUsers();
@@ -224,9 +258,6 @@ export default function Users() {
     }
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + users.length, totalRecords);
-
   return (
     <div className="flex flex-col">
       {/* Header Section */}
@@ -234,66 +265,106 @@ export default function Users() {
         onOpenAddModal={openAddModal}
         onRefresh={handleManualRefresh}
         isRefreshing={isRefreshing}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       {/* Stats Cards */}
       <UsersStats users={users} />
 
-      {/* Main Users Table Section */}
+      {/* Main Users Table / Grid Section */}
       <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark)] rounded-lg shadow-sm border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] overflow-hidden flex-1">
         <UsersToolbar
+          totalCount={totalRecords}
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           selectedRole={selectedRole}
           onRoleChange={handleRoleChange}
+          roles={roles}
           selectedStatus={selectedStatus}
           onStatusChange={handleStatusChange}
-          roles={roles}
           statuses={statuses}
+          quickFilter={quickFilter}
+          onQuickFilterChange={handleQuickFilterChange}
         />
 
         {isLoading ? (
-          <div className="p-12 text-center text-slate-500 dark:text-zinc-400 font-medium">
-            Loading users from database...
+          <div className="flex items-center justify-center py-20">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-3 border-[#003E83] border-t-transparent dark:border-blue-500 rounded-full animate-spin" />
+              <p className="text-xs font-medium text-gray-500 dark:text-zinc-400">Loading user accounts...</p>
+            </div>
           </div>
+        ) : viewMode === 'grid' ? (
+          <UsersGrid
+            users={users}
+            onViewDetails={handleView}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+          />
         ) : (
           <UsersList
             users={users}
-            onViewUser={handleView}
-            onEditUser={openEditModal}
-            onDeleteUser={handleDelete}
-            startIndex={startIndex}
+            startIndex={(currentPage - 1) * itemsPerPage}
+            onViewDetails={handleView}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
           />
         )}
 
-        {/* Simple Pagination Footer */}
-        <SimplePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          startIndex={startIndex}
-          endIndex={endIndex}
-          totalRecords={totalRecords}
-          label="users"
-        />
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-gray-50/50 dark:bg-zinc-900/30">
+            <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+              Showing page <span className="font-bold text-[var(--color-text-primary-light)] dark:text-white">{currentPage}</span> of {totalPages} ({totalRecords} records)
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-xs font-medium rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-xs font-medium rounded-md border border-[var(--color-border-subtle-light)] dark:border-[var(--color-border-dark)] bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* View User Details Modal */}
-      <UserDetailsModal
-        user={viewingUser}
-        onClose={() => setViewingUser(null)}
-        onEditUser={openEditModal}
-      />
-
-      {/* Add / Edit User Modal */}
+      {/* Create / Edit User Modal */}
       <UserModal
         isOpen={isAddModalOpen}
-        onClose={closeModal}
         editingUser={editingUser}
-        formData={formData}
-        onFormChange={handleFormChange}
+        userData={formData}
+        newUserData={formData}
+        onUserChange={handleFormChange}
+        onNewUserChange={handleFormChange}
+        onClose={closeModal}
         onSubmit={handleSubmit}
       />
+
+      {/* View User Details Modal */}
+      {viewingUser && (
+        <UserDetailsModal
+          user={viewingUser}
+          isOpen={Boolean(viewingUser)}
+          onClose={() => setViewingUser(null)}
+          onEdit={() => {
+            const userToEdit = viewingUser;
+            setViewingUser(null);
+            openEditModal(userToEdit);
+          }}
+        />
+      )}
     </div>
   );
 }

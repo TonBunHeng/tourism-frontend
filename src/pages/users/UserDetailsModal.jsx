@@ -1,7 +1,22 @@
+import { useEffect } from 'react';
 import { X, User, Check, Edit, MapPin } from "lucide-react";
 import { getUserStatusColor as getStatusColor, getRoleColor, formatRoleLabel } from '../../utils/StatusUtils';
 
 export default function UserDetailsModal({ isOpen, user, onClose, onEdit, onEditUser }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    if (isOpen && user) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, user, onClose]);
+
   if (!isOpen && !user) return null;
   if (isOpen === false) return null;
   if (!user) return null;
@@ -10,8 +25,16 @@ export default function UserDetailsModal({ isOpen, user, onClose, onEdit, onEdit
   const UserAvatar = typeof user.avatar === "function" ? user.avatar : User;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-alert-backdrop">
-      <div className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup">
+    <div
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-alert-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="bg-[var(--color-white)] dark:bg-[var(--color-bg-dark-modal)] text-[var(--color-text-primary-light)] dark:text-[var(--color-white)] rounded-xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden animate-alert-popup flex flex-col max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border-subtle-light)] dark:border-[var(--color-modal-border)]">
           <div className="flex items-center gap-3">

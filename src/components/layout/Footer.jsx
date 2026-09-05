@@ -1,52 +1,13 @@
-import { Link } from 'react-router-dom';
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="h-14 w-full bg-white dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800 px-4 sm:px-6 flex items-center shrink-0 transition-colors duration-200">
-      <div className="w-full flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between text-center sm:text-left">
-
-        {/* Left section: Copyright & Version */}
-        <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
-          <span>© {currentYear} AngkorVerses</span>
-          <span className="bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-zinc-300">
-            v1.5
-          </span>
-        </div>
-
-        {/* Right section: Links, Status & Support Button */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
-          {/* <Link
-            to="/privacy"
-            className="text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:underline transition-colors"
-          >
-            Privacy Policy
-          </Link> */}
-
-          {/* <span className="text-gray-300 dark:text-zinc-700 hidden sm:inline">•</span> */}
-
-          {/* <Link
-            to="/terms"
-            className="text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:underline transition-colors"
-          >
-            Terms of Service
-          </Link> */}
-
-          <span className="text-emerald-500 dark:text-emerald-400 font-medium flex items-center gap-1.5 mx-1">
-            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 dark:bg-emerald-400 rounded-full inline-block animate-pulse"></span>
-            <span>System Online</span>
-          </span>
-
-          <Link
-            // to="/support"
-            to="https://ai-chatbot-psi-sepia.vercel.app/" // for local testing, replace with the actual support URL in production
-            className="bg-[#003E83] hover:bg-[#002e62] text-white px-3 py-1.5 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors"
-          >
-            Contact Support
-          </Link>
-        </div>
-
+    <footer className="h-14 w-full bg-white dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800 px-4 sm:px-6 flex items-center justify-end shrink-0 transition-colors duration-200">
+      <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
+        <span>© {currentYear} AngkorVerses</span>
+        <span className="bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-zinc-300">
+          v1.5
+        </span>
       </div>
     </footer>
   );

@@ -47,41 +47,41 @@ export default function AlertModal({
     onClose?.();
   };
 
-  // Static, clean icon presentation without distracting animations
+  // Simple and sleek icon presentation with soft tinted circle
   const renderIcon = () => {
     if (customIcon) return customIcon;
 
     switch (type) {
       case 'success':
         return (
-          <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <CheckCircle2 size={26} />
+          <div className="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <CheckCircle2 size={24} />
           </div>
         );
       case 'danger':
       case 'delete':
         return (
-          <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-red-500/10 text-red-500 dark:text-red-400 flex items-center justify-center">
             <Trash2 size={24} />
           </div>
         );
       case 'error':
         return (
-          <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center">
-            <AlertCircle size={26} />
+          <div className="w-14 h-14 rounded-full bg-red-500/10 text-red-500 dark:text-red-400 flex items-center justify-center">
+            <AlertCircle size={24} />
           </div>
         );
       case 'warning':
         return (
-          <div className="w-12 h-12 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-            <AlertTriangle size={26} />
+          <div className="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <AlertTriangle size={24} />
           </div>
         );
       case 'info':
       default:
         return (
-          <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-            <Info size={26} />
+          <div className="w-14 h-14 rounded-full bg-blue-500/10 text-[#003E83] dark:text-blue-400 flex items-center justify-center">
+            <Info size={24} />
           </div>
         );
     }
@@ -95,13 +95,13 @@ export default function AlertModal({
 
   const getConfirmButtonClass = () => {
     if (type === 'danger' || type === 'delete' || type === 'error') {
-      return 'bg-red-600 hover:bg-red-700 text-white';
+      return 'bg-red-500 hover:bg-red-600 text-white';
     }
     if (type === 'success') {
-      return 'bg-emerald-600 hover:bg-emerald-700 text-white';
+      return 'bg-emerald-500 hover:bg-emerald-600 text-white';
     }
     if (type === 'warning') {
-      return 'bg-amber-600 hover:bg-amber-700 text-white';
+      return 'bg-amber-500 hover:bg-amber-600 text-white';
     }
     return 'bg-[#003E83] hover:bg-[#002e62] text-white';
   };
@@ -115,33 +115,24 @@ export default function AlertModal({
       aria-labelledby="alert-modal-title"
     >
       <div
-        className="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative border border-gray-100 dark:border-zinc-800 animate-alert-popup overflow-hidden"
+        className="bg-white dark:bg-[#18181b] rounded-lg shadow-2xl max-w-sm w-full mx-4 p-6 relative border border-gray-200 dark:border-zinc-800 animate-alert-popup overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute right-3.5 top-3.5 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-all cursor-pointer"
-          aria-label="Close dialog"
-        >
-          <X size={18} />
-        </button>
-
         {/* Icon */}
-        <div className="flex justify-center mb-3.5 animate-alert-icon">
+        <div className="flex justify-center mb-5 animate-alert-icon">
           {renderIcon()}
         </div>
 
         {/* Title */}
         {title && (
-          <h3 id="alert-modal-title" className="text-base sm:text-lg font-bold text-gray-900 dark:text-zinc-100 text-center mb-2 tracking-tight">
+          <h3 id="alert-modal-title" className="text-lg font-bold text-gray-900 dark:text-white text-center mb-2 tracking-tight">
             {title}
           </h3>
         )}
 
         {/* Message */}
         {message && (
-          <p className="text-gray-600 dark:text-zinc-400 text-center mb-6 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+          <p className="text-sm text-gray-500 dark:text-zinc-400 text-center mb-6 leading-relaxed whitespace-pre-line px-1">
             {message}
           </p>
         )}
@@ -152,14 +143,14 @@ export default function AlertModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-[0.98] transition-all cursor-pointer text-xs sm:text-sm"
+              className="flex-1 py-2.5 px-4 border border-gray-300 dark:border-zinc-800 bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800/80 text-gray-700 dark:text-zinc-300 font-medium rounded-lg transition-colors cursor-pointer text-sm"
             >
               {cancelText}
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className={`flex-1 px-4 py-2.5 font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer text-xs sm:text-sm ${getConfirmButtonClass()}`}
+              className={`flex-1 py-2.5 px-4 font-medium rounded-lg transition-colors cursor-pointer text-sm ${getConfirmButtonClass()}`}
             >
               {finalConfirmText}
             </button>
@@ -169,7 +160,7 @@ export default function AlertModal({
             <button
               type="button"
               onClick={handleConfirm}
-              className={`w-full px-4 py-2.5 font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer text-xs sm:text-sm ${getConfirmButtonClass()}`}
+              className={`w-full py-2.5 px-4 font-medium rounded-lg transition-colors cursor-pointer text-sm ${getConfirmButtonClass()}`}
             >
               {finalConfirmText}
             </button>

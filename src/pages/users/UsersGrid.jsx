@@ -1,5 +1,5 @@
-import { Check, Eye, Edit, Trash2, Activity, Calendar, User as UserIcon } from 'lucide-react';
-import { getUserStatusColor as getStatusColor, getRoleColor, getSubscriptionColor, formatRoleLabel } from '../../utils/StatusUtils';
+import { User as UserIcon, Check, Eye, Edit, Trash2, Activity, Calendar } from "lucide-react";
+import authService, { normalizeRole } from '../../services/authService';
 
 export default function UsersGrid({
   users = [],
@@ -10,9 +10,49 @@ export default function UsersGrid({
   onEditUser,
   onDeleteUser
 }) {
+  const currentUser = authService.getCurrentUser();
+  const isSuperAdmin = normalizeRole(currentUser?.role) === 'super_admin';
+
   const handleView = onViewDetails || onViewUser || (() => {});
   const handleEdit = onEdit || onEditUser || (() => {});
   const handleDeleteItem = onDelete || onDeleteUser || (() => {});
+
+  const getRoleColor = (role) => {
+    const norm = normalizeRole(role);
+    switch (norm) {
+      case 'super_admin': return 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800/50';
+      case 'admin': return 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800/50';
+      case 'guide_editor': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50';
+      case 'business_owner': return 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800/50';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-300 border-gray-200 dark:border-zinc-700';
+    }
+  };
+
+  const getStatusColor = (status, isOnline) => {
+    const s = String(status || '').toLowerCase();
+    if (s === 'suspended') return 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-800/50';
+    if (s === 'inactive') return 'bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-400 border-gray-200 dark:border-zinc-700';
+    if (isOnline) return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50';
+    return 'bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 border-slate-200 dark:border-zinc-700';
+  };
+
+  const getSubscriptionColor = (sub) => {
+    const s = String(sub || '').toLowerCase();
+    if (s === 'premium') return 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800/40';
+    if (s === 'basic') return 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800/40';
+    return 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400 border-gray-200 dark:border-zinc-700';
+  };
+
+  const formatRoleLabel = (role) => {
+    const norm = normalizeRole(role);
+    switch (norm) {
+      case 'super_admin': return 'Super Admin';
+      case 'admin': return 'Admin';
+      case 'guide_editor': return 'Guide / Editor';
+      case 'business_owner': return 'Business Owner';
+      default: return 'User';
+    }
+  };
 
   const safeUsers = users || [];
 
@@ -21,6 +61,9 @@ export default function UsersGrid({
       {safeUsers.length > 0 ? (
         safeUsers.map((user) => {
           const isOnline = Boolean(user.is_online || user.onlineStatus === "Online");
+          const isRowSuperAdmin = normalizeRole(user.role) === 'super_admin';
+          const canModifyRow = isSuperAdmin || !isRowSuperAdmin;
+
           return (
             <div
               key={user.id}
@@ -31,8 +74,6 @@ export default function UsersGrid({
                 <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[var(--color-info-bg)] dark:bg-[var(--color-info-dark-bg)] flex items-center justify-center shrink-0 border border-[var(--color-info-border)] overflow-hidden">
                   {typeof user.avatar === 'string' && user.avatar ? (
                     <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                  ) : typeof user.avatar === 'function' ? (
-                    <user.avatar className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
                   ) : (
                     <UserIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-primary)] dark:text-[var(--color-info-dark-text)]" />
                   )}
@@ -60,26 +101,36 @@ export default function UsersGrid({
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleView(user); }}
-                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
+                    className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                     title="View Details"
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); handleEdit(user); }}
-                    className="p-1.5 hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] rounded-md transition-colors cursor-pointer"
-                    title="Edit"
+                    onClick={(e) => { e.stopPropagation(); canModifyRow && handleEdit(user); }}
+                    disabled={!canModifyRow}
+                    className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                      canModifyRow 
+                        ? 'hover:bg-[var(--color-surface-hover-light)] dark:hover:bg-[var(--color-surface-hover-dark)] text-blue-600 dark:text-blue-400 active:scale-90 hover:scale-105' 
+                        : 'text-gray-300 dark:text-zinc-600 cursor-not-allowed opacity-50'
+                    }`}
+                    title={canModifyRow ? "Edit User" : "Only Super Admin can modify Super Admin accounts"}
                   >
-                    <Edit className="w-3.5 h-3.5 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
+                    <Edit className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); handleDeleteItem(user.id); }}
-                    className="p-1.5 hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
-                    title="Delete"
+                    onClick={(e) => { e.stopPropagation(); canModifyRow && handleDeleteItem(user.id); }}
+                    disabled={!canModifyRow}
+                    className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                      canModifyRow 
+                        ? 'hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] active:scale-90 hover:scale-105' 
+                        : 'text-gray-300 dark:text-zinc-600 cursor-not-allowed opacity-50'
+                    }`}
+                    title={canModifyRow ? "Delete User" : "Only Super Admin can delete Super Admin accounts"}
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)]" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>

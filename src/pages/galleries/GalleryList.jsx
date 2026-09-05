@@ -54,7 +54,7 @@ export default function GalleryList({ media, mediaItems, onPreview, onEdit, onDe
                       <button
                         type="button"
                         onClick={() => onPreview(item)}
-                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
@@ -62,7 +62,7 @@ export default function GalleryList({ media, mediaItems, onPreview, onEdit, onDe
                       <button
                         type="button"
                         onClick={() => onEdit(item)}
-                        className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />
@@ -70,7 +70,7 @@ export default function GalleryList({ media, mediaItems, onPreview, onEdit, onDe
                       <button
                         type="button"
                         onClick={() => onDelete(item.id)}
-                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -189,7 +189,7 @@ export default function GalleryList({ media, mediaItems, onPreview, onEdit, onDe
                         <button
                           type="button"
                           onClick={() => onPreview(item)}
-                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function GalleryList({ media, mediaItems, onPreview, onEdit, onDe
                         <button
                           type="button"
                           onClick={() => onEdit(item)}
-                          className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-colors cursor-pointer"
+                          className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function GalleryList({ media, mediaItems, onPreview, onEdit, onDe
                         <button
                           type="button"
                           onClick={() => onDelete(item.id)}
-                          className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-colors cursor-pointer"
+                          className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-lg transition-all active:scale-90 hover:scale-105 cursor-pointer"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />

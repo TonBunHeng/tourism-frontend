@@ -107,7 +107,7 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); onViewPlace(place.id); }}
-                      className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
+                      className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                       title="View Details"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -115,7 +115,7 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); onEditPlace(place); }}
-                      className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-colors cursor-pointer"
+                      className="p-1.5 text-[var(--color-info-text)] dark:text-[var(--color-info-dark-text)] hover:bg-[var(--color-info-bg)] dark:hover:bg-[var(--color-info-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                       title="Edit Place"
                     >
                       <Edit className="w-3.5 h-3.5" />
@@ -123,7 +123,7 @@ export default function PlacesGrid({ places, onViewPlace, onEditPlace, onDeleteP
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); onDeletePlace(place.id); }}
-                      className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
+                      className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                       title="Delete Place"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

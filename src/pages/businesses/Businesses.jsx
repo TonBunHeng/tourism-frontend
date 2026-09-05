@@ -579,7 +579,7 @@ export default function Businesses() {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => setViewingBusiness(b)}
-                            className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-colors cursor-pointer"
+                            className="p-1.5 text-[var(--color-purple-badge-text)] dark:text-[var(--color-purple-badge-dark-text)] hover:bg-[var(--color-purple-badge-bg)] dark:hover:bg-[var(--color-purple-badge-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -587,7 +587,7 @@ export default function Businesses() {
 
                           <button
                             onClick={() => { setEditingBusiness(b); setIsAddModalOpen(true); }}
-                            className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md transition-colors cursor-pointer"
+                            className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                             title="Edit Profile"
                           >
                             <Edit className="w-4 h-4" />
@@ -598,14 +598,14 @@ export default function Businesses() {
                               <button
                                 onClick={() => handleApprove(b)}
                                 disabled={actionLoading === b.id}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md text-xs font-medium transition-all active:scale-95 hover:scale-105 disabled:opacity-50 cursor-pointer"
                               >
                                 Approve
                               </button>
                               <button
                                 onClick={() => openRejectModal(b)}
                                 disabled={actionLoading === b.id}
-                                className="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                                className="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-md text-xs font-medium transition-all active:scale-95 hover:scale-105 disabled:opacity-50 cursor-pointer"
                               >
                                 Reject
                               </button>
@@ -616,7 +616,7 @@ export default function Businesses() {
                             <button
                               onClick={() => openSuspendModal(b)}
                               disabled={actionLoading === b.id}
-                              className="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                              className="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-md text-xs font-medium transition-all active:scale-95 hover:scale-105 disabled:opacity-50 cursor-pointer"
                             >
                               Suspend
                             </button>
@@ -626,7 +626,7 @@ export default function Businesses() {
                             <button
                               onClick={() => handleActivate(b)}
                               disabled={actionLoading === b.id}
-                              className="bg-[#003E83] hover:bg-[#002e62] text-white px-2.5 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                              className="bg-[#003E83] hover:bg-[#002e62] text-white px-2.5 py-1 rounded-md text-xs font-medium transition-all active:scale-95 hover:scale-105 disabled:opacity-50 cursor-pointer"
                             >
                               Reactivate
                             </button>
@@ -634,7 +634,7 @@ export default function Businesses() {
 
                           <button
                             onClick={() => handleDelete(b)}
-                            className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-colors cursor-pointer"
+                            className="p-1.5 text-[var(--color-danger-text)] dark:text-[var(--color-danger-dark-text)] hover:bg-[var(--color-danger-bg)] dark:hover:bg-[var(--color-danger-dark-bg)] rounded-md transition-all active:scale-90 hover:scale-105 cursor-pointer"
                             title="Delete Profile"
                           >
                             <Trash2 className="w-4 h-4" />
